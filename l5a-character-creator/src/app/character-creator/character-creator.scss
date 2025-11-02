@@ -1,0 +1,534 @@
+.character-creator-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.creator-header {
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  
+  mat-card-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  
+  mat-card-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+  }
+}
+
+.creator-content {
+  min-height: 600px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+// Sélection des clans
+.clan-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.clan-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.selected {
+    border-color: #1976d2;
+    background-color: rgba(25, 118, 210, 0.05);
+  }
+}
+
+.family-selection, .school-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.family-card, .school-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.selected {
+    border-color: #1976d2;
+    background-color: rgba(25, 118, 210, 0.05);
+  }
+}
+
+// Grilles pour les statistiques
+.rings-grid, .traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.ring-item, .trait-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  
+  span:first-child {
+    font-weight: 500;
+    min-width: 100px;
+  }
+  
+  span:nth-child(2) {
+    font-weight: bold;
+    color: #1976d2;
+    min-width: 30px;
+    text-align: center;
+  }
+  
+  .cost {
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: auto;
+  }
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  
+  span:first-child {
+    font-weight: 500;
+    flex: 1;
+  }
+  
+  span:nth-child(2) {
+    font-weight: bold;
+    color: #1976d2;
+    min-width: 30px;
+    text-align: center;
+  }
+  
+  .cost {
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: 8px;
+  }
+}
+
+// Résumé final
+.final-summary {
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .summary-section {
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    
+    h3 {
+      margin-top: 0;
+      color: #1976d2;
+      border-bottom: 2px solid #1976d2;
+      padding-bottom: 8px;
+    }
+    
+    p {
+      margin: 8px 0;
+      
+      strong {
+        display: inline-block;
+        min-width: 120px;
+      }
+    }
+  }
+  
+  .final-rings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+// Navigation
+.navigation-footer {
+  position: sticky;
+  bottom: 0;
+  margin-top: 20px;
+  z-index: 100;
+  
+  mat-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  
+  mat-chip {
+    min-width: 40px;
+    text-align: center;
+  }
+}
+
+// Personnalisation
+.customization-container {
+  .stats-overview {
+    h3 {
+      color: #1976d2;
+      border-bottom: 2px solid #1976d2;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+  }
+}
+
+// Onglets de personnalisation
+.tab-content {
+  padding: 20px 0;
+}
+
+.info-text {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f0f8ff;
+  border-left: 4px solid #1976d2;
+  border-radius: 4px;
+}
+
+// Grilles améliorées pour les traits et compétences
+.rings-grid .ring-item,
+.traits-grid .trait-item {
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1976d2;
+    min-width: 40px;
+    text-align: center;
+  }
+  
+  .formula {
+    font-size: 0.8rem;
+    color: #888;
+    font-style: italic;
+  }
+}
+
+.skills-grid .skill-item {
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  .value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1976d2;
+    min-width: 30px;
+    text-align: center;
+  }
+  
+  .skill-type {
+    margin: 0 8px;
+  }
+}
+
+// Section des avantages
+.advantages-section {
+  h4 {
+    color: #1976d2;
+    margin-bottom: 12px;
+  }
+  
+  .empty-state {
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+}
+
+// Navigation améliorée
+.navigation-footer {
+  .progress-bar {
+    margin-bottom: 16px;
+    
+    mat-progress-bar {
+      height: 8px;
+      border-radius: 4px;
+    }
+  }
+  
+  .steps {
+    margin-bottom: 12px;
+    
+    mat-chip {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      
+      &.clickable:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  .step-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    
+    span {
+      font-size: 0.8rem;
+      color: #666;
+      text-align: center;
+      flex: 1;
+      
+      &.active {
+        color: #1976d2;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// Résumé final amélioré
+.final-summary {
+  .summary-grid {
+    gap: 24px;
+    margin-top: 16px;
+  }
+  
+  .summary-section {
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    h3 {
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .final-rings,
+  .final-traits {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    
+    p {
+      margin: 4px 0;
+      padding: 4px 8px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+  }
+  
+  .final-skills {
+    .skill-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      margin: 4px 0;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      
+      .school-skill-icon {
+        color: #1976d2;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// Stats display amélioré
+.stats-display {
+  position: sticky;
+  top: 20px;
+  margin-top: 20px;
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .stat-section {
+    h4 {
+      color: #1976d2;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    
+    p {
+      margin: 6px 0;
+      font-size: 0.9rem;
+      
+      strong {
+        display: inline-block;
+        min-width: 100px;
+      }
+    }
+  }
+}
+
+// Animations et transitions améliorées
+.clan-card,
+.family-card,
+.school-card {
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.selected {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+  }
+}
+
+// Responsive amélioré
+@media (max-width: 1024px) {
+  .stats-display {
+    position: static;
+    margin-top: 20px;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .final-rings,
+  .final-traits {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .step-labels {
+    span {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+// Boutons d'amélioration
+button[mat-icon-button] {
+  &:disabled {
+    opacity: 0.5;
+  }
+  
+  &:not(:disabled):hover {
+    background-color: rgba(25, 118, 210, 0.1);
+    transform: scale(1.1);
+  }
+}
+
+// Chips de couleur pour les types
+mat-chip {
+  &[color="primary"] {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  &[color="accent"] {
+    background-color: #ff4081;
+    color: white;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+mat-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Themes pour les types d'école
+.school-card {
+  &[data-type="bushi"] {
+    border-left: 4px solid #d32f2f;
+  }
+  
+  &[data-type="shugenja"] {
+    border-left: 4px solid #7b1fa2;
+  }
+  
+  &[data-type="courtier"] {
+    border-left: 4px solid #388e3c;
+  }
+  
+  &[data-type="monk"] {
+    border-left: 4px solid #f57c00;
+  }
+}

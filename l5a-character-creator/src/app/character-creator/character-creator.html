@@ -1,0 +1,412 @@
+<div class="character-creator-container">
+  <mat-card class="creator-header">
+    <mat-card-header>
+      <mat-card-title>Création de Personnage - La Légende des 5 Anneaux</mat-card-title>
+      <mat-card-subtitle>Points d'Expérience disponibles: {{ availableXP() }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <div class="creator-content">
+    <!-- Étape 1: Informations de base -->
+    <mat-card *ngIf="currentStep() === 1">
+      <mat-card-header>
+        <mat-card-title>1. Informations de Base</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>Nom du personnage</mat-label>
+            <input matInput 
+                   [value]="character().name || ''" 
+                   (input)="updateBasicInfo('name', $any($event.target).value)">
+          </mat-form-field>
+          
+          <mat-form-field>
+            <mat-label>Âge</mat-label>
+            <input matInput 
+                   type="number" 
+                   [value]="character().age || 15" 
+                   (input)="updateBasicInfo('age', +$any($event.target).value)">
+          </mat-form-field>
+          
+          <mat-form-field>
+            <mat-label>Genre</mat-label>
+            <mat-select [value]="character().gender || ''" 
+                       (selectionChange)="updateBasicInfo('gender', $event.value)">
+              <mat-option value="masculin">Masculin</mat-option>
+              <mat-option value="féminin">Féminin</mat-option>
+              <mat-option value="autre">Autre</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="nextStep()">Suivant</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Étape 2: Choix du Clan -->
+    <mat-card *ngIf="currentStep() === 2">
+      <mat-card-header>
+        <mat-card-title>2. Choix du Clan</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="clan-selection">
+          <mat-card 
+            *ngFor="let clan of availableClans(); trackBy: trackByClanName"
+            class="clan-card" 
+            [class.selected]="character().clan === clan.name"
+            (click)="selectClan(clan.name)">
+            <mat-card-header>
+              <mat-card-title>{{ clan.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ clan.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="previousStep()">Précédent</button>
+        <button mat-raised-button color="primary" 
+                [disabled]="!character().clan" 
+                (click)="nextStep()">Suivant</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Étape 3: Choix de la Famille -->
+    <mat-card *ngIf="currentStep() === 3">
+      <mat-card-header>
+        <mat-card-title>3. Choix de la Famille</mat-card-title>
+        <mat-card-subtitle>Clan sélectionné: {{ character().clan }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="family-selection">
+          <mat-card 
+            *ngFor="let family of availableFamilies(); trackBy: trackByFamilyName"
+            class="family-card" 
+            [class.selected]="character().family === family.name"
+            (click)="selectFamily(family.name)">
+            <mat-card-header>
+              <mat-card-title>{{ family.name }}</mat-card-title>
+              <mat-card-subtitle>Bonus: +1 {{ family.traitBonus | titlecase }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ family.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="previousStep()">Précédent</button>
+        <button mat-raised-button color="primary" 
+                [disabled]="!character().family" 
+                (click)="nextStep()">Suivant</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Étape 4: Choix de l'École -->
+    <mat-card *ngIf="currentStep() === 4">
+      <mat-card-header>
+        <mat-card-title>4. Choix de l'École</mat-card-title>
+        <mat-card-subtitle>{{ character().clan }} - {{ character().family }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="school-selection">
+          <mat-card 
+            *ngFor="let school of availableSchools(); trackBy: trackBySchoolName"
+            class="school-card" 
+            [class.selected]="character().school === school.name"
+            (click)="selectSchool(school.name)">
+            <mat-card-header>
+              <mat-card-title>{{ school.name }}</mat-card-title>
+              <mat-card-subtitle>{{ school.type | titlecase }} - Bonus: +1 {{ school.traitBonus | titlecase }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p><strong>Honneur de départ:</strong> {{ school.honor }}</p>
+              <p><strong>Compétences:</strong></p>
+              <mat-chip-set>
+                <mat-chip *ngFor="let skill of school.skills">{{ skill }}</mat-chip>
+              </mat-chip-set>
+              <p><strong>Technique:</strong> {{ school.technique }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="previousStep()">Précédent</button>
+        <button mat-raised-button color="primary" 
+                [disabled]="!character().school" 
+                (click)="nextStep()">Suivant</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Étape 5: Personnalisation avec XP -->
+    <mat-card *ngIf="currentStep() === 5">
+      <mat-card-header>
+        <mat-card-title>5. Personnalisation</mat-card-title>
+        <mat-card-subtitle>Points d'XP restants: {{ availableXP() }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-tab-group>
+          <!-- Onglet Anneaux -->
+          <mat-tab label="Anneaux">
+            <div class="tab-content">
+              <p class="info-text">Les Anneaux sont calculés automatiquement d'après les Traits, sauf le Vide.</p>
+              <div class="rings-grid">
+                <div class="ring-item">
+                  <span>Terre:</span>
+                  <span class="value">{{ calculatedRings().terre }}</span>
+                  <span class="formula">(min Constitution/Volonté)</span>
+                </div>
+                <div class="ring-item">
+                  <span>Eau:</span>
+                  <span class="value">{{ calculatedRings().eau }}</span>
+                  <span class="formula">(min Force/Perception)</span>
+                </div>
+                <div class="ring-item">
+                  <span>Air:</span>
+                  <span class="value">{{ calculatedRings().air }}</span>
+                  <span class="formula">(min Réflexes/Intuition)</span>
+                </div>
+                <div class="ring-item">
+                  <span>Feu:</span>
+                  <span class="value">{{ calculatedRings().feu }}</span>
+                  <span class="formula">(min Agilité/Intelligence)</span>
+                </div>
+                <div class="ring-item">
+                  <span>Vide:</span>
+                  <span class="value">{{ calculatedRings().vide }}</span>
+                  <button mat-icon-button 
+                          [disabled]="!canAfford(getVoidRingCost(calculatedRings().vide)) || isAtMaximum(calculatedRings().vide)"
+                          (click)="improveVoidRing()"
+                          matTooltip="Améliorer le Vide">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <span class="cost">({{ getVoidRingCost(calculatedRings().vide) }} XP)</span>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Onglet Traits -->
+          <mat-tab label="Traits">
+            <div class="tab-content">
+              <div class="traits-grid">
+                <div class="trait-item" *ngFor="let trait of getTraitNames()">
+                  <span>{{ trait | titlecase }}:</span>
+                  <span class="value">{{ getTraitValue(trait) }}</span>
+                  <button mat-icon-button 
+                          [disabled]="!canAfford(getTraitCost(getTraitValue(trait))) || isAtMaximum(getTraitValue(trait))"
+                          (click)="improveTrait(trait)"
+                          [matTooltip]="'Améliorer ' + trait">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <span class="cost">({{ getTraitCost(getTraitValue(trait)) }} XP)</span>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Onglet Compétences -->
+          <mat-tab label="Compétences">
+            <div class="tab-content">
+              <div class="skills-grid">
+                <div class="skill-item" *ngFor="let skill of character().skills || []">
+                  <span>{{ skill.name }}:</span>
+                  <span class="value">{{ skill.rank }}</span>
+                  <mat-chip [color]="skill.isSchoolSkill ? 'primary' : 'accent'" class="skill-type">
+                    {{ skill.isSchoolSkill ? 'École' : 'Hors-École' }}
+                  </mat-chip>
+                  <button mat-icon-button 
+                          [disabled]="!canAfford(getSkillCost(skill)) || isAtMaximum(skill.rank)"
+                          (click)="improveSkill(skill.name)"
+                          [matTooltip]="'Améliorer ' + skill.name">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <span class="cost">({{ getSkillCost(skill) }} XP)</span>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Onglet Avantages/Désavantages -->
+          <mat-tab label="Avantages">
+            <div class="tab-content">
+              <p class="info-text">Fonctionnalité à venir - Avantages et Désavantages</p>
+              <div class="advantages-section">
+                <h4>Avantages sélectionnés:</h4>
+                <div *ngIf="character().advantages?.length === 0" class="empty-state">
+                  Aucun avantage sélectionné
+                </div>
+                <mat-chip-set>
+                  <mat-chip *ngFor="let advantage of character().advantages">
+                    {{ advantage.name }} ({{ advantage.cost }} XP)
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="previousStep()">Précédent</button>
+        <button mat-raised-button color="primary" (click)="nextStep()">Suivant</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Étape 6: Résumé final -->
+    <mat-card *ngIf="currentStep() === 6">
+      <mat-card-header>
+        <mat-card-title>6. Résumé du Personnage</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-grid">
+          <!-- Informations de base -->
+          <div class="summary-section">
+            <h3>Informations de Base</h3>
+            <p><strong>Nom:</strong> {{ character().name }}</p>
+            <p><strong>Âge:</strong> {{ character().age }} ans</p>
+            <p><strong>Genre:</strong> {{ character().gender }}</p>
+            <p><strong>Clan:</strong> {{ character().clan }}</p>
+            <p><strong>Famille:</strong> {{ character().family }}</p>
+            <p><strong>École:</strong> {{ character().school }}</p>
+          </div>
+
+          <!-- Statistiques dérivées -->
+          <div class="summary-section">
+            <h3>Statistiques</h3>
+            <p><strong>Rang d'Insight:</strong> {{ insightRank() }}</p>
+            <p><strong>Initiative:</strong> {{ initiative() }}</p>
+            <p><strong>Honneur:</strong> {{ character().honor }}</p>
+            <p><strong>Gloire:</strong> {{ character().glory }}</p>
+            <p><strong>Statut:</strong> {{ character().status }}</p>
+            <p><strong>XP Dépensés:</strong> {{ character().spentExperiencePoints }}/40</p>
+          </div>
+
+          <!-- Anneaux et Traits -->
+          <div class="summary-section">
+            <h3>Anneaux</h3>
+            <div class="final-rings">
+              <p>Terre: {{ calculatedRings().terre }}</p>
+              <p>Eau: {{ calculatedRings().eau }}</p>
+              <p>Air: {{ calculatedRings().air }}</p>
+              <p>Feu: {{ calculatedRings().feu }}</p>
+              <p>Vide: {{ calculatedRings().vide }}</p>
+            </div>
+          </div>
+
+          <!-- Traits -->
+          <div class="summary-section">
+            <h3>Traits</h3>
+            <div class="final-traits">
+              <p>Constitution: {{ character().traits?.constitution }}</p>
+              <p>Volonté: {{ character().traits?.volonte }}</p>
+              <p>Force: {{ character().traits?.force }}</p>
+              <p>Perception: {{ character().traits?.perception }}</p>
+              <p>Réflexes: {{ character().traits?.reflexes }}</p>
+              <p>Intuition: {{ character().traits?.intuition }}</p>
+              <p>Agilité: {{ character().traits?.agilite }}</p>
+              <p>Intelligence: {{ character().traits?.intelligence }}</p>
+            </div>
+          </div>
+
+          <!-- Compétences -->
+          <div class="summary-section">
+            <h3>Compétences</h3>
+            <div class="final-skills">
+              <div *ngFor="let skill of character().skills" class="skill-line">
+                <span>{{ skill.name }} {{ skill.rank }}</span>
+                <mat-icon *ngIf="skill.isSchoolSkill" class="school-skill-icon" matTooltip="Compétence d'École">school</mat-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Niveaux de blessure -->
+          <div class="summary-section">
+            <h3>Niveaux de Blessure</h3>
+            <p>Sain: {{ woundLevels().healthy }}</p>
+            <p>Égratignés: {{ woundLevels().nicked }}</p>
+            <p>Éraflés: {{ woundLevels().grazed }}</p>
+            <p>Blessés: {{ woundLevels().hurt }}</p>
+            <p>Estropiés: {{ woundLevels().injured }}</p>
+            <p>Abattus: {{ woundLevels().crippled }}</p>
+            <p>K.O.: {{ woundLevels().down }}</p>
+            <p>Mort: {{ woundLevels().out }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="previousStep()">Précédent</button>
+        <button mat-raised-button color="warn" (click)="resetCharacter()">Recommencer</button>
+        <button mat-raised-button color="primary" (click)="exportCharacter()">Exporter JSON</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Panneau des statistiques en temps réel -->
+    <mat-card class="stats-display" *ngIf="currentStep() < 6">
+      <mat-card-header>
+        <mat-card-title>Statistiques Actuelles</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stats-grid">
+          <div class="stat-section">
+            <h4>Anneaux</h4>
+            <p>Terre: {{ calculatedRings().terre }}</p>
+            <p>Eau: {{ calculatedRings().eau }}</p>
+            <p>Air: {{ calculatedRings().air }}</p>
+            <p>Feu: {{ calculatedRings().feu }}</p>
+            <p>Vide: {{ calculatedRings().vide }}</p>
+          </div>
+          
+          <div class="stat-section">
+            <h4>Statistiques Dérivées</h4>
+            <p>Rang d'Insight: {{ insightRank() }}</p>
+            <p>Initiative: {{ initiative() }}</p>
+            <p>Honneur: {{ character().honor }}</p>
+            <p>XP Restants: {{ availableXP() }}</p>
+          </div>
+
+          <div class="stat-section">
+            <h4>Combat (ND)</h4>
+            <p>ND Corps à Corps: {{ combatStats().meleeDefenseND }}</p>
+            <p>ND Esquive: {{ combatStats().dodgeND }}</p>
+            <p>Initiative Base: {{ combatStats().baseInitiative }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navigation-footer">
+    <mat-card>
+      <mat-card-content>
+        <div class="step-indicator">
+          <div class="progress-bar">
+            <mat-progress-bar mode="determinate" [value]="(currentStep() / 6) * 100"></mat-progress-bar>
+          </div>
+          <div class="steps">
+            <mat-chip-set>
+              <mat-chip 
+                *ngFor="let step of [1, 2, 3, 4, 5, 6]"
+                [color]="currentStep() === step ? 'primary' : (currentStep() > step ? 'accent' : '')"
+                (click)="goToStep(step)"
+                [class.clickable]="step < currentStep()">
+                {{ step }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          <div class="step-labels">
+            <span [class.active]="currentStep() === 1">Info</span>
+            <span [class.active]="currentStep() === 2">Clan</span>
+            <span [class.active]="currentStep() === 3">Famille</span>
+            <span [class.active]="currentStep() === 4">École</span>
+            <span [class.active]="currentStep() === 5">XP</span>
+            <span [class.active]="currentStep() === 6">Résumé</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
