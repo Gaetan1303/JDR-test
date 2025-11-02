@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:prod": "ng build --configuration production",
+    "build:prod": "ng build --configuration production --base-href /JDR-test/l5a-character-creator/",
+    "deploy": "ng build --configuration production --base-href /JDR-test/l5a-character-creator/ && npx angular-cli-ghpages --dir=dist/l5a-character-creator/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -40,6 +41,7 @@
     "@angular/cli": "^20.3.8",
     "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
+    "angular-cli-ghpages": "^2.0.3",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
