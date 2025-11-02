@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:prod": "ng build --configuration production --base-href /JDR-test/l5a-character-creator/",
-    "deploy": "ng build --configuration production --base-href /JDR-test/l5a-character-creator/ && npx angular-cli-ghpages --dir=dist/l5a-character-creator/browser",
+    "build:prod": "ng build --configuration production",
+    "deploy": "ng build --configuration production && npx angular-cli-ghpages --dir=dist/l5a-character-creator/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

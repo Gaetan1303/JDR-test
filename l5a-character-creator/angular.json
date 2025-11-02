@@ -47,7 +47,8 @@
                   "maximumError": "30kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "/JDR-test/l5a-character-creator/"
             },
             "development": {
               "optimization": false,
