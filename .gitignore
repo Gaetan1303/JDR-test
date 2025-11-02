@@ -1,5 +1,6 @@
 # Documentation volumineuse
-l5a-character-creator/doc/
+l5a-character-creator/doc/*
+doc/
 
 # Node modules
 node_modules/
