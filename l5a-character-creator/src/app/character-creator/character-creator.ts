@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -14,6 +14,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CharacterService } from '../services/character.service';
+import { Equipment } from '../models/character.model';
 
 @Component({
   selector: 'app-character-creator',
@@ -79,6 +80,16 @@ export class CharacterCreator {
   availableWeapons = this.characterService.availableWeapons;
   availableArmor = this.characterService.availableArmor;
   availableItems = this.characterService.availableItems;
+  
+  // Computed signal pour gérer l'armure (Equipment | Equipment[] -> Equipment)
+  currentArmor = computed(() => {
+    const armor = this.characterEquipment().armor;
+    if (!armor) return undefined;
+    if (Array.isArray(armor)) {
+      return armor.length > 0 ? armor[0] : undefined;
+    }
+    return armor;
+  });
   
   // Équipement filtré pour l'achat (uniquement avec prix)
   get shopWeapons() {
@@ -261,6 +272,11 @@ export class CharacterCreator {
     URL.revokeObjectURL(url);
   }
 
+  // Méthode pour compter les sorts par rang
+  getSpellCountByRank(rank: number): number {
+    return this.selectedSpells().filter(s => s.mastery === rank).length;
+  }
+
   // === MÉTHODES D'ACHAT D'ÉQUIPEMENT ===
   
   buyEquipment(equipment: any) {
@@ -277,5 +293,20 @@ export class CharacterCreator {
   
   getAvailableMoney(): number {
     return this.characterService.getAvailableMoney();
+  }
+
+  // Helpers pour gérer armor qui peut être Equipment ou Equipment[]
+  getArmorAsEquipment(): Equipment | undefined {
+    const armor = this.characterEquipment().armor;
+    if (!armor) return undefined;
+    if (Array.isArray(armor)) {
+      return armor.length > 0 ? armor[0] : undefined;
+    }
+    return armor;
+  }
+
+  hasArmor(): boolean {
+    const armor = this.getArmorAsEquipment();
+    return !!armor && armor.name !== 'Pas d\'armure';
   }
 }

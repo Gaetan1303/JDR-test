@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { CharacterService } from '../services/character.service';
-import { Character } from '../models/character.model';
+import { Character, Equipment } from '../models/character.model';
 
 @Component({
   selector: 'app-characters',
@@ -41,11 +41,11 @@ import { Character } from '../models/character.model';
               <div class="rings-summary">
                 <h4>Anneaux</h4>
                 <mat-chip-set>
-                  <mat-chip>Terre: {{ character.rings?.terre || 2 }}</mat-chip>
-                  <mat-chip>Eau: {{ character.rings?.eau || 2 }}</mat-chip>
-                  <mat-chip>Air: {{ character.rings?.air || 2 }}</mat-chip>
-                  <mat-chip>Feu: {{ character.rings?.feu || 2 }}</mat-chip>
-                  <mat-chip>Vide: {{ character.rings?.vide || 2 }}</mat-chip>
+                  <mat-chip>Terre: {{ character.rings.terre || 2 }}</mat-chip>
+                  <mat-chip>Eau: {{ character.rings.eau || 2 }}</mat-chip>
+                  <mat-chip>Air: {{ character.rings.air || 2 }}</mat-chip>
+                  <mat-chip>Feu: {{ character.rings.feu || 2 }}</mat-chip>
+                  <mat-chip>Vide: {{ character.rings.vide || 2 }}</mat-chip>
                 </mat-chip-set>
               </div>
 
@@ -53,7 +53,7 @@ import { Character } from '../models/character.model';
 
               <div class="stats-summary">
                 <p><strong>Honneur:</strong> {{ character.honor || 0 }}</p>
-                <p><strong>Points de Vide:</strong> {{ character.voidPoints || 0 }}</p>
+                <p><strong>Points de Vide:</strong> {{ character.voidPoints || character.rings.vide || 2 }}</p>
                 <p><strong>XP disponibles:</strong> {{ getAvailableXP(character) }}</p>
               </div>
 
@@ -62,8 +62,8 @@ import { Character } from '../models/character.model';
                 <p *ngIf="character.equipment.weapons?.length">
                   <strong>Armes:</strong> {{ character.equipment.weapons.length }}
                 </p>
-                <p *ngIf="character.equipment.armor?.length">
-                  <strong>Armures:</strong> {{ character.equipment.armor.length }}
+                <p *ngIf="character.equipment.armor">
+                  <strong>Armure:</strong> {{ getArmorName(character.equipment.armor) }}
                 </p>
               </div>
 
@@ -234,5 +234,13 @@ export class Characters {
     const spentXP = character.spentExperiencePoints || 0;
     
     return baseXP - advantageCost + disadvantageGain - spentXP;
+  }
+
+  getArmorName(armor: Equipment | Equipment[] | undefined): string {
+    if (!armor) return 'Aucune';
+    if (Array.isArray(armor)) {
+      return armor.length > 0 ? armor[0].name : 'Aucune';
+    }
+    return armor.name;
   }
 }

@@ -69,7 +69,7 @@ export interface Equipment {
 
 export interface CharacterEquipment {
   weapons: Equipment[];
-  armor?: Equipment;
+  armor?: Equipment | Equipment[]; // Peut être un seul objet ou un tableau
   items: Equipment[];
   koku: number; // Monnaie du personnage en Koku
 }
@@ -122,6 +122,7 @@ export interface Character {
   // Statistiques de base
   rings: Ring;
   traits: Traits;
+  voidPoints?: number; // Points de Vide disponibles
   skills: Skill[];
   spells: string[]; // Noms des sorts sélectionnés
   

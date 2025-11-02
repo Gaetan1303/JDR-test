@@ -546,15 +546,15 @@
                 <!-- Armure -->
                 <div class="equipment-section">
                   <h4>Armure</h4>
-                  <div class="equipment-item" *ngIf="characterEquipment().armor">
-                    <span class="equipment-name">{{ characterEquipment().armor!.name }}</span>
-                    <span class="equipment-stats">TN {{ characterEquipment().armor!.TN }}, Réduction {{ characterEquipment().armor!.reduction }}</span>
-                    <span class="equipment-cost" *ngIf="characterEquipment().armor!.cost">{{ characterEquipment().armor!.cost }} Koku</span>
-                    <span class="equipment-description">{{ characterEquipment().armor!.description }}</span>
-                    <button mat-button (click)="sellEquipment(characterEquipment().armor!.name, 'armor')" 
-                            matTooltip="Vendre ({{ Math.floor(parseInt(characterEquipment().armor!.cost || '0') / 2) }} Koku)" 
+                  <div class="equipment-item" *ngIf="currentArmor()">
+                    <span class="equipment-name">{{ currentArmor()!.name }}</span>
+                    <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
+                    <span class="equipment-cost" *ngIf="currentArmor()!.cost">{{ currentArmor()!.cost }} Koku</span>
+                    <span class="equipment-description">{{ currentArmor()!.description }}</span>
+                    <button mat-button (click)="sellEquipment(currentArmor()!.name, 'armor')" 
+                            matTooltip="Vendre ({{ Math.floor(parseInt(currentArmor()!.cost || '0') / 2) }} Koku)" 
                             class="sell-button"
-                            *ngIf="characterEquipment().armor!.name !== 'Pas d\'armure'">
+                            *ngIf="currentArmor()!.name !== 'Pas d\'armure'">
                       Vendre
                     </button>
                   </div>
@@ -640,10 +640,10 @@
         <mat-card-subtitle *ngIf="canCastSpells()">
           <div>Votre école vous permet de lancer des sorts :</div>
           <div>
-            • Rang 1 : {{ selectedSpells().filter(s => s.mastery === 1).length }}/{{ maxStartingSpells().rank1 }} sorts
+            • Rang 1 : {{ getSpellCountByRank(1) }}/{{ maxStartingSpells().rank1 }} sorts
           </div>
           <div>
-            • Rang 2 : {{ selectedSpells().filter(s => s.mastery === 2).length }}/{{ maxStartingSpells().rank2 }} sorts
+            • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpells().rank2 }} sorts
           </div>
           <div *ngIf="schoolAffinityDeficiency().affinity" class="affinity-info">
             Affinité : {{ schoolAffinityDeficiency().affinity }}
@@ -856,13 +856,13 @@
               </div>
 
               <!-- Armure -->
-              <div class="equipment-category" *ngIf="characterEquipment().armor && characterEquipment().armor!.name !== 'Pas d\'armure'">
+              <div class="equipment-category" *ngIf="currentArmor() && currentArmor()!.name !== 'Pas d\'armure'">
                 <h4>Armure</h4>
                 <div class="equipment-summary-item">
-                  <span><strong>{{ characterEquipment().armor!.name }}</strong></span>
-                  <span class="equipment-stats">TN {{ characterEquipment().armor!.TN }}, Réduction {{ characterEquipment().armor!.reduction }}</span>
-                  <p class="equipment-description">{{ characterEquipment().armor!.description }}</p>
-                  <p class="equipment-special" *ngIf="characterEquipment().armor!.special"><em>{{ characterEquipment().armor!.special }}</em></p>
+                  <span><strong>{{ currentArmor()!.name }}</strong></span>
+                  <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
+                  <p class="equipment-description">{{ currentArmor()!.description }}</p>
+                  <p class="equipment-special" *ngIf="currentArmor()!.special"><em>{{ currentArmor()!.special }}</em></p>
                 </div>
               </div>
 

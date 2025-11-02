@@ -846,7 +846,10 @@ export class CharacterService {
     if (equipmentType === 'weapon') {
       equipment = character.equipment.weapons.find(w => w.name === equipmentName);
     } else if (equipmentType === 'armor') {
-      equipment = character.equipment.armor?.name === equipmentName ? character.equipment.armor : undefined;
+      const armor = character.equipment.armor;
+      if (armor && !Array.isArray(armor) && armor.name === equipmentName) {
+        equipment = armor;
+      }
     } else {
       equipment = character.equipment.items.find(i => i.name === equipmentName);
     }
@@ -895,13 +898,13 @@ export class CharacterService {
   loadCharacter(character: Character) {
     this._character.set(character);
     // Restaurer les signaux dédiés
-    this._selectedAdvantageIds.set(character.selectedAdvantages?.map(a => a.id) || []);
-    this._selectedDisadvantageIds.set(character.selectedDisadvantages?.map(d => d.id) || []);
+    this._selectedAdvantageIds.set(character.selectedAdvantages || []);
+    this._selectedDisadvantageIds.set(character.selectedDisadvantages || []);
   }
 
   // Sauvegarder le personnage actuel
   saveCharacter(): Character {
-    const character = this.character();
+    const character = this.character() as Character;
     const saved = localStorage.getItem('l5a-characters');
     let characters: Character[] = [];
     
