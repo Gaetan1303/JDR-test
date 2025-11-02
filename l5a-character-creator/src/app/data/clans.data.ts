@@ -30,10 +30,10 @@ export const CLANS: Clan[] = [
         description: 'Chasseurs de sorciers et experts de la magie'
       },
       {
-        name: 'Toritaka',
+        name: 'Yasuki',
         clan: 'Clan du Crabe',
-        traitBonus: 'perception',
-        description: 'Anciens du Clan du Faucon, spécialistes des esprits'
+        traitBonus: 'intuition',
+        description: 'Marchands et courtisans du Clan du Crabe'
       }
     ],
     schools: []
@@ -92,10 +92,10 @@ export const CLANS: Clan[] = [
         description: 'Enquêteurs et magistrats, experts de la logique'
       },
       {
-        name: 'Tamori',
+        name: 'Togashi',
         clan: 'Clan du Dragon',
         traitBonus: 'volonte',
-        description: 'Mystiques tatoués, anciens du Clan du Phénix'
+        description: 'Moines-dragons tattoués aux pouvoirs mystiques'
       }
     ],
     schools: []
@@ -125,7 +125,7 @@ export const CLANS: Clan[] = [
       {
         name: 'Matsu',
         clan: 'Clan du Lion',
-        traitBonus: 'agilite',
+        traitBonus: 'constitution',
         description: 'Guerriers féroces, maîtres du combat rapproché'
       }
     ],
@@ -220,6 +220,173 @@ export const CLANS: Clan[] = [
         clan: 'Clan de la Licorne',
         traitBonus: 'volonte',
         description: 'Shugenja nomades, maîtres de la magie étrangère'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan de la Mante',
+    description: 'Clan mineur des îles, maîtres des mers et du commerce maritime',
+    families: [
+      {
+        name: 'Yoritomo',
+        clan: 'Clan de la Mante',
+        traitBonus: 'constitution',
+        description: 'Famille dirigeante du clan de la Mante, marins et guerriers des mers'
+      },
+      {
+        name: 'Tsuruchi',
+        clan: 'Clan de la Mante',
+        traitBonus: 'reflexes',
+        description: 'Archers d\'élite et chasseurs de primes'
+      },
+      {
+        name: 'Moshi',
+        clan: 'Clan de la Mante',
+        traitBonus: 'intelligence',
+        description: 'Shugenjas du soleil et prêtresses d\'Amaterasu'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan de l\'Araignée',
+    description: 'Ancien clan des Terres souillées, maîtres de la magie noire et de la corruption',
+    families: [
+      {
+        name: 'Daigotsu',
+        clan: 'Clan de l\'Araignée',
+        traitBonus: 'volonte',
+        description: 'Famille dirigeante du clan de l\'Araignée, seigneurs de la souillure'
+      },
+      {
+        name: 'Susumu',
+        clan: 'Clan de l\'Araignée',
+        traitBonus: 'intelligence',
+        description: 'Courtisans corrompus et manipulateurs'
+      },
+      {
+        name: 'Goju',
+        clan: 'Clan de l\'Araignée',
+        traitBonus: 'agilite',
+        description: 'Ninjas démoniaques et assassins de l\'ombre'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Blaireau',
+    description: 'Clan mineur connu pour sa ténacité et ses mineurs experts',
+    families: [
+      {
+        name: 'Ichiro',
+        clan: 'Clan du Blaireau',
+        traitBonus: 'constitution',
+        description: 'Famille dirigeante du clan du Blaireau, mineurs et artisans robustes'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan de la Libellule',
+    description: 'Clan mineur gardien du savoir mystique et des arts martiaux secrets',
+    families: [
+      {
+        name: 'Tonbo',
+        clan: 'Clan de la Libellule',
+        traitBonus: 'perception',
+        description: 'Famille dirigeante du clan de la Libellule, mystiques et gardiens du savoir'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Faucon',
+    description: 'Ancien clan mineur spécialisé dans la chasse aux esprits maléfiques',
+    families: [
+      {
+        name: 'Toritaka',
+        clan: 'Clan du Faucon',
+        traitBonus: 'perception',
+        description: 'Chasseurs d\'esprits et exorcistes (maintenant intégrés au Crabe)'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Renard',
+    description: 'Clan mineur rusé spécialisé dans l\'espionnage et la survie',
+    families: [
+      {
+        name: 'Kitsune',
+        clan: 'Clan du Renard',
+        traitBonus: 'intuition',
+        description: 'Famille dirigeante du clan du Renard, rusés et adaptatifs'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Lièvre',
+    description: 'Clan mineur pacifique spécialisé dans la médecine et les arts de guérison',
+    families: [
+      {
+        name: 'Usagi',
+        clan: 'Clan du Lièvre',
+        traitBonus: 'intelligence',
+        description: 'Famille dirigeante du clan du Lièvre, guérisseurs et médecins'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Moineau',
+    description: 'Clan mineur humble spécialisé dans les arts simples et l\'humilité',
+    families: [
+      {
+        name: 'Suzume',
+        clan: 'Clan du Moineau',
+        traitBonus: 'intuition',
+        description: 'Famille dirigeante du clan du Moineau, humbles mais déterminés'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan de l\'Ours',
+    description: 'Clan mineur des montagnes du nord, warriors robustes et berserkers',
+    families: [
+      {
+        name: 'Kuma',
+        clan: 'Clan de l\'Ours',
+        traitBonus: 'constitution',
+        description: 'Famille dirigeante du clan de l\'Ours, guerriers sauvages des montagnes'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan du Serpent',
+    description: 'Clan mineur mystérieux spécialisé dans les arts ninja et l\'infiltration',
+    families: [
+      {
+        name: 'Chuda',
+        clan: 'Clan du Serpent',
+        traitBonus: 'agilite',
+        description: 'Famille dirigeante du clan du Serpent, ninjas et infiltrateurs'
+      }
+    ],
+    schools: []
+  },
+  {
+    name: 'Clan de la Tortue',
+    description: 'Clan mineur défensif spécialisé dans la protection et l\'architecture défensive',
+    families: [
+      {
+        name: 'Kasuga',
+        clan: 'Clan de la Tortue',
+        traitBonus: 'constitution',
+        description: 'Famille dirigeante du clan de la Tortue, maîtres de la défense'
       }
     ],
     schools: []

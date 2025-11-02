@@ -26,17 +26,52 @@ export interface Skill {
 }
 
 export interface Advantage {
+  id: string;
   name: string;
   cost: number;
   description: string;
-  type: 'physical' | 'mental' | 'social' | 'spiritual';
+  category: 'Physique' | 'Mental' | 'Social' | 'Spirituel' | 'Matériel' | 'Comportemental';
 }
 
 export interface Disadvantage {
+  id: string;
   name: string;
-  pointsGained: number;
+  xpGain: number;
   description: string;
-  type: 'physical' | 'mental' | 'social' | 'spiritual';
+  category: 'Physique' | 'Mental' | 'Social' | 'Spirituel' | 'Matériel' | 'Comportemental';
+}
+
+export interface Spell {
+  name: string;
+  element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide';
+  mastery: number;
+  range: string;
+  area: string;
+  duration: string;
+  raises: string;
+  description: string;
+  universal?: boolean; // Si true, le sort peut être appris par tous les shugenjas
+}
+
+export interface Equipment {
+  name: string;
+  type: 'weapon' | 'armor' | 'item' | 'tool' | 'clothing';
+  category?: string;
+  damage?: string;
+  reach?: number;
+  TN?: number; // TN pour toucher (armes) ou TN d'armure
+  reduction?: number; // Réduction de dégâts (armures)
+  weight?: number;
+  cost?: string;
+  description: string;
+  special?: string; // Propriétés spéciales
+}
+
+export interface CharacterEquipment {
+  weapons: Equipment[];
+  armor?: Equipment;
+  items: Equipment[];
+  koku: number; // Monnaie du personnage en Koku
 }
 
 export interface School {
@@ -49,6 +84,13 @@ export interface School {
   honor: number;
   outfit: string[];
   startingMoney: string;
+  // Restrictions de sorts pour les shugenjas
+  spellLimits?: {
+    rank1: number; // Nombre de sorts de Rang 1 autorisés
+    rank2: number; // Nombre de sorts de Rang 2 autorisés
+    affinity?: string; // Élément d'affinité si applicable
+    deficiency?: string; // Élément de déficience si applicable
+  };
 }
 
 export interface Family {
@@ -67,6 +109,7 @@ export interface Clan {
 
 export interface Character {
   // Informations de base
+  id?: string; // ID unique pour la sauvegarde
   name: string;
   age: number;
   gender: string;
@@ -80,10 +123,13 @@ export interface Character {
   rings: Ring;
   traits: Traits;
   skills: Skill[];
+  spells: string[]; // Noms des sorts sélectionnés
   
   // Avantages et désavantages
   advantages: Advantage[];
   disadvantages: Disadvantage[];
+  selectedAdvantages: string[]; // IDs des avantages sélectionnés
+  selectedDisadvantages: string[]; // IDs des désavantages sélectionnés
   
   // Points d'expérience
   experiencePoints: number;
@@ -112,10 +158,7 @@ export interface Character {
   };
   
   // Équipement
-  equipment: string[];
-  weapons: string[];
-  armor: string[];
-  money: number;
+  equipment: CharacterEquipment;
   
   // Éléments narratifs
   objective: string;

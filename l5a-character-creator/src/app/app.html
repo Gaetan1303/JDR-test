@@ -1,2 +1,9 @@
-<app-character-creator></app-character-creator>
-<router-outlet />
+<mat-toolbar color="primary" class="main-toolbar">
+  <span class="title">{{ title() }}</span>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/dashboard" routerLinkActive="active">Accueil</button>
+</mat-toolbar>
+
+<div class="main-container">
+  <router-outlet></router-outlet>
+</div>

@@ -22,7 +22,13 @@ export const SCHOOLS: School[] = [
     technique: 'Chasse aux Sorciers : +1k1 pour résister à la magie maho et détecter les créatures souillées. Affinité : Terre, Déficience : Air',
     honor: 6.5,
     outfit: ['Kimono', 'Sandales', 'Wakizashi', 'Parchemins de sorts', 'Kit de calligraphie', 'Jade', 'Koku'],
-    startingMoney: '2d10'
+    startingMoney: '2d10',
+    spellLimits: {
+      rank1: 3,
+      rank2: 1,
+      affinity: 'Terre',
+      deficiency: 'Air'
+    }
   },
 
   // Écoles du Clan de la Grue
@@ -57,7 +63,13 @@ export const SCHOOLS: School[] = [
     technique: 'Cœur Paisible : Ne peut lancer de sorts offensifs. +1k1 aux sorts de guérison et de protection. Affinité : Air, Déficience : Feu',
     honor: 8.5,
     outfit: ['Kimono', 'Sandales', 'Wakizashi', 'Parchemins de sorts', 'Kit de calligraphie', 'Kit médical', 'Koku'],
-    startingMoney: '2d10'
+    startingMoney: '3d10',
+    spellLimits: {
+      rank1: 3,
+      rank2: 1,
+      affinity: 'Air',
+      deficiency: 'Feu'
+    }
   },
 
   // Écoles du Clan du Dragon
@@ -81,7 +93,13 @@ export const SCHOOLS: School[] = [
     technique: 'Tatouages Mystiques : Peut tatouer des sorts sur sa peau. Un tatouage peut être activé une fois par jour sans dépenser de sorts. Affinité : Terre, Déficience : Air',
     honor: 7.5,
     outfit: ['Kimono simple', 'Sandales', 'Bo', 'Kit de tatouage', 'Parchemins de sorts', 'Jade', 'Koku'],
-    startingMoney: '2d10'
+    startingMoney: '2d10',
+    spellLimits: {
+      rank1: 3,
+      rank2: 1,
+      affinity: 'Terre',
+      deficiency: 'Air'
+    }
   },
 
   // Écoles du Clan du Lion
@@ -105,7 +123,13 @@ export const SCHOOLS: School[] = [
     technique: 'Communion avec les Ancêtres : Peut parler avec les esprits ancestraux une fois par jour. +1k1 aux sorts impliquant les ancêtres. Affinité : Air, Déficience : Eau',
     honor: 8.5,
     outfit: ['Kimono traditionnel', 'Sandales', 'Wakizashi', 'Parchemins ancestraux', 'Encens', 'Kit de calligraphie', 'Koku'],
-    startingMoney: '2d10'
+    startingMoney: '2d10',
+    spellLimits: {
+      rank1: 3,
+      rank2: 1,
+      affinity: 'Air',
+      deficiency: 'Eau'
+    }
   },
 
   // Écoles du Clan du Phénix
@@ -118,7 +142,12 @@ export const SCHOOLS: School[] = [
     technique: 'Maîtrise Élémentaire : Choisit un élément d\'affinité au Rang 1. +1k1 aux sorts de cet élément. Peut invoquer des kami sans sorts.',
     honor: 6.5,
     outfit: ['Robes de shugenja', 'Sandales', 'Wakizashi', 'Parchemins de sorts', 'Kit de calligraphie', 'Focus élémentaire', 'Koku'],
-    startingMoney: '2d10'
+    startingMoney: '2d10',
+    spellLimits: {
+      rank1: 4,
+      rank2: 2,
+      affinity: 'Aucune' // L'école Isawa peut choisir son affinité
+    }
   },
   {
     name: 'École de Bushi Shiba',
@@ -177,6 +206,80 @@ export const SCHOOLS: School[] = [
     technique: 'Magie Nomade : Peut lancer des sorts en se déplaçant sans pénalité. +1k0 aux sorts lancés en extérieur. Affinité : Feu, Déficience : Terre',
     honor: 6.5,
     outfit: ['Robes de voyage', 'Bottes', 'Wakizashi', 'Parchemins de sorts', 'Focus de voyage', 'Cheval', 'Koku'],
+    startingMoney: '2d10',
+    spellLimits: {
+      rank1: 3,
+      rank2: 1,
+      affinity: 'Feu',
+      deficiency: 'Terre'
+    }
+  },
+
+  // Écoles des Clans Mineurs
+  {
+    name: 'École de Bushi Ichiro',
+    type: 'bushi',
+    clan: 'Clan du Blaireau',
+    traitBonus: 'constitution',
+    skills: ['Artisanat', 'Athlétisme', 'Défense', 'Kenjutsu', 'Commerce'],
+    technique: 'Ténacité du Blaireau : +1k1 aux jets de Constitution. Peut ignorer les pénalités de fatigue pendant un nombre de rounds égal à son rang de Constitution.',
+    honor: 6.0,
+    outfit: ['Vêtements de travail', 'Bottes', 'Wakizashi', 'Katana', 'Outils de mineur', 'Lanterne', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Tonbo',
+    type: 'bushi', 
+    clan: 'Clan de la Libellule',
+    traitBonus: 'perception',
+    skills: ['Défense', 'Kenjutsu', 'Kyujutsu', 'Méditation', 'Lore: Éléments'],
+    technique: 'Vision de la Libellule : +1k1 aux jets de Perception et d\'Initiative. Peut voir les auras magiques.',
+    honor: 7.0,
+    outfit: ['Kimono simple', 'Sandales', 'Wakizashi', 'Katana', 'Cristal de méditation', 'Encens', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Toritaka',
+    type: 'bushi',
+    clan: 'Clan du Faucon',
+    traitBonus: 'perception',
+    skills: ['Défense', 'Kenjutsu', 'Kyujutsu', 'Lore: Ancêtres', 'Chasse'],
+    technique: 'Œil du Faucon : +1k1 aux jets de Kyujutsu. Peut communiquer avec les esprits des ancêtres une fois par jour.',
+    honor: 6.5,
+    outfit: ['Kimono de chasseur', 'Sandales', 'Wakizashi', 'Katana', 'Arc de chasse', 'Amulette d\'ancêtre', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Kitsune',
+    type: 'bushi',
+    clan: 'Clan du Renard',
+    traitBonus: 'agilite', 
+    skills: ['Défense', 'Kenjutsu', 'Stealth', 'Lore: Forêt', 'Survie'],
+    technique: 'Ruse du Renard : +1k1 aux jets de Stealth. Peut se déplacer en terrain difficile sans pénalité.',
+    honor: 6.0,
+    outfit: ['Vêtements de forestier', 'Sandales', 'Wakizashi', 'Katana', 'Corde', 'Kit de survie', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Usagi',
+    type: 'bushi',
+    clan: 'Clan du Lièvre',
+    traitBonus: 'reflexes',
+    skills: ['Défense', 'Kenjutsu', 'Athlétisme', 'Stealth', 'Équitation'],
+    technique: 'Rapidité du Lièvre : +1k1 aux jets d\'Initiative et de mouvement. Peut effectuer une action gratuite de mouvement.',
+    honor: 6.0,
+    outfit: ['Vêtements légers', 'Sandales', 'Wakizashi', 'Katana', 'Bottes de course', 'Sac léger', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Suzume',
+    type: 'bushi',
+    clan: 'Clan du Moineau',
+    traitBonus: 'intuition',
+    skills: ['Défense', 'Kenjutsu', 'Courtoisie', 'Sincérité', 'Art de la Guerre'],
+    technique: 'Humilité du Moineau : +1k1 aux jets de Sincérité. Les adversaires sous-estiment le personnage (+5 TN à leurs jets de Perception contre lui).',
+    honor: 7.5,
+    outfit: ['Kimono humble', 'Sandales', 'Wakizashi', 'Katana', 'Textes de stratégie', 'Amulette', 'Koku'],
     startingMoney: '2d10'
   }
 ];

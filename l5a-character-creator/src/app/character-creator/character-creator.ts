@@ -8,7 +8,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -28,7 +27,6 @@ import { CharacterService } from '../services/character.service';
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
-    MatIconModule,
     MatTabsModule,
     MatDividerModule,
     MatBadgeModule,
@@ -41,6 +39,10 @@ import { CharacterService } from '../services/character.service';
 export class CharacterCreator {
   characterService = inject(CharacterService);
   
+  // Expose Math pour le template
+  Math = Math;
+  parseInt = parseInt;
+  
   // Signaux pour la réactivité
   character = this.characterService.character;
   currentStep = this.characterService.currentStep;
@@ -48,11 +50,44 @@ export class CharacterCreator {
   availableFamilies = this.characterService.availableFamilies;
   availableSchools = this.characterService.availableSchoolsForClan;
   calculatedRings = this.characterService.calculatedRings;
+  
+  // Signaux pour les avantages/désavantages
+  availableAdvantages = this.characterService.availableAdvantages;
+  availableDisadvantages = this.characterService.availableDisadvantages;
+  selectedAdvantages = this.characterService.selectedAdvantages;
+  selectedDisadvantages = this.characterService.selectedDisadvantages;
+  advantageCategories = this.characterService.advantageCategories;
+  disadvantageCategories = this.characterService.disadvantageCategories;
+  advantageXPCost = this.characterService.advantageXPCost;
+  disadvantageXPGain = this.characterService.disadvantageXPGain;
   insightRank = this.characterService.insightRank;
   initiative = this.characterService.initiative;
   woundLevels = this.characterService.woundLevels;
   combatStats = this.characterService.combatStats;
   availableXP = this.characterService.availableExperiencePoints;
+
+  // Signaux pour les sorts
+  selectedSpells = this.characterService.selectedSpells;
+  availableSpellsByElement = this.characterService.availableSpellsByElement;
+  canCastSpells = this.characterService.canCastSpells;
+  maxStartingSpells = this.characterService.maxStartingSpells;
+  canAddMoreSpells = this.characterService.canAddMoreSpells;
+  schoolAffinityDeficiency = this.characterService.schoolAffinityDeficiency;
+
+  // Signaux pour l'équipement
+  characterEquipment = this.characterService.characterEquipment;
+  availableWeapons = this.characterService.availableWeapons;
+  availableArmor = this.characterService.availableArmor;
+  availableItems = this.characterService.availableItems;
+  
+  // Équipement filtré pour l'achat (uniquement avec prix)
+  get shopWeapons() {
+    return this.availableWeapons().filter(w => w.cost);
+  }
+  
+  get shopArmor() {
+    return this.availableArmor().filter(a => a.cost && a.name !== 'Pas d\'armure');
+  }
 
   // Méthodes pour les étapes de création
   updateBasicInfo(field: string, value: any) {
@@ -83,12 +118,29 @@ export class CharacterCreator {
     this.characterService.improveSkill(skillName);
   }
 
+  // Méthodes pour diminuer les points
+  decreaseTrait(traitName: any) {
+    this.characterService.decreaseTrait(traitName);
+  }
+
+  decreaseVoidRing() {
+    this.characterService.decreaseVoidRing();
+  }
+
+  decreaseSkill(skillName: string) {
+    this.characterService.decreaseSkill(skillName);
+  }
+
   nextStep() {
+    console.log('NextStep called, current step:', this.currentStep());
     this.characterService.nextStep();
+    console.log('After nextStep, current step:', this.currentStep());
   }
 
   previousStep() {
+    console.log('PreviousStep called, current step:', this.currentStep());
     this.characterService.previousStep();
+    console.log('After previousStep, current step:', this.currentStep());
   }
 
   resetCharacter() {
@@ -129,6 +181,48 @@ export class CharacterCreator {
     return school.name;
   }
 
+  // Méthodes pour les avantages/désavantages
+  selectAdvantage(advantageId: string) {
+    this.characterService.selectAdvantage(advantageId);
+  }
+
+  deselectAdvantage(advantageId: string) {
+    this.characterService.deselectAdvantage(advantageId);
+  }
+
+  selectDisadvantage(disadvantageId: string) {
+    this.characterService.selectDisadvantage(disadvantageId);
+  }
+
+  deselectDisadvantage(disadvantageId: string) {
+    this.characterService.deselectDisadvantage(disadvantageId);
+  }
+
+  isAdvantageSelected(advantageId: string): boolean {
+    return this.characterService.isAdvantageSelected(advantageId);
+  }
+
+  isDisadvantageSelected(disadvantageId: string): boolean {
+    return this.characterService.isDisadvantageSelected(disadvantageId);
+  }
+
+  getAdvantagesByCategory(category: string) {
+    return this.characterService.getAdvantagesByCategory(category);
+  }
+
+  getDisadvantagesByCategory(category: string) {
+    return this.characterService.getDisadvantagesByCategory(category);
+  }
+
+  // Méthodes pour les sorts
+  addSpell(spellName: string) {
+    this.characterService.addSpell(spellName);
+  }
+
+  removeSpell(spellName: string) {
+    this.characterService.removeSpell(spellName);
+  }
+
   // Méthodes utilitaires supplémentaires
   getTraitNames(): string[] {
     return ['constitution', 'volonte', 'force', 'perception', 'reflexes', 'intuition', 'agilite', 'intelligence'];
@@ -165,5 +259,23 @@ export class CharacterCreator {
     link.click();
     
     URL.revokeObjectURL(url);
+  }
+
+  // === MÉTHODES D'ACHAT D'ÉQUIPEMENT ===
+  
+  buyEquipment(equipment: any) {
+    return this.characterService.buyEquipment(equipment);
+  }
+  
+  sellEquipment(equipmentName: string, equipmentType: 'weapon' | 'armor' | 'item') {
+    return this.characterService.sellEquipment(equipmentName, equipmentType);
+  }
+  
+  canAffordEquipment(equipment: any): boolean {
+    return this.characterService.canAffordEquipment(equipment);
+  }
+  
+  getAvailableMoney(): number {
+    return this.characterService.getAvailableMoney();
   }
 }

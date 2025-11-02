@@ -1,0 +1,52 @@
+// Styles pour les traits organisés par anneaux
+.traits-by-rings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  
+  .ring-group {
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    
+    h4 {
+      margin: 0 0 12px 0;
+      font-size: 1.1rem;
+      color: #1976d2;
+      text-align: center;
+    }
+    
+    p {
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 500;
+    }
+  }
+}
+
+.traits-by-rings-editor {
+  .ring-traits-group {
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    
+    h4 {
+      margin: 0 0 16px 0;
+      font-size: 1.2rem;
+      color: #1976d2;
+      text-align: center;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+    }
+    
+    .traits-ring-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+  }
+}
