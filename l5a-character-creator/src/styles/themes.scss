@@ -54,9 +54,6 @@ $colors: (
   --border-color: #{color('beni')};
   --hover-shadow: 0 8px 24px rgba(208, 16, 76, 0.3);
   
-  // Motifs décoratifs
-  --pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23d0104c' fill-opacity='0.05'/%3E%3C/svg%3E");
-  
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 }
 
@@ -75,8 +72,6 @@ $colors: (
   --border-color: #{color('murasaki')};
   --hover-shadow: 0 8px 24px rgba(136, 72, 152, 0.4);
   
-  --pattern: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='20' fill='%23884898' fill-opacity='0.05'/%3E%3C/svg%3E");
-  
   font-family: 'Noto Serif JP', 'Georgia', serif;
 }
 
@@ -94,8 +89,6 @@ $colors: (
   --text-secondary: #{color('hai')};
   --border-color: #{color('tokiwa')};
   --hover-shadow: 0 8px 24px rgba(0, 123, 67, 0.3);
-  
-  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0v40M0 20h40' stroke='%23007b43' stroke-width='0.5' fill='none' opacity='0.1'/%3E%3C/svg%3E");
   
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
   letter-spacing: 0.5px;
@@ -116,8 +109,6 @@ $colors: (
   --border-color: #{color('kogane')};
   --hover-shadow: 0 8px 24px rgba(230, 180, 34, 0.35);
   
-  --pattern: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='25' height='25' fill='%23e6b422' fill-opacity='0.05'/%3E%3Crect x='25' y='25' width='25' height='25' fill='%23e6b422' fill-opacity='0.05'/%3E%3C/svg%3E");
-  
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 }
 
@@ -136,8 +127,6 @@ $colors: (
   --border-color: #{color('akebono')};
   --hover-shadow: 0 8px 24px rgba(241, 144, 114, 0.35);
   
-  --pattern: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10c-5 0-10 5-10 10s5 10 10 10 10-5 10-10-5-10-10-10zm0 5c3 0 5 2 5 5s-2 5-5 5-5-2-5-5 2-5 5-5z' fill='%23f19072' fill-opacity='0.08'/%3E%3C/svg%3E");
-  
   font-family: 'Noto Serif JP', 'Georgia', serif;
   font-weight: 300;
 }
@@ -150,19 +139,6 @@ $colors: (
     background: var(--background);
     background-attachment: fixed;
     position: relative;
-    
-    &::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--pattern);
-      opacity: 1;
-      pointer-events: none;
-      z-index: 0;
-    }
   }
   
   .character-creator-container {
