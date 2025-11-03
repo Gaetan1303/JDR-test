@@ -1337,10 +1337,25 @@ export class CharacterService {
       character.totalExperiencePoints = character.experiencePoints + character.spentExperiencePoints;
     }
 
-    // Générer un ID unique si le personnage n'en a pas encore
+    // Générer un ID unique SEULEMENT si le personnage n'en a pas encore
+    // ET qu'il n'existe pas déjà dans la liste (évite les doublons)
     if (!character.id) {
-      character.id = Date.now().toString();
-      console.log('[CharacterService] Nouveau personnage, ID généré:', character.id);
+      // Vérifier si un personnage avec le même nom existe déjà
+      const existingByName = characters.find(c => 
+        c.name === character.name && 
+        c.clan === character.clan && 
+        c.school === character.school
+      );
+      
+      if (existingByName && existingByName.id) {
+        // Réutiliser l'ID existant pour une mise à jour
+        character.id = existingByName.id;
+        console.log('[CharacterService] Personnage existant trouvé, réutilisation ID:', character.id);
+      } else {
+        // Créer un nouvel ID unique
+        character.id = Date.now().toString();
+        console.log('[CharacterService] Nouveau personnage, ID généré:', character.id);
+      }
     }
 
     // Ajouter ou mettre à jour le personnage
@@ -1354,6 +1369,13 @@ export class CharacterService {
     }
 
     localStorage.setItem('myCharacters', JSON.stringify(characters));
+    
+    // IMPORTANT : Mettre à jour le signal interne avec l'ID
+    this._character.update(char => ({
+      ...char,
+      id: character.id
+    }));
+    
     return character;
   }
 

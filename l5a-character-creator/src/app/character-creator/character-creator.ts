@@ -371,48 +371,18 @@ export class CharacterCreator {
   }
 
   saveToMyCharacters() {
-    const characterData = {
-      ...this.character(),
-      calculatedRings: this.calculatedRings(),
-      insightRank: this.insightRank(),
-      initiative: this.initiative(),
-      woundLevels: this.woundLevels(),
-      createdAt: new Date().toISOString(),
-      id: Date.now() // ID unique basé sur le timestamp
-    };
+    // Sauvegarder via le service (utilise la même logique que exportCharacter)
+    const savedCharacter = this.characterService.saveCharacter();
     
-    // Récupérer les personnages existants
-    const savedCharacters = localStorage.getItem('myCharacters');
-    const characters = savedCharacters ? JSON.parse(savedCharacters) : [];
-    
-    // Ajouter le nouveau personnage
-    characters.push(characterData);
-    
-    // Sauvegarder dans localStorage
-    localStorage.setItem('myCharacters', JSON.stringify(characters));
+    // Afficher un message de confirmation simple SANS redirection
+    alert(`✅ ${savedCharacter.name || 'Votre personnage'} a été sauvegardé avec succès !`);
   }
 
   exportCharacter() {
     // Sauvegarder le personnage via le service (qui génère alliés/ennemis)
     const savedCharacter = this.characterService.saveCharacter();
     
-    // Message de confirmation
-    const characterName = savedCharacter.name || 'votre personnage';
-    const confirmMessage = `✅ ${characterName} a été sauvegardé avec succès !\n\nVoulez-vous retourner au menu principal ?`;
-    
-    if (confirm(confirmMessage)) {
-      // L'utilisateur veut retourner au menu
-      this.router.navigate(['/dashboard']);
-    } else {
-      // L'utilisateur veut rester ou aller voir ses personnages
-      const goToCharacters = confirm(`Voulez-vous voir la liste de vos personnages ?`);
-      if (goToCharacters) {
-        this.router.navigate(['/characters']);
-      }
-      // Sinon, rester sur la page de création
-    }
-    
-    // Optionnel : Télécharger aussi le JSON
+    // Télécharger le JSON AVANT de montrer les messages
     const characterData = {
       ...savedCharacter,
       calculatedRings: this.calculatedRings(),
@@ -432,6 +402,24 @@ export class CharacterCreator {
     link.click();
     
     URL.revokeObjectURL(url);
+    
+    // Message de confirmation APRES le téléchargement
+    setTimeout(() => {
+      const characterName = savedCharacter.name || 'votre personnage';
+      const confirmMessage = `✅ ${characterName} a été sauvegardé avec succès !\n\nVoulez-vous retourner au menu principal ?`;
+      
+      if (confirm(confirmMessage)) {
+        // L'utilisateur veut retourner au menu
+        this.router.navigate(['/dashboard']);
+      } else {
+        // L'utilisateur veut rester ou aller voir ses personnages
+        const goToCharacters = confirm(`Voulez-vous voir la liste de vos personnages ?`);
+        if (goToCharacters) {
+          this.router.navigate(['/characters']);
+        }
+        // Sinon, rester sur la page de création
+      }
+    }, 100);
   }
 
   // Méthode pour compter les sorts par rang
