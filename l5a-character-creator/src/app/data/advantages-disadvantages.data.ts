@@ -127,14 +127,35 @@ export const ADVANTAGES: Advantage[] = [
     name: 'Richesse',
     cost: 5,
     category: 'Matériel',
-    description: 'Vous disposez de ressources financières importantes.'
+    description: 'Vous disposez de ressources financières importantes. Vous commencez avec 50 koku supplémentaires.',
+    grantedEquipment: [
+      {
+        name: 'Koku (Richesse)',
+        type: 'item',
+        category: 'Argent',
+        cost: '50',
+        description: '50 koku supplémentaires accordés par l\'avantage Richesse'
+      }
+    ]
   },
   {
     id: 'equipement-superieur',
     name: 'Équipement supérieur',
     cost: 3,
     category: 'Matériel',
-    description: 'Vous possédez un équipement de qualité exceptionnelle.'
+    description: 'Vous possédez une armure de qualité exceptionnelle qui offre une meilleure protection.',
+    grantedEquipment: [
+      {
+        name: 'Armure légère supérieure',
+        type: 'armor',
+        category: 'Armure',
+        reduction: 3,
+        TN: 20,
+        cost: '20',
+        description: 'Armure légère de qualité exceptionnelle',
+        special: 'Réduction : 3 (au lieu de 2 pour l\'armure légère standard)'
+      }
+    ]
   },
   {
     id: 'ancestral-daisho',
