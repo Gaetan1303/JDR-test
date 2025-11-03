@@ -130,6 +130,7 @@ export class CharacterCreator {
   removeMahoSpell = (spellName: string) => this.characterService.removeMahoSpell(spellName);
   getSelectedMahoCount = () => this.characterService.getSelectedMahoCount();
   getSelectedMahoDetails = () => this.characterService.getSelectedMahoDetails();
+  canAddMoreMahoSpells = () => this.characterService.canAddMoreMahoSpells();
   
   availableArmor = this.characterService.availableArmor;
   availableItems = this.characterService.availableItems;

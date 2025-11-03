@@ -697,6 +697,9 @@
           <div>
             • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpells().rank2 }} sorts
           </div>
+          <div *ngIf="canUseMaho()" class="maho-count-info">
+            • Sorts Maho : {{ getSelectedMahoCount() }} (séparé du quota de sorts)
+          </div>
           <div *ngIf="schoolAffinityDeficiency().affinity" class="affinity-info">
             Affinité : {{ schoolAffinityDeficiency().affinity }}
           </div>
@@ -828,9 +831,9 @@
                   <button mat-button 
                           color="warn"
                           *ngIf="!isMahoSelected(spell.name)"
-                          [disabled]="!canAddMoreSpells()"
+                          [disabled]="!canAddMoreMahoSpells().canAddAny"
                           (click)="addMahoSpell(spell.name); $event.stopPropagation()">
-                    {{ canAddMoreSpells() ? 'Apprendre (Souillure)' : 'Limite atteinte' }}
+                    {{ canAddMoreMahoSpells().canAddAny ? 'Apprendre (Souillure)' : 'Limite Maho atteinte' }}
                   </button>
                   <button mat-button 
                           color="accent"

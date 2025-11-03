@@ -708,8 +708,10 @@ export class CharacterService {
   });
 
   // Vérifier si on peut ajouter plus de sorts d'un rang donné
+  // NE COMPTE PAS les sorts Maho (séparés)
   readonly canAddMoreSpells = computed(() => {
     const currentSpells = this.character().spells || [];
+    // Filtrer uniquement les sorts classiques (pas Maho)
     const selectedSpells = SPELLS.filter(spell => currentSpells.includes(spell.name));
     
     const rank1Count = selectedSpells.filter(spell => spell.mastery === 1).length;
@@ -776,6 +778,31 @@ export class CharacterService {
   }
 
   /**
+   * Vérifie si on peut ajouter plus de sorts Maho
+   * Les sorts Maho ont leur propre limite séparée (même que sorts classiques)
+   */
+  canAddMoreMahoSpells(): { rank1: boolean; rank2: boolean; canAddAny: boolean } {
+    if (!this.canUseMaho()) {
+      return { rank1: false, rank2: false, canAddAny: false };
+    }
+
+    const currentSpells = this.character().spells || [];
+    // Filtrer uniquement les sorts Maho
+    const selectedMahoSpells = MAHO_SPELLS.filter(spell => currentSpells.includes(spell.name));
+    
+    const rank1Count = selectedMahoSpells.filter(spell => spell.mastery === 1).length;
+    const rank2Count = selectedMahoSpells.filter(spell => spell.mastery === 2).length;
+    
+    const maxSpells = this.maxStartingSpells();
+    
+    return {
+      rank1: rank1Count < maxSpells.rank1,
+      rank2: rank2Count < maxSpells.rank2,
+      canAddAny: rank1Count < maxSpells.rank1 || rank2Count < maxSpells.rank2
+    };
+  }
+
+  /**
    * Ajoute un sort Maho au personnage
    * Attention : Nécessite le désavantage "Maho-Tsukai" !
    */
@@ -799,8 +826,8 @@ export class CharacterService {
       return false;
     }
 
-    // Vérifier la limite de sorts selon le rang (même limites que sorts normaux)
-    const canAdd = this.canAddMoreSpells();
+    // Vérifier la limite de sorts Maho (séparée des sorts classiques)
+    const canAdd = this.canAddMoreMahoSpells();
     if (spell.mastery === 1 && !canAdd.rank1) return false;
     if (spell.mastery === 2 && !canAdd.rank2) return false;
 
