@@ -471,21 +471,42 @@ export class CharacterService {
     // Mise à jour du signal dédié pour une meilleure performance
     this._selectedAdvantageIds.update(ids => [...ids, advantageId]);
     
-    // Synchronisation avec le personnage
-    this._character.update(char => ({
-      ...char,
-      selectedAdvantages: this._selectedAdvantageIds()
-    }));
+    // Ajouter l'équipement accordé par l'avantage (si disponible)
+    if (advantage.grantedEquipment && advantage.grantedEquipment.length > 0) {
+      this._character.update(char => ({
+        ...char,
+        equipment: [...(char.equipment || []), ...advantage.grantedEquipment!],
+        selectedAdvantages: this._selectedAdvantageIds()
+      }));
+    } else {
+      // Synchronisation avec le personnage
+      this._character.update(char => ({
+        ...char,
+        selectedAdvantages: this._selectedAdvantageIds()
+      }));
+    }
   }
 
   // Désélectionner un avantage - optimisé avec signaux
   deselectAdvantage(advantageId: string) {
+    const advantage = ADVANTAGES.find(adv => adv.id === advantageId);
+    
     this._selectedAdvantageIds.update(ids => ids.filter(id => id !== advantageId));
     
-    this._character.update(char => ({
-      ...char,
-      selectedAdvantages: this._selectedAdvantageIds()
-    }));
+    // Retirer l'équipement accordé par l'avantage (si disponible)
+    if (advantage?.grantedEquipment && advantage.grantedEquipment.length > 0) {
+      const grantedEquipmentNames = advantage.grantedEquipment.map(eq => eq.name);
+      this._character.update(char => ({
+        ...char,
+        equipment: (char.equipment || []).filter(eq => !grantedEquipmentNames.includes(eq.name)),
+        selectedAdvantages: this._selectedAdvantageIds()
+      }));
+    } else {
+      this._character.update(char => ({
+        ...char,
+        selectedAdvantages: this._selectedAdvantageIds()
+      }));
+    }
   }
 
   // Sélectionner un désavantage - optimisé avec signaux

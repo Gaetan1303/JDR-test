@@ -141,7 +141,31 @@ export const ADVANTAGES: Advantage[] = [
     name: 'Daisho ancestral',
     cost: 4,
     category: 'Matériel',
-    description: 'Vous possédez un daisho transmis de génération en génération.'
+    description: 'Vous possédez un daisho transmis de génération en génération. Ces armes de qualité exceptionnelle offrent +1k0 aux jets d\'attaque.',
+    grantedEquipment: [
+      {
+        name: 'Katana ancestral',
+        type: 'weapon',
+        category: 'Épée',
+        damage: '3k2',
+        reach: 1,
+        TN: 15,
+        cost: '25',
+        description: 'Katana ancestral de qualité exceptionnelle transmis de génération en génération',
+        special: 'Peut être utilisé à deux mains pour +1k1 aux dégâts. +1k0 aux jets d\'attaque (qualité exceptionnelle)'
+      },
+      {
+        name: 'Wakizashi ancestral',
+        type: 'weapon',
+        category: 'Épée courte',
+        damage: '2k2',
+        reach: 1,
+        TN: 20,
+        cost: '15',
+        description: 'Wakizashi ancestral de qualité exceptionnelle accompagnant le katana',
+        special: 'Peut être utilisé en combat à deux armes. +1k0 aux jets d\'attaque (qualité exceptionnelle)'
+      }
+    ]
   }
 ];
 

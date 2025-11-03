@@ -31,6 +31,7 @@ export interface Advantage {
   cost: number;
   description: string;
   category: 'Physique' | 'Mental' | 'Social' | 'Spirituel' | 'Matériel' | 'Comportemental';
+  grantedEquipment?: Equipment[];
 }
 
 export interface Disadvantage {
