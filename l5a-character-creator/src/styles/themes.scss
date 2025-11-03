@@ -1,0 +1,252 @@
+// ==========================================
+// Thèmes L5R - Legend of the Five Rings
+// ==========================================
+
+// Palette de couleurs japonaises traditionnelles
+$colors: (
+  // Rouges
+  'beni': #d0104c,           // Rouge carthame
+  'akebono': #f19072,        // Aube
+  'sakura': #fef4f4,         // Cerisier pâle
+  
+  // Bleus
+  'ai': #165e83,             // Indigo
+  'asagi': #33a6b8,          // Bleu léger
+  'kamenozoki': #006e54,     // Vert-bleu tortue
+  
+  // Jaunes/Or
+  'kogane': #e6b422,         // Or
+  'karashi': #d9a62e,        // Moutarde
+  'kuchinashi': #fbca4d,     // Gardénia
+  
+  // Noirs/Gris
+  'sumi': #1c1c1c,           // Noir encre
+  'hai': #7d7d7d,            // Cendres
+  'shironezumi': #bdc0ba,    // Rat blanc
+  
+  // Verts
+  'matcha': #c5c56a,         // Thé vert
+  'moegi': #89916b,          // Oignon vert
+  'tokiwa': #007b43,         // Pin persistant
+  
+  // Pourpres
+  'murasaki': #884898,       // Pourpre
+  'fuji': #a6a5c4,           // Glycine
+);
+
+// Fonction pour récupérer une couleur
+@function color($name) {
+  @return map-get($colors, $name);
+}
+
+// ==========================================
+// THEME BUSHI (Guerrier)
+// ==========================================
+.theme-bushi {
+  --primary-color: #{color('beni')};
+  --secondary-color: #{color('sumi')};
+  --accent-color: #{color('kogane')};
+  --background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --header-bg: linear-gradient(135deg, #{color('beni')}, #8b0000);
+  --text-primary: #{color('sumi')};
+  --text-secondary: #{color('hai')};
+  --border-color: #{color('beni')};
+  --hover-shadow: 0 8px 24px rgba(208, 16, 76, 0.3);
+  
+  // Motifs décoratifs
+  --pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23d0104c' fill-opacity='0.05'/%3E%3C/svg%3E");
+  
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+}
+
+// ==========================================
+// THEME SHUGENJA (Prêtre/Mage)
+// ==========================================
+.theme-shugenja {
+  --primary-color: #{color('murasaki')};
+  --secondary-color: #{color('ai')};
+  --accent-color: #{color('kuchinashi')};
+  --background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+  --card-bg: rgba(255, 255, 255, 0.97);
+  --header-bg: linear-gradient(135deg, #{color('murasaki')}, #{color('fuji')});
+  --text-primary: #{color('sumi')};
+  --text-secondary: #{color('hai')};
+  --border-color: #{color('murasaki')};
+  --hover-shadow: 0 8px 24px rgba(136, 72, 152, 0.4);
+  
+  --pattern: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='20' fill='%23884898' fill-opacity='0.05'/%3E%3C/svg%3E");
+  
+  font-family: 'Noto Serif JP', 'Georgia', serif;
+}
+
+// ==========================================
+// THEME MOINE
+// ==========================================
+.theme-moine {
+  --primary-color: #{color('moegi')};
+  --secondary-color: #{color('tokiwa')};
+  --accent-color: #{color('kogane')};
+  --background: linear-gradient(135deg, #1a1f1a 0%, #2d3a2d 100%);
+  --card-bg: rgba(250, 248, 240, 0.98);
+  --header-bg: linear-gradient(135deg, #{color('moegi')}, #{color('tokiwa')});
+  --text-primary: #{color('sumi')};
+  --text-secondary: #{color('hai')};
+  --border-color: #{color('tokiwa')};
+  --hover-shadow: 0 8px 24px rgba(0, 123, 67, 0.3);
+  
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0v40M0 20h40' stroke='%23007b43' stroke-width='0.5' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+  
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+// ==========================================
+// THEME MARCHAND (Artisan/Forgeron)
+// ==========================================
+.theme-marchand {
+  --primary-color: #{color('kogane')};
+  --secondary-color: #{color('karashi')};
+  --accent-color: #{color('beni')};
+  --background: linear-gradient(135deg, #1f1a0f 0%, #3a2f1a 100%);
+  --card-bg: rgba(255, 250, 240, 0.96);
+  --header-bg: linear-gradient(135deg, #{color('kogane')}, #{color('karashi')});
+  --text-primary: #{color('sumi')};
+  --text-secondary: #{color('hai')};
+  --border-color: #{color('kogane')};
+  --hover-shadow: 0 8px 24px rgba(230, 180, 34, 0.35);
+  
+  --pattern: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='25' height='25' fill='%23e6b422' fill-opacity='0.05'/%3E%3Crect x='25' y='25' width='25' height='25' fill='%23e6b422' fill-opacity='0.05'/%3E%3C/svg%3E");
+  
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+}
+
+// ==========================================
+// THEME COURTISAN
+// ==========================================
+.theme-courtisan {
+  --primary-color: #{color('sakura')};
+  --secondary-color: #{color('akebono')};
+  --accent-color: #{color('fuji')};
+  --background: linear-gradient(135deg, #2a1f1f 0%, #3d2d2d 100%);
+  --card-bg: rgba(254, 244, 244, 0.98);
+  --header-bg: linear-gradient(135deg, #{color('akebono')}, #{color('sakura')});
+  --text-primary: #{color('sumi')};
+  --text-secondary: #{color('hai')};
+  --border-color: #{color('akebono')};
+  --hover-shadow: 0 8px 24px rgba(241, 144, 114, 0.35);
+  
+  --pattern: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10c-5 0-10 5-10 10s5 10 10 10 10-5 10-10-5-10-10-10zm0 5c3 0 5 2 5 5s-2 5-5 5-5-2-5-5 2-5 5-5z' fill='%23f19072' fill-opacity='0.08'/%3E%3C/svg%3E");
+  
+  font-family: 'Noto Serif JP', 'Georgia', serif;
+  font-weight: 300;
+}
+
+// ==========================================
+// Styles communs pour tous les thèmes
+// ==========================================
+[class*='theme-'] {
+  .main-container {
+    background: var(--background);
+    background-attachment: fixed;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--pattern);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 0;
+    }
+  }
+  
+  .character-creator-container {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .creator-header {
+    background: var(--header-bg) !important;
+    border-bottom: 3px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    
+    mat-card-title, mat-card-subtitle {
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  mat-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: var(--hover-shadow);
+    }
+  }
+  
+  .clan-card, .family-card, .school-card {
+    &.selected {
+      border-color: var(--primary-color) !important;
+      background: linear-gradient(to bottom, var(--card-bg), rgba(var(--primary-color), 0.1)) !important;
+      box-shadow: var(--hover-shadow) !important;
+    }
+    
+    &:hover {
+      border-color: var(--secondary-color) !important;
+    }
+  }
+  
+  .main-toolbar {
+    background: var(--header-bg) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  button.active {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    border-bottom: 2px solid var(--accent-color);
+  }
+}
+
+// ==========================================
+// Éléments décoratifs japonais
+// ==========================================
+.japanese-border {
+  position: relative;
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, 
+      transparent, 
+      var(--primary-color), 
+      transparent
+    );
+  }
+  
+  &::before {
+    top: 0;
+  }
+  
+  &::after {
+    bottom: 0;
+  }
+}
+
+// Motif vague japonaise (seigaiha)
+.seigaiha-pattern {
+  background-image: 
+    radial-gradient(circle at 0% 50%, rgba(0, 0, 0, 0) 9px, var(--primary-color) 10px, rgba(0, 0, 0, 0) 11px),
+    radial-gradient(circle at 100% 50%, rgba(0, 0, 0, 0) 9px, var(--primary-color) 10px, rgba(0, 0, 0, 0) 11px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 0;
+  opacity: 0.1;
+}

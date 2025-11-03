@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
+import { ThemeSelectorComponent } from './theme-selector/theme-selector';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ import { MatCardModule } from '@angular/material/card';
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    ThemeSelectorComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

@@ -141,7 +141,7 @@ import { CLANS } from '../data/clans.data';
             <div class="filter-chips">
               <mat-chip-set>
                 <mat-chip 
-                  *ngFor="let type of ['Tous', 'bushi', 'shugenja', 'courtier', 'monk', 'ninja', 'artisan']"
+                  *ngFor="let type of ['Tous', 'bushi', 'shugenja', 'courtier', 'moine', 'ninja', 'artisan']"
                   [class.selected]="selectedSchoolType() === type"
                   (click)="selectedSchoolType.set(type)">
                   {{ getSchoolTypeLabel(type) }}
@@ -214,6 +214,23 @@ import { CLANS } from '../data/clans.data';
       padding: 24px;
       max-width: 1400px;
       margin: 0 auto;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 100%),
+                    url('/assets/images/Monastere.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        z-index: -1;
+        opacity: 0.5;
+      }
     }
 
     .header {
@@ -333,6 +350,12 @@ import { CLANS } from '../data/clans.data';
       color: #1976d2;
     }
 
+    @media (max-width: 1024px) {
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
     @media (max-width: 768px) {
       .items-grid {
         grid-template-columns: 1fr;
@@ -344,6 +367,43 @@ import { CLANS } from '../data/clans.data';
 
       .search-bar mat-form-field {
         width: 100%;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+      
+      .library-tabs {
+        min-height: 400px;
+      }
+      
+      .filter-chips mat-chip {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .tab-content {
+        padding: 12px 0;
+      }
+      
+      .item-card {
+        mat-card-title {
+          font-size: 1rem;
+        }
+        
+        mat-card-subtitle {
+          font-size: 0.85rem;
+        }
+      }
+      
+      .clan-card {
+        min-height: auto;
       }
     }
   `]
@@ -449,7 +509,7 @@ export class Library {
       'bushi': 'Bushi',
       'shugenja': 'Shugenja',
       'courtier': 'Courtisan',
-      'monk': 'Moine',
+      'moine': 'Moine',
       'ninja': 'Ninja',
       'artisan': 'Artisan'
     };

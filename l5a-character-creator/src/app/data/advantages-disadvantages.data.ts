@@ -266,6 +266,13 @@ export const DISADVANTAGES: Disadvantage[] = [
     description: 'Vous êtes affecté par une malédiction spirituelle.'
   },
   {
+    id: 'maho-tsukai',
+    name: 'Maho-Tsukai (Pratiquant de Magie Noire)',
+    xpGain: 0,
+    category: 'Spirituel',
+    description: 'Vous avez choisi la voie interdite du Maho (magie de sang). Vous commencez avec 2 points de Souillure et pouvez apprendre des sorts Maho. ATTENTION : Si découvert, vous serez chassé et exécuté. Ce désavantage donne accès aux sorts Maho lors de la création du personnage.'
+  },
+  {
     id: 'souille',
     name: 'Souillé',
     xpGain: 5,

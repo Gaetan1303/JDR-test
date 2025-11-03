@@ -1,0 +1,129 @@
+// Styles pour les techniques de clan et kata
+.techniques-section,
+.kata-section {
+  margin-bottom: 32px;
+  
+  h3 {
+    color: #ff4444;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  }
+  
+  .info-text {
+    color: rgba(245, 230, 211, 0.9);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  
+  .selection-count {
+    color: #ffd700;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+}
+
+.techniques-grid,
+.kata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.technique-card,
+.kata-card {
+  background: rgba(30, 20, 20, 0.6) !important;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  }
+  
+  &.technique-selected,
+  &.kata-selected {
+    border-color: #ffd700;
+    background: rgba(50, 40, 20, 0.8) !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  
+  mat-card-title {
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .selected-badge {
+      background: #ffd700;
+      color: #1a0f0f;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+  
+  mat-card-subtitle {
+    color: rgba(245, 230, 211, 0.7);
+    margin-top: 4px;
+  }
+  
+  mat-card-content {
+    padding-top: 16px;
+    
+    .technique-description,
+    .kata-description {
+      color: rgba(245, 230, 211, 0.9);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    
+    .technique-effect,
+    .kata-effect {
+      color: #ffd700;
+      padding: 8px;
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 3px solid #ffd700;
+      margin-top: 8px;
+      
+      strong {
+        color: #ff6b6b;
+      }
+    }
+  }
+  
+  mat-card-actions {
+    padding: 8px 16px 16px;
+    
+    button {
+      font-weight: 500;
+    }
+  }
+}
+
+.techniques-summary,
+.kata-summary {
+  .technique-line,
+  .kata-line {
+    padding: 12px;
+    margin-bottom: 8px;
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 3px solid #ffd700;
+    
+    strong {
+      color: #ff6b6b;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .techniques-grid,
+  .kata-grid {
+    grid-template-columns: 1fr;
+  }
+}

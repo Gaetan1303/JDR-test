@@ -345,7 +345,160 @@ export const ITEMS: Equipment[] = [
     type: 'tool',
     category: 'Éclairage',
     description: 'Lanterne de papier avec chandelles',
+    cost: '2',
     special: 'Éclaire dans un rayon de 10 mètres'
+  },
+  {
+    name: 'Torche',
+    type: 'tool',
+    category: 'Éclairage',
+    description: 'Torche en bois pour l\'éclairage',
+    cost: '0.5',
+    special: 'Éclaire dans un rayon de 8 mètres pendant 1 heure'
+  },
+  {
+    name: 'Briquet à silex',
+    type: 'tool',
+    category: 'Utilitaire',
+    description: 'Pierre à feu pour allumer un feu',
+    cost: '1',
+    special: 'Permet d\'allumer un feu en quelques minutes'
+  },
+  {
+    name: 'Gourde',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Gourde en bambou pour transporter de l\'eau',
+    cost: '1',
+    special: 'Contient 1 litre d\'eau'
+  },
+  {
+    name: 'Rations de voyage',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Nourriture séchée pour une semaine',
+    cost: '3',
+    special: 'Nourriture pour 7 jours'
+  },
+  {
+    name: 'Couverture',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Couverture chaude pour dormir',
+    cost: '2',
+    special: 'Protection contre le froid la nuit'
+  },
+  {
+    name: 'Tente',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Tente portative pour 2 personnes',
+    cost: '8',
+    special: 'Protection contre les éléments'
+  },
+  {
+    name: 'Sac de couchage',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Sac de couchage en tissu matelassé',
+    cost: '4',
+    special: 'Confort pour dormir en extérieur'
+  },
+  {
+    name: 'Miroir de poche',
+    type: 'item',
+    category: 'Utilitaire',
+    description: 'Petit miroir de cuivre poli',
+    cost: '3',
+    special: 'Permet de voir autour des coins, signaler'
+  },
+  {
+    name: 'Clous et marteau',
+    type: 'tool',
+    category: 'Utilitaire',
+    description: 'Outils de base pour construction',
+    cost: '2',
+    special: 'Nécessaire pour construire des structures simples'
+  },
+  {
+    name: 'Pelle',
+    type: 'tool',
+    category: 'Utilitaire',
+    description: 'Pelle pour creuser',
+    cost: '3',
+    special: 'Permet de creuser efficacement'
+  },
+  {
+    name: 'Filet de pêche',
+    type: 'tool',
+    category: 'Survie',
+    description: 'Filet pour pêcher',
+    cost: '5',
+    special: '+1k1 aux jets de Survie (Pêche)'
+  },
+  {
+    name: 'Pièges à gibier',
+    type: 'tool',
+    category: 'Survie',
+    description: 'Set de 5 pièges pour attraper du petit gibier',
+    cost: '4',
+    special: '+1k0 aux jets de Survie (Chasse)'
+  },
+  {
+    name: 'Boussole',
+    type: 'tool',
+    category: 'Navigation',
+    description: 'Boussole magnétique pour s\'orienter',
+    cost: '10',
+    special: '+1k1 aux jets de Navigation'
+  },
+  {
+    name: 'Carte régionale',
+    type: 'item',
+    category: 'Navigation',
+    description: 'Carte détaillée d\'une région',
+    cost: '6',
+    special: '+1k0 aux jets de Navigation dans la région'
+  },
+  {
+    name: 'Jumelles',
+    type: 'tool',
+    category: 'Observation',
+    description: 'Longue-vue en bambou et verre',
+    cost: '12',
+    special: '+1k1 aux jets de Perception (vue) à distance'
+  },
+  {
+    name: 'Trousse de premiers soins',
+    type: 'tool',
+    category: 'Médecine',
+    description: 'Bandages, herbes médicinales et onguents',
+    cost: '7',
+    special: '+1k0 aux jets de Médecine pour soigner'
+  },
+  {
+    name: 'Antidote universel',
+    type: 'item',
+    category: 'Médecine',
+    description: 'Potion contre les poisons courants',
+    cost: '15',
+    special: '+2k0 pour résister aux poisons pendant 1 heure'
+  },
+  {
+    name: 'Sake de qualité',
+    type: 'item',
+    category: 'Social',
+    description: 'Bouteille de saké raffiné',
+    cost: '5',
+    special: 'Cadeau apprécié, +1k0 aux jets sociaux si offert'
+  },
+  {
+    name: 'Papier et encre',
+    type: 'tool',
+    category: 'Écriture',
+    description: 'Feuilles de papier et encre de base',
+    cost: '2',
+    special: 'Pour écrire des lettres ou prendre des notes'
   },
   {
     name: 'Outils de mineur',

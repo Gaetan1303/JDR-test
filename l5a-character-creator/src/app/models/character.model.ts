@@ -43,7 +43,7 @@ export interface Disadvantage {
 
 export interface Spell {
   name: string;
-  element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide';
+  element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide' | 'Maho';
   mastery: number;
   range: string;
   area: string;
@@ -51,6 +51,18 @@ export interface Spell {
   raises: string;
   description: string;
   universal?: boolean; // Si true, le sort peut être appris par tous les shugenjas
+}
+
+export interface Kiho {
+  name: string;
+  type: 'Interne' | 'Martial' | 'Mystique';
+  element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide';
+  mastery: number; // Rang de maîtrise requis (1-5)
+  duration: string;
+  description: string;
+  effect: string;
+  activation?: string; // Comment activer le kiho
+  ring?: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide'; // Anneau associé si différent de l'élément
 }
 
 export interface Equipment {
@@ -76,7 +88,7 @@ export interface CharacterEquipment {
 
 export interface School {
   name: string;
-  type: 'bushi' | 'shugenja' | 'courtier' | 'monk' | 'ninja' | 'artisan';
+  type: 'bushi' | 'shugenja' | 'courtier' | 'moine' | 'ninja' | 'artisan';
   clan: string;
   traitBonus: keyof Traits;
   skills: string[];
@@ -113,6 +125,7 @@ export interface Character {
   name: string;
   age: number;
   gender: string;
+  avatar?: string | null; // URL ou base64 de l'image d'avatar
   
   // Clan et école
   clan: string;
@@ -125,6 +138,9 @@ export interface Character {
   voidPoints?: number; // Points de Vide disponibles
   skills: Skill[];
   spells: string[]; // Noms des sorts sélectionnés
+  techniques: string[]; // Noms des techniques de clan sélectionnées
+  kata: string[]; // Noms des kata sélectionnés
+  kiho: string[]; // Noms des kiho sélectionnés (pour les moines)
   
   // Avantages et désavantages
   advantages: Advantage[];
@@ -160,6 +176,9 @@ export interface Character {
   
   // Équipement
   equipment: CharacterEquipment;
+  
+  // Techniques de Clan
+  clanTechniques: string[]; // Noms des techniques de clan/famille sélectionnées
   
   // Éléments narratifs
   objective: string;

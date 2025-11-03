@@ -281,5 +281,85 @@ export const SCHOOLS: School[] = [
     honor: 7.5,
     outfit: ['Kimono humble', 'Sandales', 'Wakizashi', 'Katana', 'Textes de stratégie', 'Amulette', 'Koku'],
     startingMoney: '2d10'
+  },
+  {
+    name: 'École de Bushi Yoritomo',
+    type: 'bushi',
+    clan: 'Clan de la Mante',
+    traitBonus: 'force',
+    skills: ['Commerce', 'Kenjutsu', 'Kyujutsu', 'Navigation', 'Combat sans Armes'],
+    technique: 'Tempête de la Mante : +1k1 aux jets d\'attaque en combat sans armes ou avec armes improvisées. Peut combattre sans pénalité sur un navire en mouvement.',
+    honor: 5.5,
+    outfit: ['Vêtements de marin', 'Bottes', 'Wakizashi', 'Katana ou Kama', 'Corde', 'Instruments de navigation', 'Koku'],
+    startingMoney: '3d10'
+  },
+
+  // Moines
+  {
+    name: 'Ordre des Moines du Temple du Soleil',
+    type: 'moine',
+    clan: 'Clan du Dragon',
+    traitBonus: 'agilite',
+    skills: ['Athlétisme', 'Jiujutsu', 'Méditation', 'Lore: Théologie', 'Stealth'],
+    technique: 'Voie de l\'Illumination : Peut apprendre 2 Kiho de Rang 1 à la création. +1k0 aux jets de Jiujutsu. Réduit le coût en XP des Kiho de 1 (minimum 1).',
+    honor: 7.5,
+    outfit: ['Robes de moine', 'Sandales', 'Bo', 'Chapelet de prière', 'Bol à aumônes', 'Textes sacrés', 'Koku'],
+    startingMoney: '1d10'
+  },
+  {
+    name: 'Ordre des Moines du Temple du Lotus',
+    type: 'moine',
+    clan: 'Clan du Dragon',
+    traitBonus: 'volonte',
+    skills: ['Défense', 'Jiujutsu', 'Méditation', 'Lore: Éléments', 'Théologie'],
+    technique: 'Harmonie Élémentaire : Peut apprendre 2 Kiho de Rang 1 à la création (d\'éléments différents). +1k1 aux jets de Méditation. Bonus de +5 au TN pour résister aux effets magiques.',
+    honor: 8.0,
+    outfit: ['Robes monastiques', 'Sandales', 'Bo ou Tonfa', 'Encens', 'Cristaux de méditation', 'Textes élémentaires', 'Koku'],
+    startingMoney: '1d10'
+  },
+  {
+    name: 'Ordre des Moines du Dragon Tatouage',
+    type: 'moine',
+    clan: 'Clan du Dragon',
+    traitBonus: 'constitution',
+    skills: ['Artisanat: Tatouage', 'Jiujutsu', 'Méditation', 'Lore: Éléments', 'Combat sans Armes'],
+    technique: 'Tatouages Mystiques de Togashi : Peut apprendre 2 Kiho de Rang 1. Les tatouages magiques donnent +1k0 aux jets de l\'élément correspondant. Peut activer un Kiho sans dépense d\'action une fois par jour.',
+    honor: 7.0,
+    outfit: ['Robes simples', 'Sandales', 'Bo', 'Kit de tatouage', 'Encre sacrée', 'Outils de méditation', 'Koku'],
+    startingMoney: '1d10'
+  },
+  // Clan de l'Araignée
+  {
+    name: 'École de Bushi Daigotsu',
+    type: 'bushi',
+    clan: 'Clan de l\'Araignée',
+    traitBonus: 'agilite',
+    skills: ['Kenjutsu', 'Defense', 'Lore: Shadowlands', 'Stealth', 'Intimidation', 'Jiujutsu', 'Athletics'],
+    technique: 'Voie de la Souillure : Lorsque vous tuez un adversaire au combat, vous gagnez 1 point de Souillure et vous pouvez immédiatement effectuer une attaque supplémentaire contre un adversaire à portée. Vous ajoutez votre Rang de Souillure à tous vos jets d\'Intimidation.',
+    honor: 4.5,
+    outfit: ['Armure légère', 'Daisho', 'Arc ou Arme lourde', 'Vêtements de voyage sombres', 'Koku'],
+    startingMoney: '3d10'
+  },
+  {
+    name: 'École de Shugenja Daigotsu',
+    type: 'shugenja',
+    clan: 'Clan de l\'Araignée',
+    traitBonus: 'volonte',
+    skills: ['Calligraphie: Maho', 'Lore: Shadowlands', 'Lore: Souillure', 'Meditation', 'Spellcraft'],
+    technique: 'Maître du Sang : Vous connaissez 3 sorts de Maho en plus de vos sorts de départ. Vous pouvez lancer des sorts de Maho sans parchemin. Lorsque vous lancez un sort de Maho, vous gagnez +1k1 au jet de lancement mais prenez 1 point de Souillure.',
+    honor: 4.0,
+    outfit: ['Robes sombres', 'Wakizashi', 'Couteau de sacrifice', 'Parchemins de Maho', 'Kit de voyage', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Courtisan Susumu',
+    type: 'courtier',
+    clan: 'Clan de l\'Araignée',
+    traitBonus: 'intelligence',
+    skills: ['Courtier', 'Etiquette', 'Sincerity', 'Temptation', 'Lore: Underworld', 'Investigation', 'Acting'],
+    technique: 'Masque de la Vérité : Vous pouvez utiliser Sincerity à la place de Investigation pour détecter les mensonges. Vous gagnez un bonus de +2k0 aux jets de Temptation contre les personnes que vous avez identifiées comme ayant un Désavantage (désir, peur, etc.). Une fois par session, vous pouvez mentir sans que cela soit détecté magiquement.',
+    honor: 5.0,
+    outfit: ['Kimono élégant sombre', 'Wakizashi', 'Éventail', 'Kit de calligraphie', 'Koku'],
+    startingMoney: '5d10'
   }
 ];

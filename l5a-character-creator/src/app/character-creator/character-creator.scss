@@ -1,5 +1,7 @@
-@import './character-creator-rings.scss';
-@import './character-creator-equipment.scss';
+@use './character-creator-rings.scss' as *;
+@use './character-creator-equipment.scss' as *;
+@use './character-creator-techniques.scss' as *;
+@use './character-creator-kiho.scss' as *;
 
 .character-creator-container {
   max-width: 1200px;
@@ -27,17 +29,52 @@
 
 .creator-content {
   min-height: 600px;
+  margin-bottom: 24px;
 }
 
-.form-row {
+// Upload d'avatar
+.avatar-upload {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 2px dashed rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   
-  mat-form-field {
-    flex: 1;
-    min-width: 200px;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(42, 35, 28, 0.8), rgba(30, 25, 20, 0.8));
+  color: #d4af37;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.avatar-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 // Sélection des clans
@@ -124,6 +161,11 @@
     text-align: center;
   }
   
+  .trait-buttons {
+    display: flex;
+    gap: 2px;
+  }
+  
   .cost {
     font-size: 0.8rem;
     color: #666;
@@ -158,6 +200,23 @@
     text-align: center;
   }
   
+  .button-group {
+    display: flex;
+    gap: 4px;
+    
+    button {
+      min-width: 32px;
+      padding: 0 8px;
+      pointer-events: auto !important;
+      cursor: pointer;
+      
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
   .cost {
     font-size: 0.8rem;
     color: #666;
@@ -167,38 +226,401 @@
 
 // Résumé final
 .final-summary {
+  // ===== FICHE DE PERSONNAGE (RÉSUMÉ FINAL) - STYLE L5A OFFICIEL =====
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: linear-gradient(to bottom, #f5f0e8 0%, #ede4d3 100%);
+    border: 3px solid #8b4513;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.3),
+      inset 0 0 60px rgba(139, 69, 19, 0.05);
+    position: relative;
+    
+    // Bordure décorative supérieure
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: repeating-linear-gradient(
+        90deg,
+        #8b4513 0px,
+        #8b4513 20px,
+        #d4af37 20px,
+        #d4af37 22px,
+        #8b4513 22px,
+        #8b4513 42px
+      );
+    }
+    
+    // Bordure décorative inférieure
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: repeating-linear-gradient(
+        90deg,
+        #8b4513 0px,
+        #8b4513 20px,
+        #d4af37 20px,
+        #d4af37 22px,
+        #8b4513 22px,
+        #8b4513 42px
+      );
+    }
   }
   
   .summary-section {
-    padding: 16px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
+    padding: 20px 24px;
+    background: transparent;
+    border-bottom: 2px solid rgba(139, 69, 19, 0.2);
+    border-radius: 0;
+    position: relative;
+    
+    &:first-child {
+      margin-top: 12px;
+    }
+    
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 12px;
+    }
     
     h3 {
-      margin-top: 0;
-      color: #1976d2;
-      border-bottom: 2px solid #1976d2;
-      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+      color: #3e2723;
+      font-family: 'Cinzel', 'Noto Serif JP', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 3px double #8b4513;
+      padding-bottom: 10px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #d4af37, transparent);
+      }
+    }
+    
+    h4 {
+      margin: 16px 0 10px 0;
+      color: #5d4037;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-left: 4px solid #d4af37;
+      padding-left: 12px;
     }
     
     p {
-      margin: 8px 0;
+      margin: 10px 0;
+      line-height: 1.6;
+      color: #3e2723;
+      font-size: 1rem;
       
       strong {
         display: inline-block;
-        min-width: 120px;
+        min-width: 140px;
+        font-weight: 600;
+        color: #5d4037;
+        font-family: 'Noto Sans JP', sans-serif;
+      }
+    }
+  }
+  
+  // Section informations de base - En-tête spécial
+  .summary-section:first-of-type {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.08) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 2px solid rgba(139, 69, 19, 0.2);
+    border-radius: 8px 8px 0 0;
+    margin: 12px 12px 0 12px;
+    padding: 24px;
+    
+    h3 {
+      color: #3e2723;
+      font-size: 1.6rem;
+      border-bottom-color: #d4af37;
+    }
+    
+    p {
+      font-size: 1.05rem;
+      
+      strong {
+        color: #8b4513;
       }
     }
   }
   
   .final-rings {
     display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+    
+    p {
+      background: linear-gradient(135deg, #fff 0%, #f5f0e8 100%);
+      border: 2px solid #8b4513;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #3e2723;
+      text-align: center;
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      margin: 0 auto;
+      flex-direction: column;
+      line-height: 1.2;
+      
+      &::before {
+        content: attr(data-ring);
+        font-size: 0.7rem;
+        font-weight: 400;
+        color: #8b4513;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+    }
+  }
+  
+  // Traits par anneaux - Grille spéciale
+  .traits-by-rings {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 16px;
+    margin-top: 12px;
+    
+    .ring-group {
+      background: #fff;
+      border: 1px solid #d4af37;
+      border-left: 4px solid #8b4513;
+      padding: 12px 16px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      
+      h4 {
+        margin: 0 0 8px 0;
+        border: none;
+        padding: 0;
+        color: #8b4513;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        padding-left: 8px;
+      }
+    }
+  }
+  
+  // Compétences - Liste compacte
+  .final-skills {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
+    margin-top: 12px;
+    
+    .skill-line {
+      background: #fff;
+      border-left: 3px solid #d4af37;
+      padding: 8px 12px;
+      border-radius: 0 4px 4px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      
+      span:first-child {
+        font-weight: 500;
+        color: #3e2723;
+      }
+      
+      .school-skill-icon {
+        background: #d4af37;
+        color: #3e2723;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+  
+  // Avantages/Désavantages
+  .advantages-summary,
+  .disadvantages-summary {
+    margin-top: 16px;
+    
+    h4 {
+      color: #3e2723;
+      border-left-color: #4caf50;
+    }
+    
+    .advantage-line,
+    .disadvantage-line {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-left: 4px solid #4caf50;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      
+      span strong {
+        color: #2e7d32;
+        font-size: 1.05rem;
+      }
+      
+      .description {
+        margin: 8px 0 0 0;
+        font-size: 0.9rem;
+        color: #555;
+        font-style: italic;
+        padding-left: 8px;
+        border-left: 2px solid #c8e6c9;
+      }
+    }
+    
+    .disadvantage-line {
+      border-left-color: #f44336;
+      
+      span strong {
+        color: #c62828;
+      }
+      
+      .description {
+        border-left-color: #ffcdd2;
+      }
+    }
+  }
+  
+  // Sorts - Style mystique
+  .spells-summary {
+    margin-top: 12px;
+    
+    .spell-line {
+      background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+      border: 1px solid #ba68c8;
+      border-left: 4px solid #7b1fa2;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(123, 31, 162, 0.15);
+      
+      span strong {
+        color: #6a1b9a;
+        font-size: 1.1rem;
+      }
+      
+      .spell-details-summary {
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 4px;
+        border: 1px solid rgba(186, 104, 200, 0.3);
+        
+        p {
+          margin: 6px 0;
+          font-size: 0.9rem;
+          
+          &.spell-description {
+            font-style: italic;
+            color: #4a148c;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #ba68c8;
+          }
+        }
+      }
+    }
+  }
+  
+  // Équipement - Style organisé
+  .equipment-summary {
+    .equipment-category {
+      margin: 16px 0;
+      
+      h4 {
+        color: #5d4037;
+        border-left-color: #d4af37;
+        margin-bottom: 12px;
+      }
+      
+      .equipment-summary-item {
+        background: #fff;
+        border: 1px solid #d7ccc8;
+        border-left: 4px solid #8b4513;
+        padding: 12px 14px;
+        margin: 8px 0;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        
+        span strong {
+          color: #3e2723;
+          font-size: 1.05rem;
+        }
+        
+        .equipment-stats {
+          display: block;
+          color: #d32f2f;
+          font-weight: 600;
+          margin: 4px 0;
+          font-size: 0.95rem;
+        }
+        
+        .equipment-description {
+          margin: 8px 0 4px 0;
+          font-size: 0.9rem;
+          color: #555;
+        }
+        
+        .equipment-special {
+          margin: 4px 0 0 0;
+          font-size: 0.85rem;
+          color: #1976d2;
+          font-style: italic;
+          padding-left: 8px;
+          border-left: 2px solid #bbdefb;
+        }
+        
+        &.compact {
+          padding: 8px 12px;
+        }
+      }
+      
+      .equipment-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+      }
+    }
   }
 }
 
@@ -798,6 +1220,18 @@ mat-card {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-color: #1976d2;
   }
+
+  &.spell-selected {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+    opacity: 0.7;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
   
   mat-card-header {
     background: linear-gradient(135deg, #f8f9fa, #e9ecef);
@@ -808,6 +1242,13 @@ mat-card {
       color: #1976d2;
       font-size: 1.1rem;
       font-weight: 600;
+
+      .selected-badge {
+        color: #4caf50;
+        font-size: 0.9rem;
+        margin-left: 8px;
+        font-weight: bold;
+      }
     }
     
     mat-card-subtitle {
@@ -927,3 +1368,963 @@ mat-tab[label="Universels"] {
     }
   }
 }
+
+// ===== STYLES PAR TYPE D'ÉCOLE =====
+
+// Style Bushi (Guerrier) - Rouge/Noir/Acier
+.school-type-bushi {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(26, 0, 0, 0.7), rgba(74, 0, 0, 0.5)),
+                url('/assets/images/image.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .creator-header {
+    background: linear-gradient(135deg, #1a0000 0%, #4a0000 50%, #1a0000 100%) !important;
+    border: 2px solid #8b0000 !important;
+    box-shadow: 0 4px 20px rgba(139, 0, 0, 0.5) !important;
+    
+    mat-card-title {
+      color: #ff6b6b !important;
+      text-shadow: 0 0 10px rgba(255, 107, 107, 0.5) !important;
+    }
+    
+    mat-card-subtitle {
+      color: #ffaaaa !important;
+    }
+  }
+  
+  mat-card {
+    border-left: 3px solid #8b0000 !important;
+    
+    mat-card-title {
+      color: #8b0000 !important;
+    }
+  }
+  
+  button[mat-raised-button][color="primary"] {
+    background: linear-gradient(135deg, #8b0000, #4a0000) !important;
+    border: 1px solid #ff6b6b !important;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(135deg, #a00000, #6a0000) !important;
+      box-shadow: 0 4px 15px rgba(139, 0, 0, 0.6) !important;
+    }
+  }
+}
+
+// Style Shugenja (Prêtre/Mage) - Violet/Or/Mystique
+.school-type-shugenja {
+  .creator-header {
+    background: linear-gradient(135deg, #1a0033 0%, #330066 50%, #1a0033 100%) !important;
+    border: 2px solid #6600cc !important;
+    box-shadow: 0 4px 20px rgba(102, 0, 204, 0.5) !important;
+    
+    mat-card-title {
+      color: #bb86fc !important;
+      text-shadow: 0 0 10px rgba(187, 134, 252, 0.5) !important;
+    }
+    
+    mat-card-subtitle {
+      color: #d4bbff !important;
+    }
+  }
+  
+  mat-card {
+    border-left: 3px solid #6600cc !important;
+    background: linear-gradient(to bottom, #faf8ff 0%, #f5f0ff 100%) !important;
+    
+    mat-card-title {
+      color: #6600cc !important;
+    }
+  }
+  
+  button[mat-raised-button][color="primary"] {
+    background: linear-gradient(135deg, #6600cc, #4400aa) !important;
+    border: 1px solid #bb86fc !important;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(135deg, #7700dd, #5500bb) !important;
+      box-shadow: 0 4px 15px rgba(102, 0, 204, 0.6) !important;
+    }
+  }
+}
+
+// Style Courtisan (Diplomate) - Bleu élégant
+.school-type-courtier {
+  .creator-header {
+    background: linear-gradient(135deg, #001a33 0%, #003366 50%, #001a33 100%) !important;
+    border: 2px solid #0066cc !important;
+    box-shadow: 0 4px 20px rgba(0, 102, 204, 0.5) !important;
+    
+    mat-card-title {
+      color: #66b3ff !important;
+      text-shadow: 0 0 10px rgba(102, 179, 255, 0.5) !important;
+    }
+    
+    mat-card-subtitle {
+      color: #99ccff !important;
+    }
+  }
+  
+  mat-card {
+    border-left: 3px solid #0066cc !important;
+    background: linear-gradient(to bottom, #f0f8ff 0%, #e6f2ff 100%) !important;
+    
+    mat-card-title {
+      color: #0066cc !important;
+    }
+  }
+  
+  button[mat-raised-button][color="primary"] {
+    background: linear-gradient(135deg, #0066cc, #004499) !important;
+    border: 1px solid #66b3ff !important;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(135deg, #0077dd, #0055aa) !important;
+      box-shadow: 0 4px 15px rgba(0, 102, 204, 0.6) !important;
+    }
+  }
+}
+
+// Style Moine - Vert/Nature/Zen
+.school-type-moine {
+  .creator-header {
+    background: linear-gradient(135deg, #0d1f0d 0%, #1a4d1a 50%, #0d1f0d 100%) !important;
+    border: 2px solid #2d5f2d !important;
+    box-shadow: 0 4px 20px rgba(45, 95, 45, 0.5) !important;
+    
+    mat-card-title {
+      color: #81c784 !important;
+      text-shadow: 0 0 10px rgba(129, 199, 132, 0.5) !important;
+    }
+    
+    mat-card-subtitle {
+      color: #a5d6a7 !important;
+    }
+  }
+  
+  mat-card {
+    border-left: 3px solid #2d5f2d !important;
+    background: linear-gradient(to bottom, #f1f8f1 0%, #e8f5e8 100%) !important;
+    
+    mat-card-title {
+      color: #2d5f2d !important;
+    }
+  }
+  
+  button[mat-raised-button][color="primary"] {
+    background: linear-gradient(135deg, #2d5f2d, #1a4d1a) !important;
+    border: 1px solid #81c784 !important;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(135deg, #3d7f3d, #2a6d2a) !important;
+      box-shadow: 0 4px 15px rgba(45, 95, 45, 0.6) !important;
+    }
+  }
+}
+
+// Style Marchand/Artisan - Orange/Ambre
+.school-type-artisan, .school-type-marchand {
+  .creator-header {
+    background: linear-gradient(135deg, #331a00 0%, #663300 50%, #331a00 100%) !important;
+    border: 2px solid #cc6600 !important;
+    box-shadow: 0 4px 20px rgba(204, 102, 0, 0.5) !important;
+    
+    mat-card-title {
+      color: #ffaa66 !important;
+      text-shadow: 0 0 10px rgba(255, 170, 102, 0.5) !important;
+    }
+    
+    mat-card-subtitle {
+      color: #ffcc99 !important;
+    }
+  }
+  
+  mat-card {
+    border-left: 3px solid #cc6600 !important;
+    background: linear-gradient(to bottom, #fff8f0 0%, #fff0e6 100%) !important;
+    
+    mat-card-title {
+      color: #cc6600 !important;
+    }
+  }
+  
+  button[mat-raised-button][color="primary"] {
+    background: linear-gradient(135deg, #cc6600, #aa5500) !important;
+    border: 1px solid #ffaa66 !important;
+    
+    &:hover:not([disabled]) {
+      background: linear-gradient(135deg, #dd7700, #bb6600) !important;
+      box-shadow: 0 4px 15px rgba(204, 102, 0, 0.6) !important;
+    }
+  }
+}
+
+// ===== STYLES PAR TYPE D'ÉCOLE =====
+
+// Style pour les Bushi (guerriers) - Rouge/Noir agressif
+.school-type-bushi {
+  .creator-header {
+    background: linear-gradient(135deg, #8b0000 0%, #4a0000 100%);
+    border-left: 5px solid #ff4444;
+    box-shadow: 0 4px 20px rgba(139, 0, 0, 0.4);
+    
+    mat-card-title {
+      color: #ffeeee !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    mat-card-subtitle {
+      color: #ffcccc !important;
+    }
+  }
+  
+  mat-card:not(.creator-header) {
+    border-left: 3px solid #8b0000;
+    
+    mat-card-title {
+      color: #8b0000;
+    }
+  }
+  
+  button[color="primary"] {
+    background-color: #8b0000 !important;
+    
+    &:hover:not([disabled]) {
+      background-color: #a00000 !important;
+    }
+  }
+}
+
+// Style pour les Shugenja (prêtres/mages) - Violet/Indigo doux mystique
+.school-type-shugenja {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(25, 25, 51, 0.7), rgba(40, 35, 60, 0.5)),
+                url('/assets/images/Monastere.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .creator-header {
+    background: linear-gradient(135deg, #3f3168 0%, #2a1f3d 100%);
+    border-left: 5px solid #6a5a8e;
+    box-shadow: 0 4px 20px rgba(106, 90, 142, 0.3);
+    
+    mat-card-title {
+      color: #e8dff5 !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 15px rgba(106, 90, 142, 0.4);
+    }
+    
+    mat-card-subtitle {
+      color: #d4c5e8 !important;
+      color: #e1bee7 !important;
+    }
+  }
+  
+  mat-card:not(.creator-header) {
+    border-left: 3px solid #6a5a8e;
+    background: linear-gradient(to right, rgba(106, 90, 142, 0.05) 0%, transparent 100%);
+    
+    mat-card-title {
+      color: #8a7aae;
+    }
+  }
+  
+  button[color="primary"] {
+    background-color: #6a5a8e !important;
+    
+    &:hover:not([disabled]) {
+      background-color: #7d6ba5 !important;
+    }
+  }
+  
+  .spell-card {
+    border-color: rgba(106, 90, 142, 0.3);
+    
+    &:hover {
+      border-color: #6a5a8e;
+      box-shadow: 0 4px 20px rgba(106, 90, 142, 0.25);
+    }
+  }
+}
+
+// Style pour les Courtisans - Bleu élégant
+.school-type-courtier {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(13, 71, 161, 0.7), rgba(0, 25, 112, 0.5)),
+                url('/assets/images/background2.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .creator-header {
+    background: linear-gradient(135deg, #0d47a1 0%, #001970 100%);
+    border-left: 5px solid #2196f3;
+    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.4);
+    
+    mat-card-title {
+      color: #e3f2fd !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    mat-card-subtitle {
+      color: #bbdefb !important;
+    }
+  }
+  
+  mat-card:not(.creator-header) {
+    border-left: 3px solid #1976d2;
+    
+    mat-card-title {
+      color: #1565c0;
+    }
+  }
+  
+  button[color="primary"] {
+    background-color: #1976d2 !important;
+    
+    &:hover:not([disabled]) {
+      background-color: #2196f3 !important;
+    }
+  }
+}
+
+// Style pour les Moines - Vert zen/nature
+.school-type-moine {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(27, 94, 32, 0.7), rgba(13, 56, 24, 0.5)),
+                url('/assets/images/foret.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .creator-header {
+    background: linear-gradient(135deg, #1b5e20 0%, #0d3818 100%);
+    border-left: 5px solid #4caf50;
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+    
+    mat-card-title {
+      color: #e8f5e9 !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    mat-card-subtitle {
+      color: #c8e6c9 !important;
+    }
+  }
+  
+  mat-card:not(.creator-header) {
+    border-left: 3px solid #388e3c;
+    
+    mat-card-title {
+      color: #2e7d32;
+    }
+  }
+  
+  button[color="primary"] {
+    background-color: #388e3c !important;
+    
+    &:hover:not([disabled]) {
+      background-color: #4caf50 !important;
+    }
+  }
+}
+
+// Style pour les Marchands/Artisans - Orange/Ambre commercial
+.school-type-marchand, .school-type-artisan {
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(230, 81, 0, 0.7), rgba(191, 54, 12, 0.5)),
+                url('/assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .creator-header {
+    background: linear-gradient(135deg, #e65100 0%, #bf360c 100%);
+    border-left: 5px solid #ff6f00;
+    box-shadow: 0 4px 20px rgba(255, 111, 0, 0.4);
+    
+    mat-card-title {
+      color: #fff3e0 !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    mat-card-subtitle {
+      color: #ffe0b2 !important;
+    }
+  }
+  
+  mat-card:not(.creator-header) {
+    border-left: 3px solid #f57c00;
+    
+    mat-card-title {
+      color: #e65100;
+    }
+  }
+  
+  button[color="primary"] {
+    background-color: #f57c00 !important;
+    
+    &:hover:not([disabled]) {
+      background-color: #ff6f00 !important;
+    }
+  }
+}
+
+// ===== RESPONSIVE DESIGN =====
+
+// Tablettes
+@media (max-width: 1024px) {
+  .character-creator-container {
+    padding: 16px;
+  }
+  
+  .clan-selection,
+  .family-selection,
+  .school-selection {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .character-creator-container {
+    padding: 12px;
+  }
+  
+  .creator-header {
+    mat-card-title {
+      font-size: 1.3rem !important;
+    }
+    
+    mat-card-subtitle {
+      font-size: 0.9rem !important;
+    }
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+    
+    mat-form-field {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+  
+  .avatar-upload {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .clan-selection,
+  .family-selection,
+  .school-selection {
+    grid-template-columns: 1fr;
+  }
+  
+  .traits-grid,
+  .skills-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .spell-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .equipment-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  // Fiche de personnage finale responsive
+  .character-sheet {
+    padding: 16px !important;
+    
+    .sheet-header {
+      flex-direction: column;
+      text-align: center;
+      
+      .avatar-display {
+        margin: 0 auto 16px;
+      }
+    }
+    
+    .sheet-section {
+      margin-bottom: 16px;
+    }
+    
+    .rings-display {
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) !important;
+    }
+    
+    .traits-display {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+
+// Très petit mobile
+@media (max-width: 480px) {
+  .creator-header {
+    mat-card-title {
+      font-size: 1.1rem !important;
+    }
+  }
+  
+  .avatar-preview {
+    width: 100px;
+    height: 100px;
+  }
+  
+  mat-card {
+    padding: 12px !important;
+  }
+  
+  .character-sheet {
+    .rings-display .ring-circle {
+      width: 70px !important;
+      height: 70px !important;
+      font-size: 1.2rem !important;
+    }
+  }
+}
+// Styles pour les techniques de clan et kata
+.techniques-section,
+.kata-section {
+  margin-bottom: 32px;
+  
+  h3 {
+    color: #ff4444;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  }
+  
+  .info-text {
+    color: rgba(245, 230, 211, 0.9);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  
+  .selection-count {
+    color: #ffd700;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+}
+
+.techniques-grid,
+.kata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.technique-card,
+.kata-card {
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  }
+  
+  &.technique-selected,
+  &.kata-selected {
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  
+  mat-card-title {
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .selected-badge {
+      background: #ffd700;
+      color: #1a0f0f;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+  
+  mat-card-subtitle {
+    color: rgba(245, 230, 211, 0.7);
+    margin-top: 4px;
+  }
+  
+  mat-card-content {
+    padding-top: 16px;
+    
+    .technique-description,
+    .kata-description {
+      color: rgba(245, 230, 211, 0.9);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    
+    .technique-effect,
+    .kata-effect {
+      color: #ffd700;
+      padding: 8px;
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 3px solid #ffd700;
+      margin-top: 8px;
+      
+      strong {
+        color: #ff6b6b;
+      }
+    }
+  }
+  
+  mat-card-actions {
+    padding: 8px 16px 16px;
+    
+    button {
+      font-weight: 500;
+    }
+  }
+}
+
+.techniques-summary,
+.kata-summary {
+  .technique-line,
+  .kata-line {
+    padding: 12px;
+    margin-bottom: 8px;
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 3px solid #ffd700;
+    
+    strong {
+      color: #ff6b6b;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+// ========== TECHNIQUES DE CLAN ET FAMILLE ==========
+
+.clan-technique-subsection,
+.family-technique-subsection {
+  margin-bottom: 32px;
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.05);
+
+  h4 {
+    color: #ff6b6b;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  }
+
+  .no-data {
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.5);
+    padding: 12px;
+  }
+}
+
+.technique-card {
+  &.clan-technique {
+    border-left: 4px solid #ff6b6b;
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.05), rgba(255, 215, 0, 0.05));
+  }
+
+  &.family-technique {
+    border-left: 4px solid #ffd700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(139, 26, 26, 0.05));
+  }
+
+  .technique-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 8px;
+
+    &.clan-badge {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    &.family-badge {
+      background: #ffd700;
+      color: #8B1A1A;
+    }
+  }
+}
+
+// Résumé - Techniques de Clan et Famille
+.clan-techniques-summary {
+  margin-bottom: 20px;
+
+  .clan-technique-detail {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 4px solid #ff6b6b;
+    border-radius: 4px;
+
+    h4 {
+      color: #ff6b6b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .technique-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+
+        &.clan-badge {
+          background: #ff6b6b;
+          color: white;
+        }
+
+        &.family-badge {
+          background: #ffd700;
+          color: #8B1A1A;
+        }
+      }
+    }
+
+    .technique-clan-info {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 8px;
+    }
+
+    .technique-description {
+      font-style: italic;
+      margin-bottom: 8px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .technique-effect {
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(255, 215, 0, 0.1);
+      border-radius: 4px;
+
+      strong {
+        color: #8B1A1A;
+      }
+    }
+  }
+}
+
+.school-techniques-summary {
+  h4 {
+    color: #ff6b6b;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .techniques-grid,
+  .kata-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .clan-technique-subsection,
+  .family-technique-subsection {
+    padding: 12px;
+    
+    h4 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// ========== STYLES MAHO (MAGIE NOIRE) ==========
+.maho-spells-section {
+  margin-top: 32px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+
+  mat-divider {
+    margin-bottom: 20px;
+    background-color: #8b0000;
+  }
+
+  .maho-warning {
+    color: #8b0000;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .maho-description {
+    background-color: rgba(139, 0, 0, 0.1);
+    padding: 16px;
+    border-left: 4px solid #8b0000;
+    margin-bottom: 24px;
+    border-radius: 4px;
+
+    strong {
+      color: #ff0000;
+    }
+  }
+
+  .maho-spells-list {
+    h4 {
+      color: #8b0000;
+      margin-bottom: 16px;
+    }
+  }
+
+  .maho-card {
+    border: 1px solid #8b0000;
+    background: linear-gradient(135deg, rgba(20, 0, 0, 0.3), rgba(40, 0, 0, 0.2));
+    margin-bottom: 16px;
+
+    &.spell-selected {
+      border: 2px solid #ff0000;
+      box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
+    }
+
+    mat-card-header {
+      background: rgba(139, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: 4px 4px 0 0;
+    }
+
+    mat-card-title {
+      color: #ff4444;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .maho-icon {
+        color: #8b0000;
+      }
+    }
+
+    mat-card-subtitle {
+      color: #cc6666;
+    }
+
+    .maho-description-text {
+      color: #ffcccc;
+      font-style: italic;
+    }
+  }
+}
+
+.maho-summary {
+  border: 2px solid #8b0000;
+  background: rgba(139, 0, 0, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+
+  .maho-alert {
+    background-color: rgba(255, 0, 0, 0.1);
+    padding: 12px;
+    border-left: 4px solid #ff0000;
+    margin-bottom: 16px;
+    border-radius: 4px;
+
+    strong {
+      color: #ff0000;
+    }
+  }
+
+  .maho-spell-line {
+    padding: 12px;
+    background: rgba(139, 0, 0, 0.1);
+    border-left: 3px solid #8b0000;
+    margin-bottom: 12px;
+    border-radius: 4px;
+
+    span strong {
+      color: #8b0000;
+    }
+  }
+}
+

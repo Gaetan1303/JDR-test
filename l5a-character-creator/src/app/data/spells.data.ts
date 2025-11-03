@@ -318,16 +318,6 @@ export const SPELLS: Spell[] = [
     raises: 'Distance (x2)',
     description: 'Permet de voir à travers toute surface d\'eau dans un rayon de 1 km.'
   },
-  {
-    name: 'Chemin sur l\'Eau',
-    element: 'Eau',
-    mastery: 1,
-    range: 'Personnel',
-    area: 'Lanceur',
-    duration: '10 minutes',
-    raises: 'Durée (+5 min), Cibles (+1)',
-    description: 'Permet de marcher sur l\'eau comme sur terre ferme.'
-  },
 
   // Eau - Rang 2
   {
@@ -397,16 +387,6 @@ export const SPELLS: Spell[] = [
     description: 'Une pierre révèle ce qui s\'est passé dans la zone récemment.'
   },
   {
-    name: 'Armure de Jade',
-    element: 'Terre',
-    mastery: 1,
-    range: 'Personnel',
-    area: 'Lanceur',
-    duration: '1 heure',
-    raises: 'Durée (+30 min), Protection (+1)',
-    description: 'La peau devient dure comme la pierre. +5 en Armure Naturelle.'
-  },
-  {
     name: 'Poussière Aux Yeux',
     element: 'Terre',
     mastery: 1,
@@ -453,7 +433,7 @@ export const SPELLS: Spell[] = [
 
   // Sorts supplémentaires de niveau 1 et 2 pour équilibrer le jeu
   {
-    name: 'Purification',
+    name: 'Brise Purificatrice',
     element: 'Air',
     mastery: 1,
     range: 'Contact',
@@ -481,16 +461,6 @@ export const SPELLS: Spell[] = [
     duration: 'Instantané',
     raises: 'Guérison (+2 points)',
     description: 'Guérit 1k2 points de dégâts par contact avec la terre.'
-  },
-  {
-    name: 'Mur de Pierre',
-    element: 'Terre',
-    mastery: 2,
-    range: '30 mètres',
-    area: 'Mur de 3m x 3m',
-    duration: '1 heure',
-    raises: 'Taille (+1m x 1m), Durée (+30 min)',
-    description: 'Fait surgir un mur de pierre solide de la terre.'
   },
   {
     name: 'Flamme Dansante',
@@ -531,16 +501,6 @@ export const SPELLS: Spell[] = [
     duration: 'Instantané',
     raises: 'Dégâts (+1k0), Longueur (+5m)',
     description: 'Projette des lames d\'eau tranchantes qui infligent 2k2 dégâts.'
-  },
-  {
-    name: 'Sens du Vide',
-    element: 'Vide',
-    mastery: 1,
-    range: 'Personnel',
-    area: 'Lanceur',
-    duration: '1 scène',
-    raises: 'Durée (+1 scène)',
-    description: 'Permet de sentir la présence de créatures surnaturelles dans un rayon de 100m.'
   },
   {
     name: 'Protection Mystique',

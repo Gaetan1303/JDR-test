@@ -96,6 +96,23 @@ import { Character, Equipment } from '../models/character.model';
       padding: 24px;
       max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 100%),
+                    url('/assets/images/background2.png');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        z-index: -1;
+        opacity: 0.6;
+      }
     }
 
     .header {
@@ -171,6 +188,30 @@ import { Character, Equipment } from '../models/character.model';
       .characters-container {
         padding: 16px;
       }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .characters-grid {
+        gap: 16px;
+      }
+      
+      .character-card {
+        mat-card-title {
+          font-size: 1.1rem;
+        }
+        
+        mat-card-subtitle {
+          font-size: 0.9rem;
+        }
+      }
     }
   `]
 })
@@ -185,8 +226,8 @@ export class Characters {
   }
 
   loadSavedCharacters() {
-    // Simulation de chargement depuis localStorage ou service
-    const saved = localStorage.getItem('l5a-characters');
+    // Chargement depuis localStorage avec la clé 'myCharacters'
+    const saved = localStorage.getItem('myCharacters');
     if (saved) {
       try {
         const characters = JSON.parse(saved);
@@ -224,7 +265,7 @@ export class Characters {
   }
 
   private saveCharacters() {
-    localStorage.setItem('l5a-characters', JSON.stringify(this.savedCharacters()));
+    localStorage.setItem('myCharacters', JSON.stringify(this.savedCharacters()));
   }
 
   getAvailableXP(character: Character): number {

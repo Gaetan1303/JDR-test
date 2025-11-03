@@ -1,10 +1,14 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { Character, Ring, Traits, Skill, Advantage, Disadvantage, Spell, Equipment, CharacterEquipment } from '../models/character.model';
+import { Character, Ring, Traits, Skill, Advantage, Disadvantage, Spell, Equipment, CharacterEquipment, Kiho } from '../models/character.model';
 import { CLANS } from '../data/clans.data';
 import { SCHOOLS } from '../data/schools.data';
 import { ADVANTAGES, DISADVANTAGES } from '../data/advantages-disadvantages.data';
 import { SPELLS } from '../data/spells.data';
+import { MAHO_SPELLS } from '../data/maho.data';
 import { WEAPONS, ARMOR, ITEMS, getSchoolStartingEquipment } from '../data/equipment.data';
+import { CLAN_TECHNIQUES, KATA, ClanTechnique as TechniqueKata } from '../data/techniques-kata.data';
+import { CLAN_TECHNIQUES as CLAN_FAMILY_TECHNIQUES, ClanTechnique } from '../data/clan-techniques.data';
+import { KIHO } from '../data/kiho.data';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +41,10 @@ export class CharacterService {
     },
     skills: [],
     spells: [],
+    techniques: [],
+    kata: [],
+    kiho: [],
+    clanTechniques: [],
     advantages: [],
     disadvantages: [],
     experiencePoints: 40,
@@ -203,7 +211,7 @@ export class CharacterService {
   });
 
   // Méthodes pour mettre à jour le personnage
-  updateBasicInfo(info: { name?: string; age?: number; gender?: string }) {
+  updateBasicInfo(info: { name?: string; age?: number; gender?: string; avatar?: string | null }) {
     this._character.update(char => ({ ...char, ...info }));
   }
 
@@ -212,22 +220,62 @@ export class CharacterService {
       ...char,
       clan: clanName,
       family: '', // Reset family when clan changes
-      school: ''  // Reset school when clan changes
+      school: '', // Reset school when clan changes
+      // Réinitialiser tous les traits à 2 (valeur de base)
+      traits: {
+        constitution: 2,
+        volonte: 2,
+        force: 2,
+        perception: 2,
+        reflexes: 2,
+        intuition: 2,
+        agilite: 2,
+        intelligence: 2
+      },
+      // Retirer toutes les compétences d'école
+      skills: (char.skills || []).filter(skill => !skill.isSchoolSkill),
+      // Réinitialiser les XP dépensés sur les traits/compétences
+      spentExperiencePoints: 0
     }));
   }
 
+  /**
+   * Sélectionne une famille pour le personnage
+   * Les traits sont calculés ainsi :
+   * - Base : 2 pour chaque trait
+   * - Bonus de famille : +1 au trait de la famille
+   * - Bonus d'école : +1 au trait de l'école
+   * - Améliorations XP : peut monter jusqu'à 5 maximum (incluant tous les bonus)
+   */
   selectFamily(familyName: string) {
     const family = this.availableFamilies().find(f => f.name === familyName);
     if (!family) return;
 
     this._character.update(char => {
-      const newTraits = { ...char.traits! };
-      newTraits[family.traitBonus] += 1;
+      // Réinitialiser tous les traits à 2 (valeur de base)
+      const newTraits: Traits = {
+        constitution: 2,
+        volonte: 2,
+        force: 2,
+        perception: 2,
+        reflexes: 2,
+        intuition: 2,
+        agilite: 2,
+        intelligence: 2
+      };
+      
+      // Ajouter le bonus de la nouvelle famille
+      newTraits[family.traitBonus] = 3;
       
       return {
         ...char,
         family: familyName,
-        traits: newTraits
+        school: '',  // Reset school when family changes
+        traits: newTraits,
+        // Retirer toutes les compétences d'école (car on va changer d'école)
+        skills: (char.skills || []).filter(skill => !skill.isSchoolSkill),
+        // Réinitialiser les XP dépensés
+        spentExperiencePoints: 0
       };
     });
   }
@@ -237,12 +285,43 @@ export class CharacterService {
     if (!school) return;
 
     this._character.update(char => {
-      const newTraits = { ...char.traits! };
+      // Réinitialiser tous les traits à leur valeur de base + bonus de famille
+      const newTraits: Traits = {
+        constitution: 2,
+        volonte: 2,
+        force: 2,
+        perception: 2,
+        reflexes: 2,
+        intuition: 2,
+        agilite: 2,
+        intelligence: 2
+      };
+      
+      // Ré-appliquer le bonus de famille
+      if (char.family) {
+        const family = this.availableFamilies().find(f => f.name === char.family);
+        if (family) {
+          newTraits[family.traitBonus] = 3;
+        }
+      }
+      
+      // Ajouter le nouveau bonus d'école
       newTraits[school.traitBonus] += 1;
       
-      // Ajouter les compétences d'école (en évitant les doublons)
-      const existingSkills = char.skills || [];
-      const existingSkillNames = existingSkills.map(s => s.name);
+      // Retirer les compétences de l'ancienne école si elle existe
+      let filteredSkills = char.skills || [];
+      if (char.school) {
+        const oldSchool = SCHOOLS.find(s => s.name === char.school);
+        if (oldSchool) {
+          // Garder seulement les compétences qui ne sont pas de l'ancienne école
+          filteredSkills = filteredSkills.filter(skill => 
+            !skill.isSchoolSkill || !oldSchool.skills.includes(skill.name)
+          );
+        }
+      }
+      
+      // Ajouter les nouvelles compétences d'école
+      const existingSkillNames = filteredSkills.map(s => s.name);
       
       const newSkills: Skill[] = school.skills
         .filter(skillName => !existingSkillNames.includes(skillName))
@@ -260,9 +339,11 @@ export class CharacterService {
         ...char,
         school: schoolName,
         traits: newTraits,
-        skills: [...existingSkills, ...newSkills],
+        skills: [...filteredSkills, ...newSkills],
         equipment: schoolEquipment,
-        honor: school.honor
+        honor: school.honor,
+        // Réinitialiser les XP dépensés car on a reset les traits
+        spentExperiencePoints: 0
       };
     });
   }
@@ -270,7 +351,8 @@ export class CharacterService {
   // Méthode pour dépenser des XP pour améliorer un trait
   improveTrait(traitName: keyof Traits) {
     const currentValue = this.character().traits![traitName];
-    if (currentValue >= 4) return; // Limite de création
+    // Empêcher de dépasser 5 (la limite INCLUT les bonus d'école)
+    if (currentValue >= 5) return;
     
     const cost = (currentValue + 1) * 4;
     if (this.availableExperiencePoints() < cost) return;
@@ -288,7 +370,8 @@ export class CharacterService {
   // Méthode pour améliorer l'anneau du Vide
   improveVoidRing() {
     const currentValue = this.character().rings!.vide;
-    if (currentValue >= 4) return; // Limite de création
+    // Empêcher de dépasser 5
+    if (currentValue >= 5) return;
     
     const cost = (currentValue + 1) * 10;
     if (this.availableExperiencePoints() < cost) return;
@@ -363,7 +446,7 @@ export class CharacterService {
   decreaseSkill(skillName: string) {
     const skills = this.character().skills || [];
     const skill = skills.find(s => s.name === skillName);
-    if (!skill || skill.rank <= 1) return; // Ne peut pas descendre en dessous de 1
+    if (!skill || skill.rank <= 1 || skill.isSchoolSkill) return; // Ne peut pas descendre en dessous de 1 ni diminuer compétences d'école
     
     const refundCost = skill.isSchoolSkill ? skill.rank * 1 : skill.rank * 2;
     
@@ -452,7 +535,7 @@ export class CharacterService {
 
   // Passer à l'étape suivante
   nextStep() {
-    this.currentStep.update(step => Math.min(step + 1, 7));
+    this.currentStep.update(step => Math.min(step + 1, 8));
   }
 
   // Revenir à l'étape précédente
@@ -651,6 +734,114 @@ export class CharacterService {
       deficiency: school?.spellLimits?.deficiency || null
     };
   });
+
+  // ========== MÉTHODES MAHO (MAGIE NOIRE) ==========
+  
+  /**
+   * Vérifie si le personnage a accès aux sorts Maho
+   * Nécessite le désavantage "Maho-Tsukai"
+   */
+  canUseMaho(): boolean {
+    const selectedDisadvantages = this.character().selectedDisadvantages || [];
+    return selectedDisadvantages.includes('maho-tsukai');
+  }
+
+  /**
+   * Retourne tous les sorts Maho disponibles
+   * Seulement si le personnage a le désavantage Maho-Tsukai
+   */
+  getAllMahoSpells(): Spell[] {
+    if (!this.canUseMaho()) {
+      return [];
+    }
+    return MAHO_SPELLS;
+  }
+
+  /**
+   * Retourne les sorts Maho disponibles pour le rang de maîtrise
+   */
+  getAvailableMahoByRank(maxRank: number = 2): Spell[] {
+    if (!this.canUseMaho()) {
+      return [];
+    }
+    return MAHO_SPELLS.filter(spell => spell.mastery <= maxRank);
+  }
+
+  /**
+   * Vérifie si un sort Maho est sélectionné
+   */
+  isMahoSelected(spellName: string): boolean {
+    const currentSpells = this.character().spells || [];
+    return currentSpells.includes(spellName);
+  }
+
+  /**
+   * Ajoute un sort Maho au personnage
+   * Attention : Nécessite le désavantage "Maho-Tsukai" !
+   */
+  addMahoSpell(spellName: string): boolean {
+    // Vérifier que le personnage a accès au Maho
+    if (!this.canUseMaho()) {
+      console.warn('Vous devez avoir le désavantage "Maho-Tsukai" pour apprendre des sorts Maho');
+      return false;
+    }
+
+    const spell = MAHO_SPELLS.find(s => s.name === spellName);
+    if (!spell) {
+      console.warn('Sort Maho non trouvé:', spellName);
+      return false;
+    }
+
+    const currentSpells = this.character().spells || [];
+    
+    // Vérifier si déjà sélectionné
+    if (currentSpells.includes(spellName)) {
+      return false;
+    }
+
+    // Vérifier la limite de sorts selon le rang (même limites que sorts normaux)
+    const canAdd = this.canAddMoreSpells();
+    if (spell.mastery === 1 && !canAdd.rank1) return false;
+    if (spell.mastery === 2 && !canAdd.rank2) return false;
+
+    // Ajouter le sort Maho
+    this._character.update(char => ({
+      ...char,
+      spells: [...currentSpells, spellName]
+    }));
+
+    return true;
+  }
+
+  /**
+   * Retire un sort Maho du personnage
+   */
+  removeMahoSpell(spellName: string): void {
+    const currentSpells = this.character().spells || [];
+    
+    this._character.update(char => ({
+      ...char,
+      spells: currentSpells.filter(name => name !== spellName)
+    }));
+  }
+
+  /**
+   * Compte le nombre de sorts Maho sélectionnés
+   */
+  getSelectedMahoCount(): number {
+    const currentSpells = this.character().spells || [];
+    return currentSpells.filter(spellName => 
+      MAHO_SPELLS.some(maho => maho.name === spellName)
+    ).length;
+  }
+
+  /**
+   * Obtient les détails des sorts Maho sélectionnés
+   */
+  getSelectedMahoDetails(): Spell[] {
+    const currentSpells = this.character().spells || [];
+    return MAHO_SPELLS.filter(spell => currentSpells.includes(spell.name));
+  }
 
   // ==========================
   // MÉTHODES POUR L'ÉQUIPEMENT
@@ -858,7 +1049,12 @@ export class CharacterService {
       return false;
     }
     
-    const sellPrice = Math.floor(parseInt(equipment.cost || '0') / 2); // Vente à 50% du prix
+    // Pendant la création (insight rank 1 et pas encore finalisé), vente à 100%
+    // Après la création, vente à 50% du prix
+    const isCreation = this.insightRank() === 1 && this.currentStep() < 7;
+    const sellPrice = isCreation 
+      ? parseInt(equipment.cost || '0') 
+      : Math.floor(parseInt(equipment.cost || '0') / 2);
     
     this._character.update(char => {
       if (!char.equipment) return char;
@@ -927,5 +1123,325 @@ export class CharacterService {
 
     localStorage.setItem('l5a-characters', JSON.stringify(characters));
     return character;
+  }
+
+  // Méthodes pour les techniques de clan et kata
+  availableClanTechniques(): TechniqueKata[] {
+    const clan = this.character().clan;
+    if (!clan) return [];
+    
+    return CLAN_TECHNIQUES.filter(t => t.clan === clan || t.clan === 'Universel');
+  }
+
+  availableKata(): TechniqueKata[] {
+    return KATA;
+  }
+
+  addTechnique(techniqueName: string) {
+    const currentTechniques = this.character().techniques || [];
+    if (currentTechniques.includes(techniqueName)) return;
+    
+    this._character.update(char => ({
+      ...char,
+      techniques: [...currentTechniques, techniqueName]
+    }));
+  }
+
+  removeTechnique(techniqueName: string) {
+    const currentTechniques = this.character().techniques || [];
+    
+    this._character.update(char => ({
+      ...char,
+      techniques: currentTechniques.filter(name => name !== techniqueName)
+    }));
+  }
+
+  addKata(kataName: string) {
+    const currentKata = this.character().kata || [];
+    if (currentKata.includes(kataName)) return;
+    
+    this._character.update(char => ({
+      ...char,
+      kata: [...currentKata, kataName]
+    }));
+  }
+
+  removeKata(kataName: string) {
+    const currentKata = this.character().kata || [];
+    
+    this._character.update(char => ({
+      ...char,
+      kata: currentKata.filter(name => name !== kataName)
+    }));
+  }
+
+  isTechniqueSelected(techniqueName: string): boolean {
+    return (this.character().techniques || []).includes(techniqueName);
+  }
+
+  isKataSelected(kataName: string): boolean {
+    return (this.character().kata || []).includes(kataName);
+  }
+
+  // Limite de techniques et kata à la création (1 technique de clan + 2 kata max)
+  canAddMoreTechniques(): boolean {
+    return (this.character().techniques || []).length < 1;
+  }
+
+  canAddMoreKata(): boolean {
+    return (this.character().kata || []).length < 2;
+  }
+
+  // ========== MÉTHODES TECHNIQUES DE CLAN/FAMILLE ==========
+  
+  /**
+   * Retourne toutes les techniques de clan/famille disponibles
+   */
+  getAllClanFamilyTechniques(): ClanTechnique[] {
+    return CLAN_FAMILY_TECHNIQUES;
+  }
+
+  /**
+   * Retourne les techniques disponibles pour le clan du personnage
+   */
+  getAvailableClanTechniques(): ClanTechnique[] {
+    const clan = this.character().clan;
+    if (!clan) return [];
+    
+    return CLAN_FAMILY_TECHNIQUES.filter(t => t.clan === clan && t.type === 'clan');
+  }
+
+  /**
+   * Retourne les techniques disponibles pour la famille du personnage
+   */
+  getAvailableFamilyTechniques(): ClanTechnique[] {
+    const family = this.character().family;
+    if (!family) return [];
+    
+    return CLAN_FAMILY_TECHNIQUES.filter(t => t.family === family && t.type === 'famille');
+  }
+
+  /**
+   * Ajoute une technique de clan/famille au personnage
+   */
+  addClanTechnique(techniqueName: string) {
+    const currentTechniques = this.character().clanTechniques || [];
+    if (currentTechniques.includes(techniqueName)) return;
+    
+    this._character.update(char => ({
+      ...char,
+      clanTechniques: [...currentTechniques, techniqueName]
+    }));
+  }
+
+  /**
+   * Retire une technique de clan/famille du personnage
+   */
+  removeClanTechnique(techniqueName: string) {
+    const currentTechniques = this.character().clanTechniques || [];
+    
+    this._character.update(char => ({
+      ...char,
+      clanTechniques: currentTechniques.filter(name => name !== techniqueName)
+    }));
+  }
+
+  /**
+   * Vérifie si une technique de clan/famille est déjà sélectionnée
+   */
+  isClanTechniqueSelected(techniqueName: string): boolean {
+    return (this.character().clanTechniques || []).includes(techniqueName);
+  }
+
+  /**
+   * Retourne le nombre de techniques de clan/famille sélectionnées
+   */
+  getSelectedClanTechniquesCount(): number {
+    return (this.character().clanTechniques || []).length;
+  }
+
+  /**
+   * Retourne les détails d'une technique de clan/famille
+   */
+  getClanTechniqueDetails(techniqueName: string): ClanTechnique | undefined {
+    return CLAN_FAMILY_TECHNIQUES.find(t => t.name === techniqueName);
+  }
+
+  /**
+   * Retourne les détails de toutes les techniques de clan/famille sélectionnées
+   */
+  getSelectedClanTechniquesDetails(): ClanTechnique[] {
+    const selectedNames = this.character().clanTechniques || [];
+    return selectedNames
+      .map(name => this.getClanTechniqueDetails(name))
+      .filter((t): t is ClanTechnique => t !== undefined);
+  }
+
+  // ========== MÉTHODES KIHO ==========
+  
+  /**
+   * Retourne tous les Kiho disponibles
+   */
+  getAllKiho(): Kiho[] {
+    return KIHO;
+  }
+
+  /**
+   * Retourne les Kiho disponibles filtrés par élément
+   */
+  getKihoByElement(element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide'): Kiho[] {
+    return KIHO.filter(k => k.element === element);
+  }
+
+  /**
+   * Retourne les Kiho disponibles filtrés par type
+   */
+  getKihoByType(type: 'Interne' | 'Martial' | 'Mystique'): Kiho[] {
+    return KIHO.filter(k => k.type === type);
+  }
+
+  /**
+   * Retourne les Kiho disponibles pour le rang actuel du personnage
+   * Un moine peut apprendre des Kiho dont le mastery <= son Insight Rank
+   */
+  getAvailableKihoByRank(): Kiho[] {
+    const insightRank = this.getInsightRank();
+    return KIHO.filter(k => k.mastery <= insightRank);
+  }
+
+  /**
+   * Retourne les Kiho disponibles pour un élément et un rang donné
+   */
+  getAvailableKihoByElementAndRank(element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide'): Kiho[] {
+    const insightRank = this.getInsightRank();
+    return KIHO.filter(k => k.element === element && k.mastery <= insightRank);
+  }
+
+  /**
+   * Ajoute un Kiho au personnage
+   */
+  addKiho(kihoName: string): boolean {
+    const currentKiho = this.character().kiho || [];
+    
+    // Vérifier si déjà sélectionné
+    if (currentKiho.includes(kihoName)) {
+      return false;
+    }
+
+    // Vérifier la limite de Kiho (3 par rang d'école, donc 3 au rang 1)
+    const maxKiho = 3;
+    if (currentKiho.length >= maxKiho) {
+      console.warn(`Limite de Kiho atteinte (${maxKiho} maximum au rang 1)`);
+      return false;
+    }
+
+    // Vérifier si le personnage est un moine
+    const school = this.character().school;
+    if (!school || !school.toLowerCase().includes('moine')) {
+      console.warn('Seuls les moines peuvent apprendre des Kiho');
+      return false;
+    }
+
+    // Trouver le Kiho
+    const kiho = KIHO.find(k => k.name === kihoName);
+    if (!kiho) {
+      console.warn('Kiho non trouvé:', kihoName);
+      return false;
+    }
+
+    // Vérifier le rang requis
+    const insightRank = this.getInsightRank();
+    if (kiho.mastery > insightRank) {
+      console.warn(`Rang d'Insight insuffisant pour ${kihoName} (requis: ${kiho.mastery}, actuel: ${insightRank})`);
+      return false;
+    }
+
+    this._character.update(char => ({
+      ...char,
+      kiho: [...currentKiho, kihoName]
+    }));
+
+    return true;
+  }
+
+  /**
+   * Retire un Kiho du personnage
+   */
+  removeKiho(kihoName: string): void {
+    const currentKiho = this.character().kiho || [];
+    
+    this._character.update(char => ({
+      ...char,
+      kiho: currentKiho.filter(name => name !== kihoName)
+    }));
+  }
+
+  /**
+   * Vérifie si un Kiho est sélectionné
+   */
+  isKihoSelected(kihoName: string): boolean {
+    return (this.character().kiho || []).includes(kihoName);
+  }
+
+  /**
+   * Retourne le nombre de Kiho sélectionnés
+   */
+  getSelectedKihoCount(): number {
+    return (this.character().kiho || []).length;
+  }
+
+  /**
+   * Retourne les détails d'un Kiho sélectionné
+   */
+  getKihoDetails(kihoName: string): Kiho | undefined {
+    return KIHO.find(k => k.name === kihoName);
+  }
+
+  /**
+   * Retourne tous les Kiho sélectionnés avec leurs détails
+   */
+  getSelectedKihoDetails(): Kiho[] {
+    const selectedKihoNames = this.character().kiho || [];
+    return selectedKihoNames
+      .map(name => KIHO.find(k => k.name === name))
+      .filter(k => k !== undefined) as Kiho[];
+  }
+
+  /**
+   * Vérifie si le personnage peut apprendre plus de Kiho
+   * À la création: 3 Kiho maximum (règle L5A)
+   */
+  canAddMoreKiho(): boolean {
+    const currentCount = (this.character().kiho || []).length;
+    return currentCount < 3;
+  }
+
+  /**
+   * Retourne le nombre maximum de Kiho autorisé
+   */
+  getMaxKiho(): number {
+    return 3; // 3 Kiho par rang d'école, donc 3 au rang 1
+  }
+
+  /**
+   * Vérifie si le personnage est un moine
+   */
+  isMonk(): boolean {
+    const school = this.character().school;
+    return school ? school.toLowerCase().includes('moine') : false;
+  }
+
+  /**
+   * Calcule le rang d'Insight du personnage
+   * Utilisé pour déterminer quels Kiho peuvent être appris
+   */
+  getInsightRank(): number {
+    const insight = this.insightRank();
+    
+    if (insight < 150) return 1;
+    if (insight < 175) return 2;
+    if (insight < 200) return 3;
+    if (insight < 225) return 4;
+    return 5;
   }
 }

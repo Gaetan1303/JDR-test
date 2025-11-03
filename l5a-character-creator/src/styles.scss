@@ -6,6 +6,13 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+// Import des thèmes L5R
+@import './styles/themes.scss';
+@import './styles/japanese-decorations.scss';
+
+// Import de la police japonaise
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&family=Cinzel:wght@400;600;700&display=swap');
+
 html {
   @include mat.theme((
     color: (
@@ -18,22 +25,148 @@ html {
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
+  background: linear-gradient(to bottom, #8B1A1A 0%, #6B0F0F 50%, #8B1A1A 100%);
+  background-attachment: fixed;
+  color: #ff6b6b;
+  font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.6);
+  }
 }
+
+// ===== STYLES GLOBAUX JAPONAIS MÉDIÉVAL =====
+
+// Amélioration des mat-cards avec style japonais
+mat-card {
+  background: linear-gradient(to bottom, rgba(20, 10, 10, 0.85) 0%, rgba(30, 15, 15, 0.85) 100%) !important;
+  border: 2px solid rgba(212, 175, 55, 0.4) !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(212, 175, 55, 0.3),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2) !important;
+  border-radius: 8px !important;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+  }
+  
+  mat-card-title, mat-card-subtitle, h1, h2, h3, h4, h5, h6, p, span, label {
+    color: #ff6b6b !important;
+  }
+  
+  mat-card-subtitle {
+    opacity: 0.9;
+  }
+}
+
+// Titres avec style japonais
+h1, h2, h3, h4 {
+  font-family: 'Cinzel', 'Noto Serif JP', serif;
+  color: #ff4444;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+// Boutons avec style japonais
+button[mat-raised-button] {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 4px !important;
+  box-shadow: 
+    0 2px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s ease;
+  
+  &:hover:not([disabled]) {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+// Form fields pour bonne visibilité sur fond rouge
+mat-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: rgba(20, 10, 10, 0.6) !important;
+  }
+  
+  .mat-mdc-form-field-focus-overlay {
+    background-color: rgba(212, 175, 55, 0.1) !important;
+  }
+  
+  label, .mat-mdc-floating-label {
+    color: #ff6b6b !important;
+  }
+  
+  input, textarea, .mat-mdc-select-value {
+    color: #ff4444 !important;
+    caret-color: #ff4444 !important;
+  }
+  
+  .mat-mdc-form-field-hint, .mat-mdc-form-field-error {
+    color: #ff6b6b !important;
+  }
+}
+
+// Mat-select dropdown
+.mat-mdc-select-panel {
+  background-color: rgba(20, 10, 10, 0.98) !important;
+  border: 2px solid rgba(212, 175, 55, 0.5) !important;
+  
+  .mat-mdc-option {
+    color: #ff6b6b !important;
+    
+    &:hover, &.mdc-list-item--selected {
+      background-color: rgba(212, 175, 55, 0.2) !important;
+      color: #ff4444 !important;
+    }
+  }
+}
+
+// Scrollbar personnalisée
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #6B0F0F;
+  border-left: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d4af37, #b8941f);
+  border-radius: 6px;
+  border: 2px solid #6B0F0F;
+  
+  &:hover {
+    background: linear-gradient(180deg, #ffd700, #d4af37);
+  }
+}
+
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif; }
+
