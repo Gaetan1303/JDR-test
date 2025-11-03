@@ -48,7 +48,7 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/JDR-test/l5a-character-creator/"
+              "baseHref": "/JDR-test/"
             },
             "development": {
               "optimization": false,
