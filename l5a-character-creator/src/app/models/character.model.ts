@@ -42,6 +42,15 @@ export interface Disadvantage {
   category: 'Physique' | 'Mental' | 'Social' | 'Spirituel' | 'Matériel' | 'Comportemental';
 }
 
+export interface NPC {
+  name: string;
+  clan: string;
+  family?: string;
+  school?: string;
+  relationship: 'Allié' | 'Ennemi';
+  description: string;
+}
+
 export interface Spell {
   name: string;
   element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide' | 'Maho';
@@ -180,6 +189,10 @@ export interface Character {
   
   // Techniques de Clan
   clanTechniques: string[]; // Noms des techniques de clan/famille sélectionnées
+  
+  // Alliés et ennemis
+  allies?: NPC[]; // Alliés du personnage
+  enemies?: NPC[]; // Ennemis du personnage
   
   // Éléments narratifs
   objective: string;

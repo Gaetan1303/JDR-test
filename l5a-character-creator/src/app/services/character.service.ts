@@ -471,13 +471,40 @@ export class CharacterService {
     // Mise à jour du signal dédié pour une meilleure performance
     this._selectedAdvantageIds.update(ids => [...ids, advantageId]);
     
-    // Ajouter l'équipement accordé par l'avantage (si disponible)
-    if (advantage.grantedEquipment && advantage.grantedEquipment.length > 0) {
+    // Générer un allié si l'avantage est "allies"
+    if (advantageId === 'allies') {
+      const ally = this.generateRandomNPC('Allié');
       this._character.update(char => ({
         ...char,
-        equipment: [...(char.equipment || []), ...advantage.grantedEquipment!],
+        allies: [...(char.allies || []), ally],
         selectedAdvantages: this._selectedAdvantageIds()
       }));
+      return;
+    }
+    
+    // Ajouter l'équipement accordé par l'avantage (si disponible)
+    if (advantage.grantedEquipment && advantage.grantedEquipment.length > 0) {
+      this._character.update(char => {
+        const currentEquipment = char.equipment || this.getDefaultEquipment();
+        const updatedEquipment = { ...currentEquipment };
+        
+        // Ajouter chaque équipement selon son type
+        advantage.grantedEquipment!.forEach(eq => {
+          if (eq.type === 'weapon') {
+            updatedEquipment.weapons = [...updatedEquipment.weapons, eq];
+          } else if (eq.type === 'armor') {
+            updatedEquipment.armor = eq;
+          } else if (eq.type === 'item') {
+            updatedEquipment.items = [...updatedEquipment.items, eq];
+          }
+        });
+        
+        return {
+          ...char,
+          equipment: updatedEquipment,
+          selectedAdvantages: this._selectedAdvantageIds()
+        };
+      });
     } else {
       // Synchronisation avec le personnage
       this._character.update(char => ({
@@ -493,14 +520,34 @@ export class CharacterService {
     
     this._selectedAdvantageIds.update(ids => ids.filter(id => id !== advantageId));
     
+    // Retirer l'allié si l'avantage est "allies"
+    if (advantageId === 'allies') {
+      this._character.update(char => ({
+        ...char,
+        allies: [], // Retirer tous les alliés de cet avantage
+        selectedAdvantages: this._selectedAdvantageIds()
+      }));
+      return;
+    }
+    
     // Retirer l'équipement accordé par l'avantage (si disponible)
     if (advantage?.grantedEquipment && advantage.grantedEquipment.length > 0) {
       const grantedEquipmentNames = advantage.grantedEquipment.map(eq => eq.name);
-      this._character.update(char => ({
-        ...char,
-        equipment: (char.equipment || []).filter(eq => !grantedEquipmentNames.includes(eq.name)),
-        selectedAdvantages: this._selectedAdvantageIds()
-      }));
+      
+      this._character.update(char => {
+        const currentEquipment = char.equipment || this.getDefaultEquipment();
+        const updatedEquipment = {
+          ...currentEquipment,
+          weapons: currentEquipment.weapons.filter(w => !grantedEquipmentNames.includes(w.name)),
+          items: currentEquipment.items.filter(i => !grantedEquipmentNames.includes(i.name))
+        };
+        
+        return {
+          ...char,
+          equipment: updatedEquipment,
+          selectedAdvantages: this._selectedAdvantageIds()
+        };
+      });
     } else {
       this._character.update(char => ({
         ...char,
@@ -509,12 +556,83 @@ export class CharacterService {
     }
   }
 
+  // Méthode utilitaire pour obtenir l'équipement par défaut
+  private getDefaultEquipment(): CharacterEquipment {
+    return {
+      weapons: [],
+      armor: ARMOR[0],
+      items: [],
+      koku: 100
+    };
+  }
+
+  // Générer un PNJ aléatoire (allié ou ennemi)
+  private generateRandomNPC(relationship: 'Allié' | 'Ennemi'): any {
+    const firstNames = [
+      'Akodo', 'Bayushi', 'Doji', 'Hida', 'Isawa', 'Kakita', 'Matsu', 'Mirumoto', 
+      'Shiba', 'Shinjo', 'Togashi', 'Yoritomo', 'Asahina', 'Kitsuki', 'Utaku'
+    ];
+    
+    const lastNames = [
+      'Takeshi', 'Yumiko', 'Kenji', 'Sakura', 'Hiroshi', 'Ayame', 'Daichi', 'Hana',
+      'Ichiro', 'Kaede', 'Masaru', 'Mei', 'Noboru', 'Rin', 'Taro', 'Yuki'
+    ];
+    
+    // 50% de chance d'être du même clan, 50% d'un clan aléatoire
+    const playerClan = this.character().clan;
+    const usePlayerClan = Math.random() < 0.5 && playerClan;
+    
+    const randomClan = usePlayerClan ? playerClan : CLANS[Math.floor(Math.random() * CLANS.length)].name;
+    const clan = CLANS.find(c => c.name === randomClan);
+    
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const fullName = `${firstName} ${lastName}`;
+    
+    const family = clan?.families[Math.floor(Math.random() * (clan?.families.length || 1))];
+    const school = SCHOOLS.filter(s => s.clan === randomClan)[Math.floor(Math.random() * SCHOOLS.filter(s => s.clan === randomClan).length)];
+    
+    const descriptions = relationship === 'Allié' ? [
+      'Un compagnon fidèle rencontré lors de votre formation.',
+      'Un ami d\'enfance qui vous soutient dans vos épreuves.',
+      'Un mentor bienveillant qui guide vos pas.',
+      'Un camarade de combat qui a sauvé votre vie.',
+      'Un allié politique précieux dans votre clan.'
+    ] : [
+      'Un rival jaloux de votre réussite.',
+      'Un ennemi juré cherchant à ternir votre honneur.',
+      'Un adversaire politique manœuvrant contre vous.',
+      'Un ancien ami devenu ennemi après une trahison.',
+      'Un membre d\'un clan rival cherchant vengeance.'
+    ];
+    
+    return {
+      name: fullName,
+      clan: randomClan,
+      family: family?.name,
+      school: school?.name,
+      relationship: relationship,
+      description: descriptions[Math.floor(Math.random() * descriptions.length)]
+    };
+  }
+
   // Sélectionner un désavantage - optimisé avec signaux
   selectDisadvantage(disadvantageId: string) {
     const disadvantage = DISADVANTAGES.find(dis => dis.id === disadvantageId);
     if (!disadvantage) return;
     
     this._selectedDisadvantageIds.update(ids => [...ids, disadvantageId]);
+    
+    // Générer un ennemi si le désavantage est "enemies"
+    if (disadvantageId === 'enemies') {
+      const enemy = this.generateRandomNPC('Ennemi');
+      this._character.update(char => ({
+        ...char,
+        enemies: [...(char.enemies || []), enemy],
+        selectedDisadvantages: this._selectedDisadvantageIds()
+      }));
+      return;
+    }
     
     this._character.update(char => ({
       ...char,
@@ -525,6 +643,16 @@ export class CharacterService {
   // Désélectionner un désavantage - optimisé avec signaux
   deselectDisadvantage(disadvantageId: string) {
     this._selectedDisadvantageIds.update(ids => ids.filter(id => id !== disadvantageId));
+    
+    // Retirer l'ennemi si le désavantage est "enemies"
+    if (disadvantageId === 'enemies') {
+      this._character.update(char => ({
+        ...char,
+        enemies: [], // Retirer tous les ennemis de ce désavantage
+        selectedDisadvantages: this._selectedDisadvantageIds()
+      }));
+      return;
+    }
     
     this._character.update(char => ({
       ...char,
