@@ -3,6 +3,16 @@
   <span class="spacer"></span>
   <button mat-button routerLink="/dashboard" routerLinkActive="active">Accueil</button>
   <app-theme-selector></app-theme-selector>
+  <span class="spacer"></span>
+  <ng-container *ngIf="auth.isAuthenticated(); else anon">
+    <span class="welcome">Bonjour, {{ auth.currentUser()?.name }}</span>
+    <button mat-button routerLink="/multiplayer">Multijoueur</button>
+    <button mat-button (click)="logout()">Déconnexion</button>
+  </ng-container>
+  <ng-template #anon>
+    <button mat-button routerLink="/login">Connexion</button>
+    <button mat-button routerLink="/register">Créer un compte</button>
+  </ng-template>
 </mat-toolbar>
 
 <div class="main-container">

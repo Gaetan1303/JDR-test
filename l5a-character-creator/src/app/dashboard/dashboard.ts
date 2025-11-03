@@ -38,6 +38,21 @@ import { MatGridListModule } from '@angular/material/grid-list';
           </mat-card-actions>
         </mat-card>
 
+        <mat-card class="menu-card" routerLink="/multiplayer">
+          <mat-card-header>
+            <mat-card-title>Multijoueur local</mat-card-title>
+            <mat-card-subtitle>Salon, chat et dés (sans serveur)</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Créez une salle en tant que MJ, rejoignez comme joueur, discutez et lancez des dés via BroadcastChannel.</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="/multiplayer">
+              Ouvrir le multijoueur
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
         <mat-card class="menu-card" routerLink="/characters">
           <mat-card-header>
             <mat-card-title>Mes personnages</mat-card-title>

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -7,6 +7,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { ThemeSelectorComponent } from './theme-selector/theme-selector';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -26,4 +27,9 @@ import { ThemeSelectorComponent } from './theme-selector/theme-selector';
 })
 export class App {
   protected readonly title = signal('Légende des 5 Anneaux - 4e édition');
+  protected auth = inject(AuthService);
+
+  logout() {
+    this.auth.logout();
+  }
 }
