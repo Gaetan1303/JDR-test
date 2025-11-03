@@ -396,8 +396,21 @@ export class CharacterCreator {
     // Sauvegarder le personnage via le service (qui génère alliés/ennemis)
     const savedCharacter = this.characterService.saveCharacter();
     
-    // Rediriger vers la page "Mes Personnages"
-    this.router.navigate(['/characters']);
+    // Message de confirmation
+    const characterName = savedCharacter.name || 'votre personnage';
+    const confirmMessage = `✅ ${characterName} a été sauvegardé avec succès !\n\nVoulez-vous retourner au menu principal ?`;
+    
+    if (confirm(confirmMessage)) {
+      // L'utilisateur veut retourner au menu
+      this.router.navigate(['/dashboard']);
+    } else {
+      // L'utilisateur veut rester ou aller voir ses personnages
+      const goToCharacters = confirm(`Voulez-vous voir la liste de vos personnages ?`);
+      if (goToCharacters) {
+        this.router.navigate(['/characters']);
+      }
+      // Sinon, rester sur la page de création
+    }
     
     // Optionnel : Télécharger aussi le JSON
     const characterData = {

@@ -2330,3 +2330,69 @@ mat-tab[label="Universels"] {
   }
 }
 
+// Chips personnalisés pour avantages/désavantages
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.custom-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &.advantage-chip {
+    background: #e8f5e9;
+    border: 2px solid #4caf50;
+    color: #2e7d32;
+
+    &:hover {
+      background: #c8e6c9;
+      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+    }
+  }
+
+  &.disadvantage-chip {
+    background: #ffebee;
+    border: 2px solid #f44336;
+    color: #c62828;
+
+    &:hover {
+      background: #ffcdd2;
+      box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+    }
+  }
+
+  .chip-remove {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      transform: scale(1.2);
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+

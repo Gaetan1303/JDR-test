@@ -442,7 +442,7 @@
                   </mat-chip>
                   <div class="button-group">
                     <button mat-button 
-                            [disabled]="skill.rank <= 1 || skill.isSchoolSkill"
+                            [disabled]="skill.rank <= 1"
                             (click)="decreaseSkill(skill.name)"
                             [matTooltip]="'Diminuer ' + skill.name">
                       -
@@ -479,13 +479,12 @@
                     <div *ngIf="selectedAdvantages().length > 0" class="selected-section">
                       <h3>Avantages sélectionnés</h3>
                       <div class="selected-items">
-                        <mat-chip-set>
-                          <mat-chip *ngFor="let advantage of selectedAdvantages()" 
-                                    (removed)="deselectAdvantage(advantage.id)">
-                            {{ advantage.name }} ({{ advantage.cost }} XP)
-                            X
-                          </mat-chip>
-                        </mat-chip-set>
+                        <div class="chip-list">
+                          <div *ngFor="let advantage of selectedAdvantages()" class="custom-chip advantage-chip">
+                            <span>{{ advantage.name }} ({{ advantage.cost }} XP)</span>
+                            <button class="chip-remove" (click)="deselectAdvantage(advantage.id)">✕</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -524,13 +523,12 @@
                     <div *ngIf="selectedDisadvantages().length > 0" class="selected-section">
                       <h3>Désavantages sélectionnés</h3>
                       <div class="selected-items">
-                        <mat-chip-set>
-                          <mat-chip *ngFor="let disadvantage of selectedDisadvantages()" 
-                                    (removed)="deselectDisadvantage(disadvantage.id)">
-                            {{ disadvantage.name }} (+{{ disadvantage.xpGain }} XP)
-                            X
-                          </mat-chip>
-                        </mat-chip-set>
+                        <div class="chip-list">
+                          <div *ngFor="let disadvantage of selectedDisadvantages()" class="custom-chip disadvantage-chip">
+                            <span>{{ disadvantage.name }} (+{{ disadvantage.xpGain }} XP)</span>
+                            <button class="chip-remove" (click)="deselectDisadvantage(disadvantage.id)">✕</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
