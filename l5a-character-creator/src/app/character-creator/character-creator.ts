@@ -1,6 +1,7 @@
 import { Component, inject, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,7 +14,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
 import { CharacterService } from '../services/character.service';
 import { Equipment } from '../models/character.model';
 import { SCHOOLS } from '../data/schools.data';
@@ -34,14 +34,14 @@ import { SCHOOLS } from '../data/schools.data';
     MatDividerModule,
     MatBadgeModule,
     MatProgressBarModule,
-    MatTooltipModule,
-    MatIconModule
+    MatTooltipModule
   ],
   templateUrl: './character-creator.html',
   styleUrl: './character-creator.scss'
 })
 export class CharacterCreator {
   characterService = inject(CharacterService);
+  private router = inject(Router);
   
   // Expose Math et document pour le template
   Math = Math;
@@ -393,8 +393,15 @@ export class CharacterCreator {
   }
 
   exportCharacter() {
+    // Sauvegarder le personnage via le service (qui génère alliés/ennemis)
+    const savedCharacter = this.characterService.saveCharacter();
+    
+    // Rediriger vers la page "Mes Personnages"
+    this.router.navigate(['/characters']);
+    
+    // Optionnel : Télécharger aussi le JSON
     const characterData = {
-      ...this.character(),
+      ...savedCharacter,
       calculatedRings: this.calculatedRings(),
       insightRank: this.insightRank(),
       initiative: this.initiative(),
@@ -402,16 +409,13 @@ export class CharacterCreator {
       createdAt: new Date().toISOString()
     };
     
-    // Sauvegarder automatiquement dans "Mes personnages"
-    this.saveToMyCharacters();
-    
     const dataStr = JSON.stringify(characterData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.character().name || 'personnage'}_L5A.json`;
+    link.download = `${savedCharacter.name || 'personnage'}_L5A.json`;
     link.click();
     
     URL.revokeObjectURL(url);

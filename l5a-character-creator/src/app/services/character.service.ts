@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { Character, Ring, Traits, Skill, Advantage, Disadvantage, Spell, Equipment, CharacterEquipment, Kiho } from '../models/character.model';
+import { Character, Ring, Traits, Skill, Advantage, Disadvantage, Spell, Equipment, CharacterEquipment, Kiho, NPC } from '../models/character.model';
 import { CLANS } from '../data/clans.data';
 import { SCHOOLS } from '../data/schools.data';
 import { ADVANTAGES, DISADVANTAGES } from '../data/advantages-disadvantages.data';
@@ -471,16 +471,7 @@ export class CharacterService {
     // Mise à jour du signal dédié pour une meilleure performance
     this._selectedAdvantageIds.update(ids => [...ids, advantageId]);
     
-    // Générer un allié si l'avantage est "allies"
-    if (advantageId === 'allies') {
-      const ally = this.generateRandomNPC('Allié');
-      this._character.update(char => ({
-        ...char,
-        allies: [...(char.allies || []), ally],
-        selectedAdvantages: this._selectedAdvantageIds()
-      }));
-      return;
-    }
+    // NOTE: Les alliés seront générés lors de la sauvegarde finale du personnage
     
     // Ajouter l'équipement accordé par l'avantage (si disponible)
     if (advantage.grantedEquipment && advantage.grantedEquipment.length > 0) {
@@ -520,15 +511,7 @@ export class CharacterService {
     
     this._selectedAdvantageIds.update(ids => ids.filter(id => id !== advantageId));
     
-    // Retirer l'allié si l'avantage est "allies"
-    if (advantageId === 'allies') {
-      this._character.update(char => ({
-        ...char,
-        allies: [], // Retirer tous les alliés de cet avantage
-        selectedAdvantages: this._selectedAdvantageIds()
-      }));
-      return;
-    }
+    // NOTE: Les alliés seront retirés/gérés lors de la sauvegarde finale
     
     // Retirer l'équipement accordé par l'avantage (si disponible)
     if (advantage?.grantedEquipment && advantage.grantedEquipment.length > 0) {
@@ -567,7 +550,8 @@ export class CharacterService {
   }
 
   // Générer un PNJ aléatoire (allié ou ennemi)
-  private generateRandomNPC(relationship: 'Allié' | 'Ennemi'): any {
+  // Générer un NPC aléatoire (allié ou ennemi)
+  generateRandomNPC(relationship: 'Allié' | 'Ennemi'): any {
     const firstNames = [
       'Akodo', 'Bayushi', 'Doji', 'Hida', 'Isawa', 'Kakita', 'Matsu', 'Mirumoto', 
       'Shiba', 'Shinjo', 'Togashi', 'Yoritomo', 'Asahina', 'Kitsuki', 'Utaku'
@@ -623,16 +607,7 @@ export class CharacterService {
     
     this._selectedDisadvantageIds.update(ids => [...ids, disadvantageId]);
     
-    // Générer un ennemi si le désavantage est "enemies"
-    if (disadvantageId === 'enemies') {
-      const enemy = this.generateRandomNPC('Ennemi');
-      this._character.update(char => ({
-        ...char,
-        enemies: [...(char.enemies || []), enemy],
-        selectedDisadvantages: this._selectedDisadvantageIds()
-      }));
-      return;
-    }
+    // NOTE: Les ennemis seront générés lors de la sauvegarde finale du personnage
     
     this._character.update(char => ({
       ...char,
@@ -644,15 +619,7 @@ export class CharacterService {
   deselectDisadvantage(disadvantageId: string) {
     this._selectedDisadvantageIds.update(ids => ids.filter(id => id !== disadvantageId));
     
-    // Retirer l'ennemi si le désavantage est "enemies"
-    if (disadvantageId === 'enemies') {
-      this._character.update(char => ({
-        ...char,
-        enemies: [], // Retirer tous les ennemis de ce désavantage
-        selectedDisadvantages: this._selectedDisadvantageIds()
-      }));
-      return;
-    }
+    // NOTE: Les ennemis seront retirés/gérés lors de la sauvegarde finale
     
     this._character.update(char => ({
       ...char,
@@ -663,9 +630,7 @@ export class CharacterService {
   // Méthodes utilitaires pour vérifier la sélection - utilisant les signaux pour la performance
   isAdvantageSelected(advantageId: string): boolean {
     return this._selectedAdvantageIds().includes(advantageId);
-  }
-
-  isDisadvantageSelected(disadvantageId: string): boolean {
+  }  isDisadvantageSelected(disadvantageId: string): boolean {
     return this._selectedDisadvantageIds().includes(disadvantageId);
   }
 
@@ -699,6 +664,7 @@ export class CharacterService {
     this._selectedDisadvantageIds.set([]);
     
     this._character.set({
+      id: undefined, // Pas d'ID tant que le personnage n'est pas sauvegardé
       name: '',
       age: 15,
       gender: '',
@@ -1277,7 +1243,37 @@ export class CharacterService {
   // Sauvegarder le personnage actuel
   saveCharacter(): Character {
     const character = this.character() as Character;
-    const saved = localStorage.getItem('l5a-characters');
+    
+    console.log('[CharacterService] Sauvegarde personnage:', character.name);
+    console.log('[CharacterService] Avantages sélectionnés:', this._selectedAdvantageIds());
+    console.log('[CharacterService] Désavantages sélectionnés:', this._selectedDisadvantageIds());
+    
+    // Générer les alliés et ennemis selon les avantages/désavantages sélectionnés
+    const hasAlliesAdvantage = this._selectedAdvantageIds().includes('allies');
+    const hasEnemiesDisadvantage = this._selectedDisadvantageIds().includes('enemies');
+    
+    // Générer des alliés si l'avantage "Alliés" est sélectionné
+    if (hasAlliesAdvantage && (!character.allies || character.allies.length === 0)) {
+      console.log('[CharacterService] Génération de 2 alliés...');
+      character.allies = [
+        this.generateRandomNPC('Allié'),
+        this.generateRandomNPC('Allié')
+      ];
+    }
+    
+    // Générer des ennemis si le désavantage "Ennemis" est sélectionné
+    if (hasEnemiesDisadvantage && (!character.enemies || character.enemies.length === 0)) {
+      console.log('[CharacterService] Génération de 2 ennemis...');
+      character.enemies = [
+        this.generateRandomNPC('Ennemi'),
+        this.generateRandomNPC('Ennemi')
+      ];
+    }
+    
+    // NE PAS supprimer les alliés/ennemis existants si l'avantage n'est plus sélectionné
+    // (garde l'historique du personnage)
+    
+    const saved = localStorage.getItem('myCharacters');
     let characters: Character[] = [];
     
     if (saved) {
@@ -1288,17 +1284,125 @@ export class CharacterService {
       }
     }
 
+    // Générer les alliés si l'avantage "Alliés" est présent
+    if (!character.allies || character.allies.length === 0) {
+      console.log('[CharacterService] Recherche avantage Alliés...');
+      console.log('[CharacterService] Avantages du personnage:', character.advantages);
+      console.log('[CharacterService] IDs avantages sélectionnés:', character.selectedAdvantages);
+      
+      // Chercher dans les avantages complets
+      let alliesAdvantage = character.advantages?.find(a => 
+        a.name.toLowerCase().includes('allié') || a.name.toLowerCase().includes('allies')
+      );
+      
+      // Si pas trouvé, chercher dans les IDs sélectionnés
+      if (!alliesAdvantage && character.selectedAdvantages) {
+        const hasAlliesId = character.selectedAdvantages.includes('allies');
+        if (hasAlliesId) {
+          console.log('[CharacterService] Avantage Alliés trouvé dans selectedAdvantages');
+          character.allies = this.generateAllies(2); // Générer 2 alliés
+        }
+      } else if (alliesAdvantage) {
+        console.log('[CharacterService] Avantage Alliés trouvé:', alliesAdvantage.name);
+        character.allies = this.generateAllies(2); // Générer 2 alliés
+      }
+    }
+
+    // Générer les ennemis si le désavantage "Ennemis" est présent
+    if (!character.enemies || character.enemies.length === 0) {
+      console.log('[CharacterService] Recherche désavantage Ennemis...');
+      console.log('[CharacterService] Désavantages du personnage:', character.disadvantages);
+      console.log('[CharacterService] IDs désavantages sélectionnés:', character.selectedDisadvantages);
+      
+      // Chercher dans les désavantages complets
+      let enemiesDisadvantage = character.disadvantages?.find(d => 
+        d.name.toLowerCase().includes('ennemi') || d.name.toLowerCase().includes('enemies')
+      );
+      
+      // Si pas trouvé, chercher dans les IDs sélectionnés
+      if (!enemiesDisadvantage && character.selectedDisadvantages) {
+        const hasEnemiesId = character.selectedDisadvantages.includes('enemies');
+        if (hasEnemiesId) {
+          console.log('[CharacterService] Désavantage Ennemis trouvé dans selectedDisadvantages');
+          character.enemies = this.generateEnemies(2); // Générer 2 ennemis
+        }
+      } else if (enemiesDisadvantage) {
+        console.log('[CharacterService] Désavantage Ennemis trouvé:', enemiesDisadvantage.name);
+        character.enemies = this.generateEnemies(2); // Générer 2 ennemis
+      }
+    }
+
+    // Initialiser totalExperiencePoints si non défini
+    if (!character.totalExperiencePoints) {
+      character.totalExperiencePoints = character.experiencePoints + character.spentExperiencePoints;
+    }
+
+    // Générer un ID unique si le personnage n'en a pas encore
+    if (!character.id) {
+      character.id = Date.now().toString();
+      console.log('[CharacterService] Nouveau personnage, ID généré:', character.id);
+    }
+
     // Ajouter ou mettre à jour le personnage
     const existingIndex = characters.findIndex(c => c.id === character.id);
     if (existingIndex >= 0) {
+      console.log('[CharacterService] Mise à jour du personnage existant à l\'index', existingIndex);
       characters[existingIndex] = character;
     } else {
-      character.id = Date.now().toString();
+      console.log('[CharacterService] Ajout d\'un nouveau personnage');
       characters.push(character);
     }
 
-    localStorage.setItem('l5a-characters', JSON.stringify(characters));
+    localStorage.setItem('myCharacters', JSON.stringify(characters));
     return character;
+  }
+
+  private generateAllies(count: number): NPC[] {
+    const allies: NPC[] = [];
+    const clans = ['Crabe', 'Grue', 'Dragon', 'Lion', 'Phénix', 'Scorpion', 'Licorne'];
+    const relationships = [
+      'Ami d\'enfance qui a toujours été présent',
+      'Ancien camarade d\'école devenu confident',
+      'Membre de la famille éloignée mais loyal',
+      'Compagnon de voyage de confiance',
+      'Mentor qui continue à offrir ses conseils'
+    ];
+
+    for (let i = 0; i < count; i++) {
+      const clan = clans[Math.floor(Math.random() * clans.length)];
+      allies.push({
+        name: `Allié ${i + 1}`,
+        clan: clan,
+        relationship: 'Allié',
+        description: relationships[Math.floor(Math.random() * relationships.length)]
+      });
+    }
+
+    return allies;
+  }
+
+  private generateEnemies(count: number): NPC[] {
+    const enemies: NPC[] = [];
+    const clans = ['Crabe', 'Grue', 'Dragon', 'Lion', 'Phénix', 'Scorpion', 'Licorne'];
+    const relationships = [
+      'Rival jaloux qui cherche à nuire à votre réputation',
+      'Ancien ami devenu ennemi après une trahison',
+      'Membre d\'un clan rival avec une vendetta personnelle',
+      'Criminel que vous avez dénoncé',
+      'Courtisan offensé par vos actions passées'
+    ];
+
+    for (let i = 0; i < count; i++) {
+      const clan = clans[Math.floor(Math.random() * clans.length)];
+      enemies.push({
+        name: `Ennemi ${i + 1}`,
+        clan: clan,
+        relationship: 'Ennemi',
+        description: relationships[Math.floor(Math.random() * relationships.length)]
+      });
+    }
+
+    return enemies;
   }
 
   // Méthodes pour les techniques de clan et kata

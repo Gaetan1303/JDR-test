@@ -792,9 +792,7 @@
           <div *ngIf="canUseMaho()" class="maho-spells-section">
             <mat-divider></mat-divider>
             <h3 class="maho-warning">
-              <mat-icon color="warn">warning</mat-icon>
-              Sorts Maho (Magie de Sang)
-              <mat-icon color="warn">warning</mat-icon>
+              ⚠️ Sorts Maho (Magie de Sang) ⚠️
             </h3>
             <p class="maho-description">
               <strong>ATTENTION :</strong> Les sorts Maho sont interdits dans tout l'Empire. 
@@ -810,8 +808,7 @@
                 [class.spell-selected]="isMahoSelected(spell.name)">
                 <mat-card-header>
                   <mat-card-title>
-                    <mat-icon class="maho-icon">skull</mat-icon>
-                    {{ spell.name }}
+                    💀 {{ spell.name }}
                     <span *ngIf="isMahoSelected(spell.name)" class="selected-badge">Sélectionné</span>
                   </mat-card-title>
                   <mat-card-subtitle>
@@ -1170,9 +1167,7 @@
           <!-- Sorts Maho (si Maho-Tsukai) -->
           <div class="summary-section maho-summary" *ngIf="getSelectedMahoCount() > 0">
             <h3 class="maho-warning">
-              <mat-icon color="warn">warning</mat-icon>
-              Sorts Maho (INTERDIT)
-              <mat-icon color="warn">warning</mat-icon>
+              ⚠️ Sorts Maho (INTERDIT) ⚠️
             </h3>
             <p class="maho-alert">
               <strong>⚠️ DANGER :</strong> Vous pratiquez la magie noire interdite. 

@@ -159,8 +159,9 @@ export interface Character {
   selectedDisadvantages: string[]; // IDs des désavantages sélectionnés
   
   // Points d'expérience
-  experiencePoints: number;
-  spentExperiencePoints: number;
+  experiencePoints: number; // XP disponibles
+  spentExperiencePoints: number; // XP dépensés
+  totalExperiencePoints?: number; // XP total gagnés (incluant les dépensés)
   
   // Statistiques dérivées
   insight: number;
@@ -198,6 +199,9 @@ export interface Character {
   objective: string;
   personality: string;
   background: string;
+  
+  // Notes du joueur
+  notes?: string; // Notes personnelles du joueur sur son personnage
 }
 
 export interface CharacterCreationStep {

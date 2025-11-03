@@ -1,6 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -71,10 +71,27 @@ import { Character, Equipment } from '../models/character.model';
                 <h4>Sorts</h4>
                 <p>{{ character.spells.length }} sorts connus</p>
               </div>
+
+              <div class="allies-summary" *ngIf="character.allies?.length">
+                <h4>Alliés</h4>
+                <p *ngFor="let ally of character.allies" class="npc-item">
+                  <strong>{{ ally.name }}</strong> ({{ ally.clan }})<br>
+                  <span class="npc-desc">{{ ally.description }}</span>
+                </p>
+              </div>
+
+              <div class="enemies-summary" *ngIf="character.enemies?.length">
+                <h4>Ennemis</h4>
+                <p *ngFor="let enemy of character.enemies" class="npc-item">
+                  <strong>{{ enemy.name }}</strong> ({{ enemy.clan }})<br>
+                  <span class="npc-desc">{{ enemy.description }}</span>
+                </p>
+              </div>
             </div>
           </mat-card-content>
           
           <mat-card-actions>
+            <button mat-button [routerLink]="['/character-sheet', character.id]">Voir la fiche</button>
             <button mat-button (click)="loadCharacter(character)">Modifier</button>
             <button mat-button (click)="duplicateCharacter(character)">Dupliquer</button>
             <button mat-button color="warn" (click)="deleteCharacter(character)">Supprimer</button>
@@ -160,8 +177,40 @@ import { Character, Equipment } from '../models/character.model';
     }
 
     .equipment-summary p,
-    .spells-summary p {
+    .spells-summary p,
+    .allies-summary p,
+    .enemies-summary p {
       margin: 8px 0;
+    }
+
+    .allies-summary h4 {
+      color: #4caf50 !important;
+    }
+
+    .enemies-summary h4 {
+      color: #f44336 !important;
+    }
+
+    .npc-item {
+      padding: 8px;
+      margin: 4px 0;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 4px;
+      border-left: 3px solid #ddd;
+    }
+
+    .allies-summary .npc-item {
+      border-left-color: #4caf50;
+    }
+
+    .enemies-summary .npc-item {
+      border-left-color: #f44336;
+    }
+
+    .npc-desc {
+      font-size: 0.9em;
+      font-style: italic;
+      color: #666;
     }
 
     .empty-state {
@@ -215,8 +264,9 @@ import { Character, Equipment } from '../models/character.model';
     }
   `]
 })
-export class Characters {
+export class Characters implements OnInit {
   characterService = inject(CharacterService);
+  private router = inject(Router);
   
   // Signal pour les personnages sauvegardés
   savedCharacters = signal<Character[]>([]);
@@ -241,7 +291,7 @@ export class Characters {
   loadCharacter(character: Character) {
     // Charger le personnage dans le service et rediriger vers l'éditeur
     this.characterService.loadCharacter(character);
-    // Redirection vers l'éditeur (à implémenter)
+    this.router.navigate(['/character-creator']);
   }
 
   duplicateCharacter(character: Character) {
@@ -266,6 +316,16 @@ export class Characters {
 
   private saveCharacters() {
     localStorage.setItem('myCharacters', JSON.stringify(this.savedCharacters()));
+  }
+
+  debugCharacter(character: Character) {
+    console.log('[DEBUG] Personnage:', character.name);
+    console.log('[DEBUG] ID:', character.id);
+    console.log('[DEBUG] Type ID:', typeof character.id);
+    console.log('[DEBUG] Clan:', character.clan);
+    console.log('[DEBUG] Ecole:', character.school);
+    console.log('[DEBUG] URL serait:', `/character-sheet/${character.id}`);
+    alert(`DEBUG:\nNom: ${character.name}\nID: ${character.id}\nType: ${typeof character.id}`);
   }
 
   getAvailableXP(character: Character): number {
