@@ -482,26 +482,30 @@ import { KIHO } from '../data/kiho.data';
           <div class="techniques-list">
             @for (spell of spellsArray(); track spell) {
               <div class="technique-item spell-item">
-                <div class="spell-title">
+                <div class="spell-content">
                   <span class="spell-name">{{ spell }}</span>
-                  <span class="spell-badges">
-                    <span class="mini-badge element" [ngClass]="'element-' + getSpellElement(spell).toLowerCase()">{{ getSpellElement(spell) }}</span>
+                  <div class="spell-badges">
+                    <span class="mini-badge element" [ngClass]="'element-' + getSpellElement(spell).toLowerCase()">
+                      {{ getSpellElement(spell) }}
+                    </span>
                     <span class="mini-badge mastery">Rang {{ getSpellMastery(spell) }}</span>
                     @if (getSpellElement(spell) === 'Maho') {
                       <span class="mini-badge maho">MAHO</span>
                     }
-                  </span>
+                  </div>
                 </div>
               </div>
             }
             @for (kiho of kihoArray(); track kiho) {
               <div class="technique-item kiho-item">
-                <div class="spell-title">
+                <div class="spell-content">
                   <span class="spell-name">{{ kiho }}</span>
-                  <span class="spell-badges">
-                    <span class="mini-badge element" [ngClass]="'element-' + getKihoElement(kiho).toLowerCase()">{{ getKihoElement(kiho) }}</span>
-                    <span class="mini-badge mastery">Type: {{ getKihoType(kiho) }}</span>
-                  </span>
+                  <div class="spell-badges">
+                    <span class="mini-badge element" [ngClass]="'element-' + getKihoElement(kiho).toLowerCase()">
+                      {{ getKihoElement(kiho) }}
+                    </span>
+                    <span class="mini-badge mastery">{{ getKihoType(kiho) }}</span>
+                  </div>
                 </div>
               </div>
             }
@@ -722,89 +726,148 @@ import { KIHO } from '../data/kiho.data';
     </mat-tab>    <!-- Onglet: Équipement Détaillé -->
     <mat-tab label="Équipement">
       <div class="tab-content equipment-tab">
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>
-              Arsenal et Équipement
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="money-section">
-              <h3>Richesses</h3>
-              <div class="money-display">
-                <div class="coin-item">
-                  <strong>Koku:</strong> {{ character()?.equipment?.koku || 0 }}
-                </div>
-              </div>
+        <!-- Richesses et Poids -->
+        <div class="inventory-header">
+          <div class="wealth-display">
+            <div class="wealth-icon">💰</div>
+            <div class="wealth-info">
+              <label>Richesses</label>
+              <span class="koku-amount">{{ character()?.equipment?.koku || 0 }} Koku</span>
             </div>
+          </div>
+          <div class="weight-display">
+            <div class="weight-icon">⚖</div>
+            <div class="weight-info">
+              <label>Charge</label>
+              <span class="weight-amount">{{ getTotalWeight() }} / {{ getMaxWeight() }}</span>
+            </div>
+          </div>
+        </div>
 
-            <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-            <div class="weapons-section">
-              <h3>Armes ({{ weaponsArray().length }})</h3>
-              <div class="equipment-list">
-                @for (weapon of weaponsArray(); track weapon.name) {
-                  <div class="equipment-card">
-                    <h4>{{ weapon.name }}</h4>
-                    <div class="item-stats">
-                      @if (weapon.damage) { <span><strong>Dégâts:</strong> {{ weapon.damage }}</span> }
-                      @if (weapon.reach) { <span><strong>Portée:</strong> {{ weapon.reach }}</span> }
-                      @if (weapon.TN) { <span><strong>TN:</strong> {{ weapon.TN }}</span> }
-                    </div>
-                    <p class="item-description">{{ weapon.description }}</p>
-                    @if (weapon.special) {
-                      <p class="item-special"><em>{{ weapon.special }}</em></p>
+        <!-- Armes -->
+        <div class="equipment-category weapons-category">
+          <h3>
+            <span class="category-icon">⚔</span>
+            Armes ({{ weaponsArray().length }})
+          </h3>
+          <div class="equipment-grid">
+            @for (weapon of weaponsArray(); track weapon.name) {
+              <div class="equipment-item weapon-item">
+                <div class="item-header">
+                  <span class="item-name">{{ weapon.name }}</span>
+                  <div class="item-badges">
+                    @if (weapon.category) {
+                      <span class="item-badge type-badge">{{ weapon.category }}</span>
+                    }
+                    @if (weapon.damage) {
+                      <span class="item-badge damage-badge">{{ weapon.damage }}</span>
                     }
                   </div>
-                }
-                @if (weaponsArray().length === 0) {
-                  <p class="no-items">Aucune arme</p>
-                }
-              </div>
-            </div>
-
-            <mat-divider></mat-divider>
-
-            <div class="armor-section">
-              <h3>Armure</h3>
-              <div class="equipment-list">
-                @if (character()?.equipment?.armor) {
-                  <div class="equipment-card">
-                    <h4>{{ getArmorName(character()!.equipment!.armor!) }}</h4>
-                    <div class="item-stats">
-                      <span><strong>Réduction:</strong> {{ getArmorReduction(character()!.equipment!.armor!) }}</span>
-                    </div>
-                    <p class="item-description">{{ getArmorDescription(character()!.equipment!.armor!) }}</p>
-                  </div>
-                } @else {
-                  <p class="no-items">Aucune armure</p>
-                }
-              </div>
-            </div>
-
-            <mat-divider></mat-divider>
-
-            <div class="items-section">
-              <h3>Objets & Outils ({{ itemsArray().length }})</h3>
-              <div class="equipment-list">
-                @for (item of itemsArray(); track item.name) {
-                  <div class="equipment-card">
-                    <h4>{{ item.name }}</h4>
-                    @if (item.cost) {
-                      <div class="item-stats">
-                        <span><strong>Valeur:</strong> {{ item.cost }}</span>
+                </div>
+                <div class="item-body">
+                  <div class="item-stats-row">
+                    @if (weapon.reach) {
+                      <div class="stat-chip">
+                        <span class="stat-label">Portée</span>
+                        <span class="stat-value">{{ weapon.reach }}</span>
                       </div>
                     }
-                    <p class="item-description">{{ item.description }}</p>
+                    @if (weapon.TN) {
+                      <div class="stat-chip">
+                        <span class="stat-label">TN</span>
+                        <span class="stat-value">{{ weapon.TN }}</span>
+                      </div>
+                    }
                   </div>
-                }
-                @if (itemsArray().length === 0) {
-                  <p class="no-items">Aucun objet</p>
-                }
+                  <p class="item-description">{{ weapon.description }}</p>
+                  @if (weapon.special) {
+                    <div class="item-special">
+                      <span class="special-label">Spécial:</span>
+                      {{ weapon.special }}
+                    </div>
+                  }
+                </div>
               </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+            }
+            @if (weaponsArray().length === 0) {
+              <div class="empty-slot">
+                <p>Aucune arme équipée</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Armure -->
+        <div class="equipment-category armor-category">
+          <h3>
+            <span class="category-icon">🛡</span>
+            Armure
+          </h3>
+          <div class="equipment-grid">
+            @if (character()?.equipment?.armor && getArmorName(character()!.equipment!.armor!) !== 'Aucune') {
+              <div class="equipment-item armor-item">
+                <div class="item-header">
+                  <span class="item-name">{{ getArmorName(character()!.equipment!.armor!) }}</span>
+                  <div class="item-badges">
+                    <span class="item-badge armor-badge">Protection: {{ getArmorReduction(character()!.equipment!.armor!) }}</span>
+                  </div>
+                </div>
+                <div class="item-body">
+                  <p class="item-description">{{ getArmorDescription(character()!.equipment!.armor!) }}</p>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-slot">
+                <p>Aucune armure portée</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Inventaire d'objets -->
+        <div class="equipment-category items-category">
+          <h3>
+            <span class="category-icon">🎒</span>
+            Inventaire ({{ itemsArray().length }})
+          </h3>
+          <div class="equipment-grid inventory-grid">
+            @for (item of itemsArray(); track $index) {
+              <div class="equipment-item inventory-item">
+                <div class="item-header">
+                  <span class="item-name">{{ item.name }}</span>
+                  <div class="item-badges">
+                    @if (item.type) {
+                      <span class="item-badge type-badge">{{ getItemTypeLabel(item.type) }}</span>
+                    }
+                    @if (item.cost) {
+                      <span class="item-badge cost-badge">{{ item.cost }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="item-body">
+                  <p class="item-description">{{ item.description }}</p>
+                  @if (item.special) {
+                    <div class="item-special">
+                      <span class="special-label">Spécial:</span>
+                      {{ item.special }}
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+            @if (itemsArray().length === 0) {
+              <div class="empty-slot">
+                <p>Inventaire vide</p>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     </mat-tab>
 
@@ -1443,6 +1506,36 @@ export class CharacterSheet implements OnInit {
 
   getKihoDescription(name: string): string {
     return KIHO.find(k => k.name === name)?.description || '';
+  }
+
+  // Helpers pour équipement
+  getItemTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      'weapon': 'Arme',
+      'armor': 'Armure',
+      'item': 'Objet',
+      'tool': 'Outil',
+      'clothing': 'Vêtement'
+    };
+    return labels[type] || type;
+  }
+
+  getTotalWeight(): number {
+    // Calcul simplifié du poids total (peut être étendu)
+    const char = this.character();
+    if (!char?.equipment) return 0;
+    
+    let weight = 0;
+    weight += (char.equipment.weapons?.length || 0) * 2;
+    weight += char.equipment.items?.length || 0;
+    return weight;
+  }
+
+  getMaxWeight(): number {
+    // Capacité basée sur Force * 5
+    const char = this.character();
+    if (!char?.traits) return 10;
+    return (char.traits.force || 2) * 5;
   }
 
   getArmorName(armor: Equipment | Equipment[] | undefined): string {
