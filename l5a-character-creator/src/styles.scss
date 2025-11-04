@@ -35,7 +35,6 @@ body {
     #1a1a2e 100%
   );
   background-attachment: fixed;
-  color: #e8d5b7;
   font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
   position: relative;
@@ -187,6 +186,22 @@ mat-form-field {
 
 /* You can add global styles to this file, and also import other style files */
 
+// Tooltips personnalisés pour les compétences
+::ng-deep .skill-tooltip {
+  background: rgba(40, 26, 16, 0.98) !important;
+  border: 2px solid #d4af37 !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  font-size: 0.95em !important;
+  max-width: 350px !important;
+  line-height: 1.6 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+  
+  &.warning {
+    border-color: #f44336 !important;
+    background: rgba(60, 20, 20, 0.98) !important;
+  }
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif; }
-

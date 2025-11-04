@@ -7,6 +7,7 @@ import { Library } from './library/library';
 import { Login } from './auth/login';
 import { Register } from './auth/register';
 import { Multiplayer } from './multiplayer/multiplayer';
+import { PlayCharacter } from './play-character/play-character';
 
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'multiplayer', component: Multiplayer },
+  { path: 'play-character', component: PlayCharacter },
   // Placeholders pour les futures pages
   { path: 'campaigns', redirectTo: '/dashboard' },
   { path: 'game-master', redirectTo: '/dashboard' }

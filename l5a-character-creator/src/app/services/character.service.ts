@@ -1746,4 +1746,41 @@ export class CharacterService {
     if (insight < 225) return 4;
     return 5;
   }
+
+  /**
+   * Récupère tous les personnages sauvegardés depuis localStorage
+   */
+  getAllCharacters(): Character[] {
+    const saved = localStorage.getItem('myCharacters');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (error) {
+        console.error('Erreur lors du chargement des personnages:', error);
+        return [];
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Met à jour un personnage existant dans localStorage
+   */
+  updateCharacter(character: Character): void {
+    if (!character.id) {
+      console.error('Impossible de mettre à jour un personnage sans ID');
+      return;
+    }
+
+    const characters = this.getAllCharacters();
+    const index = characters.findIndex(c => c.id === character.id);
+    
+    if (index >= 0) {
+      characters[index] = character;
+      localStorage.setItem('myCharacters', JSON.stringify(characters));
+      console.log('[CharacterService] Personnage mis à jour:', character.name);
+    } else {
+      console.error('[CharacterService] Personnage non trouvé pour mise à jour:', character.id);
+    }
+  }
 }

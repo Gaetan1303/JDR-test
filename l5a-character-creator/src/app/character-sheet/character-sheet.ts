@@ -1,4 +1,5 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -8,7 +9,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { Character, Equipment, NPC } from '../models/character.model';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Character, Equipment, NPC, Traits } from '../models/character.model';
 import { CharacterService } from '../services/character.service';
 import { ADVANTAGES, DISADVANTAGES } from '../data/advantages-disadvantages.data';
 import { SPELLS } from '../data/spells.data';
@@ -27,11 +29,13 @@ import { KIHO } from '../data/kiho.data';
     MatTabsModule,
     MatChipsModule,
     MatDividerModule,
-    MatListModule
-  ],
+    MatListModule,
+    MatTooltipModule
+],
   styleUrl: './character-sheet.scss',
   template: `
-    <div class="character-sheet-container" *ngIf="character()">
+    @if (character()) {
+      <div class="character-sheet-container">
       <div class="sheet-header">
         <button mat-raised-button routerLink="/characters" class="back-button">
           ← Retour
@@ -52,7 +56,8 @@ import { KIHO } from '../data/kiho.data';
       </div>
 
       <!-- Dialog pour ajouter de l'XP -->
-      <div class="xp-dialog-overlay" *ngIf="showXpDialog" (click)="showXpDialog = false">
+      @if (showXpDialog) {
+        <div class="xp-dialog-overlay" (click)="showXpDialog = false">
         <div class="xp-dialog" (click)="$event.stopPropagation()">
           <h2>Ajouter de l'Expérience</h2>
           <p>Session de jeu terminée ? Ajoutez les XP gagnés !</p>
@@ -65,7 +70,8 @@ import { KIHO } from '../data/kiho.data';
             <button mat-raised-button color="primary" (click)="addExperience()">Ajouter</button>
           </div>
         </div>
-      </div>
+        </div>
+      }
 
       <mat-tab-group class="character-tabs" animationDuration="300ms">
         <!-- Onglet: Fiche Officielle -->
@@ -152,11 +158,9 @@ import { KIHO } from '../data/kiho.data';
               <div class="void-points-display">
                 <label>Points de Vide</label>
                 <div class="points-boxes">
-                  <div class="point-box" 
-                       *ngFor="let point of getVoidPointsArray()" 
-                       [class.filled]="true">
-                    ⚫
-                  </div>
+                  @for (point of getVoidPointsArray(); track $index) {
+                    <div class="point-box filled"></div>
+                  }
                 </div>
               </div>
             </div>
@@ -202,36 +206,112 @@ import { KIHO } from '../data/kiho.data';
         </div>
 
         <div class="skills-section">
-          <h3>COMPÉTENCES NOBLES</h3>
-          <div class="skills-list">
-            <div class="skill-item" *ngFor="let skill of getNobleSkills()">
-              <span class="skill-name">{{ skill.name }}</span>
-              <div class="skill-boxes">
-                <div class="skill-box" *ngFor="let rank of [1,2,3,4,5,6,7,8,9,10]" 
-                     [class.filled]="rank <= skill.rank"></div>
-              </div>
+          <!-- Compétences d'École / Clan (prioritaires) -->
+          <div class="skills-category school-skills">
+            <h3>COMPÉTENCES D'ÉCOLE ET DE CLAN</h3>
+            <p class="category-info">Compétences héritées de votre école et de votre famille</p>
+            <div class="skills-list">
+              @for (skill of schoolAndClanSkills(); track skill.name) {
+                <div class="skill-item school-skill">
+                  <span class="skill-name">{{ skill.name }}</span>
+                  <div class="skill-boxes">
+                    @for (rank of [1,2,3,4,5,6,7,8,9,10]; track rank) {
+                      <div class="skill-box" [class.filled]="rank <= skill.rank"></div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
           </div>
 
-          <h3>COMPÉTENCES MARCHANDS</h3>
-          <div class="skills-list">
-            <div class="skill-item" *ngFor="let skill of getMerchantSkills()">
-              <span class="skill-name">{{ skill.name }}</span>
-              <div class="skill-boxes">
-                <div class="skill-box" *ngFor="let rank of [1,2,3,4,5,6,7,8,9,10]" 
-                     [class.filled]="rank <= skill.rank"></div>
-              </div>
+          <!-- Compétences développées (rang > 0) -->
+          <div class="skills-category developed-skills">
+            <h3>COMPÉTENCES DÉVELOPPÉES</h3>
+            <p class="category-info">Compétences que vous avez améliorées durant votre formation</p>
+            <div class="skills-list">
+              @for (skill of developedSkills(); track skill.name) {
+                <div class="skill-item developed-skill">
+                  <span class="skill-name">{{ skill.name }}</span>
+                  <div class="skill-boxes">
+                    @for (rank of [1,2,3,4,5,6,7,8,9,10]; track rank) {
+                      <div class="skill-box" [class.filled]="rank <= skill.rank"></div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
           </div>
 
-          <h3>BUGEI (COMPÉTENCES MARTIALES)</h3>
-          <div class="skills-list">
-            <div class="skill-item" *ngFor="let skill of getBugeiSkills()">
-              <span class="skill-name">{{ skill.name }}</span>
-              <div class="skill-boxes">
-                <div class="skill-box" *ngFor="let rank of [1,2,3,4,5,6,7,8,9,10]" 
-                     [class.filled]="rank <= skill.rank"></div>
+          <!-- Compétences Innées (compétences de base) -->
+          <div class="skills-category innate-skills-group">
+            <h3>COMPÉTENCES INNÉES (DE BASE)</h3>
+            <p class="category-info">Compétences utilisables sans formation préalable (rang 0)</p>
+            
+            <div class="innate-skills-section">
+              <div class="innate-category">
+                <h4>Compétences Nobles et Bugei (sans perte d'honneur)</h4>
+                <p class="category-description">Ces compétences peuvent être utilisées sans rang par un samouraï sans déshonneur :</p>
+                <div class="innate-skills-list">
+                  <span class="innate-skill noble" 
+                        matTooltip="Défense : Compétence permettant d'évaluer les défenses d'un lieu ou d'une position stratégique. Exemple : Un samouraï examine les fortifications d'un château ennemi pour identifier les points faibles avant un siège."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip">
+                    Défense
+                  </span>
+                  <span class="innate-skill noble"
+                        matTooltip="Divination : Art d'interpréter les signes du destin et de prédire l'avenir par diverses méthodes. Exemple : Avant une bataille importante, un samouraï consulte les bâtons de divination pour déterminer le moment propice d'attaquer."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip">
+                    Divination
+                  </span>
+                  <span class="innate-skill noble"
+                        matTooltip="Jeux : Connaissance des jeux de stratégie comme le go ou le shogi, considérés comme nobles et intellectuels. Exemple : Un courtisan défie un rival politique à une partie de go pour démontrer sa supériorité tactique sans violence."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip">
+                    Jeux
+                  </span>
+                  <span class="innate-skill noble"
+                        matTooltip="Médecine : Capacité à diagnostiquer et soigner les blessures et maladies, art noble de préserver la vie. Exemple : Après un duel, un samouraï soigne les blessures de son adversaire vaincu pour préserver son honneur et sa vie."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip">
+                    Médecine
+                  </span>
+                  <span class="innate-skill noble"
+                        matTooltip="Connaissance : Savoirs intellectuels sur divers sujets (histoire, théologie, loi, nature, etc.). Exemple : Un magistrat se souvient d'un précédent juridique ancien pour résoudre un litige complexe entre deux clans."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip">
+                    Connaissance (toutes)
+                  </span>
+                </div>
               </div>
+
+              <div class="innate-category degrading">
+                <h4>Compétences Marchandes (dégradantes - perte d'honneur)</h4>
+                <p class="category-description">Ces compétences peuvent être utilisées sans rang, mais causent une perte d'honneur pour un samouraï :</p>
+                <div class="innate-skills-list">
+                  <span class="innate-skill merchant"
+                        matTooltip="Artisanat : Création d'objets par le travail manuel, considéré comme indigne d'un samouraï. Exemple : Un ronin affamé fabrique des sandales de paille pour les vendre au marché, perdant son honneur mais gagnant de quoi manger. Perte d'honneur si découvert."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip warning">
+                    Artisanat (tous)
+                  </span>
+                  <span class="innate-skill merchant"
+                        matTooltip="Commerce : Négociation et vente de biens, activité méprisée par la caste des samouraïs. Exemple : Un samouraï déshonoré marchande le prix d'une armure au marché noir, trahissant les principes du bushido. Perte d'honneur garantie."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip warning">
+                    Commerce
+                  </span>
+                  <span class="innate-skill merchant"
+                        matTooltip="Navigation : Pilotage de navires, métier de marin souvent associé aux marchands. Exemple : Un samouraï en mission secrète doit naviguer lui-même pour éviter d'être reconnu, risquant son honneur si sa famille l'apprend. Perte d'honneur selon le contexte."
+                        matTooltipPosition="above"
+                        matTooltipClass="skill-tooltip warning">
+                    Navigation (selon le contexte)
+                  </span>
+                </div>
+                <p class="warning-note">Attention : Utiliser ces compétences peut entraîner une perte d'honneur selon le contexte social.</p>
+              </div>
+
+              <p class="innate-note">Les compétences innées peuvent être tentées même avec un rang 0, en utilisant uniquement le trait associé.</p>
             </div>
           </div>
         </div>
@@ -243,43 +323,45 @@ import { KIHO } from '../data/kiho.data';
               <div class="wound-level">
                 <span>Indemne (+0)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('healthy')"></div>
+                  @for (box of getWoundBoxes('healthy'); track $index) {
+                    <div class="wound-box"></div>
+                  }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Égratigné (+3)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('nicked')"></div>
+                  @for (box of getWoundBoxes('nicked'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Blessé (+5)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('grazed')"></div>
+                  @for (box of getWoundBoxes('grazed'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Grièvement Blessé (+10)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('hurt')"></div>
+                  @for (box of getWoundBoxes('hurt'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Estropié (+15)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('injured')"></div>
+                  @for (box of getWoundBoxes('injured'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Handicapé (+20)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('crippled')"></div>
+                  @for (box of getWoundBoxes('crippled'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
               <div class="wound-level">
                 <span>Mourant (+40)</span>
                 <div class="wound-boxes">
-                  <div class="wound-box" *ngFor="let box of getWoundBoxes('down')"></div>
+                  @for (box of getWoundBoxes('down'); track $index) { <div class="wound-box"></div> }
                 </div>
               </div>
             </div>
@@ -310,45 +392,53 @@ import { KIHO } from '../data/kiho.data';
         </div>
 
         <div class="equipment-list">
-          <div class="equipment-item" *ngFor="let item of getAllEquipment()">
-            {{ item.name }}
-          </div>
+          @for (item of getAllEquipment(); track item.name) {
+            <div class="equipment-item">{{ item.name }}</div>
+          }
         </div>
 
         <div class="arsenal-section">
           <h3>ARSENAL</h3>
           <div class="weapons-list">
-            <div class="weapon-item" *ngFor="let weapon of character()?.equipment?.weapons">
-              <span class="weapon-name">{{ weapon.name }}</span>
-              <span class="weapon-damage">{{ weapon.damage }}</span>
-            </div>
+            @for (weapon of weaponsArray(); track weapon.name) {
+              <div class="weapon-item">
+                <span class="weapon-name">{{ weapon.name }}</span>
+                <span class="weapon-damage">{{ weapon.damage }}</span>
+              </div>
+            }
           </div>
 
-          <div class="armor-info" *ngIf="character()?.equipment?.armor">
-            <h4>Armure</h4>
-            <p>{{ getArmorName(character()?.equipment?.armor) }}</p>
-            <p>Réduction: {{ getArmorReduction(character()?.equipment?.armor) }}</p>
-          </div>
+          @if (character()?.equipment?.armor) {
+            <div class="armor-info">
+              <h4>Armure</h4>
+              <p>{{ getArmorName(character()?.equipment?.armor) }}</p>
+              <p>Réduction: {{ getArmorReduction(character()?.equipment?.armor) }}</p>
+            </div>
+          }
         </div>
 
         <div class="advantages-disadvantages">
           <div class="advantages-section">
             <h3>AVANTAGES</h3>
             <div class="adv-list">
-              <div class="adv-item" *ngFor="let advId of character()?.selectedAdvantages">
-                <span class="adv-name">{{ getAdvantageName(advId) }}</span>
-                <span class="adv-cost">{{ getAdvantageCost(advId) }} XP</span>
-              </div>
+              @for (advId of advantagesArray(); track advId) {
+                <div class="adv-item">
+                  <span class="adv-name">{{ getAdvantageName(advId) }}</span>
+                  <span class="adv-cost">{{ getAdvantageCost(advId) }} XP</span>
+                </div>
+              }
             </div>
           </div>
 
           <div class="disadvantages-section">
             <h3>DÉSAVANTAGES</h3>
             <div class="dis-list">
-              <div class="dis-item" *ngFor="let disId of character()?.selectedDisadvantages">
-                <span class="dis-name">{{ getDisadvantageName(disId) }}</span>
-                <span class="dis-gain">+{{ getDisadvantageGain(disId) }} XP</span>
-              </div>
+              @for (disId of disadvantagesArray(); track disId) {
+                <div class="dis-item">
+                  <span class="dis-name">{{ getDisadvantageName(disId) }}</span>
+                  <span class="dis-gain">+{{ getDisadvantageGain(disId) }} XP</span>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -357,45 +447,64 @@ import { KIHO } from '../data/kiho.data';
           <div class="stat-track">
             <label>GLOIRE</label>
             <div class="track-boxes">
-              <div class="track-box" *ngFor="let box of [1,2,3,4,5,6,7,8,9,10]" 
-                   [class.filled]="box <= (character()?.glory || 1)"></div>
+              @for (box of [1,2,3,4,5,6,7,8,9,10]; track box) { <div class="track-box" [class.filled]="box <= (character()?.glory || 1)"></div> }
             </div>
           </div>
 
           <div class="stat-track">
             <label>HONNEUR</label>
             <div class="track-boxes">
-              <div class="track-box" *ngFor="let box of [1,2,3,4,5,6,7,8,9,10]" 
-                   [class.filled]="box <= (character()?.honor || 5.5)"></div>
+              @for (box of [1,2,3,4,5,6,7,8,9,10]; track box) { <div class="track-box" [class.filled]="box <= (character()?.honor || 5.5)"></div> }
             </div>
           </div>
 
           <div class="stat-track">
             <label>STATUT</label>
             <div class="track-boxes">
-              <div class="track-box" *ngFor="let box of [1,2,3,4,5,6,7,8,9,10]" 
-                   [class.filled]="box <= (character()?.status || 1)"></div>
+              @for (box of [1,2,3,4,5,6,7,8,9,10]; track box) { <div class="track-box" [class.filled]="box <= (character()?.status || 1)"></div> }
             </div>
           </div>
 
-          <div class="stat-track" *ngIf="character()?.taint && character()!.taint! > 0">
-            <label>SOUILLURE DE L'OUTREMONDE</label>
-            <div class="track-boxes taint">
-              <div class="track-box" *ngFor="let box of [1,2,3,4,5,6,7,8,9,10]" 
-                   [class.filled]="box <= (character()?.taint || 0)"></div>
+          @if (character()?.taint && character()!.taint! > 0) {
+            <div class="stat-track">
+              <label>SOUILLURE DE L'OUTREMONDE</label>
+              <div class="track-boxes taint">
+                @for (box of [1,2,3,4,5,6,7,8,9,10]; track box) {
+                  <div class="track-box" [class.filled]="box <= (character()?.taint || 0)"></div>
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         <div class="techniques-section">
           <h3>TECHNIQUES, SORTS, KATA, KIHO, POUVOIRS DE L'OUTREMONDE</h3>
           <div class="techniques-list">
-            <div class="technique-item" *ngFor="let spell of character()?.spells">
-              {{ spell }}
-            </div>
-            <div class="technique-item" *ngFor="let kiho of character()?.kiho">
-              {{ kiho }}
-            </div>
+            @for (spell of spellsArray(); track spell) {
+              <div class="technique-item spell-item">
+                <div class="spell-title">
+                  <span class="spell-name">{{ spell }}</span>
+                  <span class="spell-badges">
+                    <span class="mini-badge element" [ngClass]="'element-' + getSpellElement(spell).toLowerCase()">{{ getSpellElement(spell) }}</span>
+                    <span class="mini-badge mastery">Rang {{ getSpellMastery(spell) }}</span>
+                    @if (getSpellElement(spell) === 'Maho') {
+                      <span class="mini-badge maho">MAHO</span>
+                    }
+                  </span>
+                </div>
+              </div>
+            }
+            @for (kiho of kihoArray(); track kiho) {
+              <div class="technique-item kiho-item">
+                <div class="spell-title">
+                  <span class="spell-name">{{ kiho }}</span>
+                  <span class="spell-badges">
+                    <span class="mini-badge element" [ngClass]="'element-' + getKihoElement(kiho).toLowerCase()">{{ getKihoElement(kiho) }}</span>
+                    <span class="mini-badge mastery">Type: {{ getKihoType(kiho) }}</span>
+                  </span>
+                </div>
+              </div>
+            }
           </div>
         </div>
 
@@ -430,35 +539,44 @@ import { KIHO } from '../data/kiho.data';
                     color="primary" 
                     (click)="toggleEditMode()"
                     [title]="editMode ? 'Sauvegarder' : 'Modifier'">
-              {{ editMode ? '💾 Sauvegarder' : '✏️ Modifier' }}
+              {{ editMode ? 'Sauvegarder' : 'Modifier' }}
             </button>
           </mat-card-actions>
           <mat-card-content>
             <div class="background-section">
               <h3>Objectif</h3>
-              <textarea *ngIf="editMode" 
-                        [(ngModel)]="editableCharacter.objective"
-                        class="edit-textarea"
-                        rows="3"></textarea>
-              <p *ngIf="!editMode">{{ character()?.objective || 'Aucun objectif defini' }}</p>
+              @if (editMode) {
+                <textarea [(ngModel)]="editableCharacter.objective"
+                          class="edit-textarea"
+                          rows="3"></textarea>
+              }
+              @if (!editMode) {
+                <p>{{ character()?.objective || 'Aucun objectif defini' }}</p>
+              }
             </div>
             <mat-divider></mat-divider>
             <div class="background-section">
               <h3>Personnalite</h3>
-              <textarea *ngIf="editMode" 
-                        [(ngModel)]="editableCharacter.personality"
-                        class="edit-textarea"
-                        rows="4"></textarea>
-              <p *ngIf="!editMode">{{ character()?.personality || 'Aucune personnalite definie' }}</p>
+              @if (editMode) {
+                <textarea [(ngModel)]="editableCharacter.personality"
+                          class="edit-textarea"
+                          rows="4"></textarea>
+              }
+              @if (!editMode) {
+                <p>{{ character()?.personality || 'Aucune personnalite definie' }}</p>
+              }
             </div>
             <mat-divider></mat-divider>
             <div class="background-section">
               <h3>Histoire</h3>
-              <textarea *ngIf="editMode" 
-                        [(ngModel)]="editableCharacter.background"
-                        class="edit-textarea"
-                        rows="8"></textarea>
-              <p class="background-text" *ngIf="!editMode">{{ character()?.background || 'Aucune histoire definie' }}</p>
+              @if (editMode) {
+                <textarea [(ngModel)]="editableCharacter.background"
+                          class="edit-textarea"
+                          rows="8"></textarea>
+              }
+              @if (!editMode) {
+                <p class="background-text">{{ character()?.background || 'Aucune histoire definie' }}</p>
+              }
             </div>
             
             <mat-divider></mat-divider>
@@ -473,42 +591,62 @@ import { KIHO } from '../data/kiho.data';
                   +
                 </button>
               </h3>
-              <div class="npc-list" *ngIf="character()?.allies && character()!.allies!.length > 0">
-                <mat-card class="npc-card ally-card" *ngFor="let ally of character()?.allies; let i = index">
-                  <mat-card-header>
-                    <mat-card-title *ngIf="!editMode">{{ ally.name }}</mat-card-title>
-                    <input *ngIf="editMode" 
-                           [(ngModel)]="ally.name" 
-                           class="edit-input"
-                           placeholder="Nom de l'allié">
-                    <mat-card-subtitle *ngIf="!editMode">{{ ally.clan }} - {{ ally.school || 'Ecole inconnue' }}</mat-card-subtitle>
-                    <div *ngIf="editMode" class="edit-row">
-                      <input [(ngModel)]="ally.clan" class="edit-input" placeholder="Clan">
-                      <input [(ngModel)]="ally.school" class="edit-input" placeholder="École">
-                    </div>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <p><strong>Relation:</strong> {{ ally.relationship }}</p>
-                    <p class="npc-description" *ngIf="!editMode">{{ ally.description }}</p>
-                    <textarea *ngIf="editMode" 
-                              [(ngModel)]="ally.description"
-                              class="edit-textarea"
-                              rows="3"
-                              placeholder="Description de la relation"></textarea>
-                  </mat-card-content>
-                  <mat-card-actions *ngIf="editMode">
-                    <button mat-raised-button color="warn" (click)="removeNPC('allies', i)">
-                      🗑️ Supprimer
-                    </button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-              <p *ngIf="!character()?.allies || character()!.allies!.length === 0" class="no-items">
-                {{ editMode ? 'Aucun allié - Cliquez pour en ajouter' : 'Aucun allié pour le moment' }}
-              </p>
-              <button mat-raised-button *ngIf="editMode" (click)="addNPC('allies')" class="add-npc-btn">
-                + Ajouter un allié
-              </button>
+              @if (character()?.allies && character()!.allies!.length > 0) {
+                <div class="npc-list">
+                  @for (ally of alliesArray(); track ally; let i = $index) {
+                    <mat-card class="npc-card ally-card">
+                      <mat-card-header>
+                        @if (!editMode) {
+                          <mat-card-title>{{ ally.name }}</mat-card-title>
+                        }
+                        @if (editMode) {
+                          <input [(ngModel)]="ally.name" 
+                                 class="edit-input"
+                                 placeholder="Nom de l'allié">
+                        }
+                        @if (!editMode) {
+                          <mat-card-subtitle>{{ ally.clan }} - {{ ally.school || 'Ecole inconnue' }}</mat-card-subtitle>
+                        }
+                        @if (editMode) {
+                          <div class="edit-row">
+                            <input [(ngModel)]="ally.clan" class="edit-input" placeholder="Clan">
+                            <input [(ngModel)]="ally.school" class="edit-input" placeholder="École">
+                          </div>
+                        }
+                      </mat-card-header>
+                      <mat-card-content>
+                        <p><strong>Relation:</strong> {{ ally.relationship }}</p>
+                        @if (!editMode) {
+                          <p class="npc-description">{{ ally.description }}</p>
+                        }
+                        @if (editMode) {
+                          <textarea [(ngModel)]="ally.description"
+                                    class="edit-textarea"
+                                    rows="3"
+                                    placeholder="Description de la relation"></textarea>
+                        }
+                      </mat-card-content>
+                      @if (editMode) {
+                        <mat-card-actions>
+                          <button mat-raised-button color="warn" (click)="removeNPC('allies', i)">
+                            Supprimer
+                          </button>
+                        </mat-card-actions>
+                      }
+                    </mat-card>
+                  }
+                </div>
+              }
+              @if (!character()?.allies || character()!.allies!.length === 0) {
+                <p class="no-items">
+                  {{ editMode ? 'Aucun allié - Cliquez pour en ajouter' : 'Aucun allié pour le moment' }}
+                </p>
+              }
+              @if (editMode) {
+                <button mat-raised-button (click)="addNPC('allies')" class="add-npc-btn">
+                  + Ajouter un allié
+                </button>
+              }
             </div>
             
             <!-- Ennemis -->
@@ -521,42 +659,62 @@ import { KIHO } from '../data/kiho.data';
                   +
                 </button>
               </h3>
-              <div class="npc-list" *ngIf="character()?.enemies && character()!.enemies!.length > 0">
-                <mat-card class="npc-card enemy-card" *ngFor="let enemy of character()?.enemies; let i = index">
-                  <mat-card-header>
-                    <mat-card-title *ngIf="!editMode">{{ enemy.name }}</mat-card-title>
-                    <input *ngIf="editMode" 
-                           [(ngModel)]="enemy.name" 
-                           class="edit-input"
-                           placeholder="Nom de l'ennemi">
-                    <mat-card-subtitle *ngIf="!editMode">{{ enemy.clan }} - {{ enemy.school || 'Ecole inconnue' }}</mat-card-subtitle>
-                    <div *ngIf="editMode" class="edit-row">
-                      <input [(ngModel)]="enemy.clan" class="edit-input" placeholder="Clan">
-                      <input [(ngModel)]="enemy.school" class="edit-input" placeholder="École">
-                    </div>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <p><strong>Relation:</strong> {{ enemy.relationship }}</p>
-                    <p class="npc-description" *ngIf="!editMode">{{ enemy.description }}</p>
-                    <textarea *ngIf="editMode" 
-                              [(ngModel)]="enemy.description"
-                              class="edit-textarea"
-                              rows="3"
-                              placeholder="Description de la relation"></textarea>
-                  </mat-card-content>
-                  <mat-card-actions *ngIf="editMode">
-                    <button mat-raised-button color="warn" (click)="removeNPC('enemies', i)">
-                      🗑️ Supprimer
-                    </button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-              <p *ngIf="!character()?.enemies || character()!.enemies!.length === 0" class="no-items">
-                {{ editMode ? 'Aucun ennemi - Cliquez pour en ajouter' : 'Aucun ennemi pour le moment' }}
-              </p>
-              <button mat-raised-button *ngIf="editMode" (click)="addNPC('enemies')" class="add-npc-btn">
-                + Ajouter un ennemi
-              </button>
+              @if (character()?.enemies && character()!.enemies!.length > 0) {
+                <div class="npc-list">
+                  @for (enemy of enemiesArray(); track enemy; let i = $index) {
+                    <mat-card class="npc-card enemy-card">
+                      <mat-card-header>
+                        @if (!editMode) {
+                          <mat-card-title>{{ enemy.name }}</mat-card-title>
+                        }
+                        @if (editMode) {
+                          <input [(ngModel)]="enemy.name" 
+                                 class="edit-input"
+                                 placeholder="Nom de l'ennemi">
+                        }
+                        @if (!editMode) {
+                          <mat-card-subtitle>{{ enemy.clan }} - {{ enemy.school || 'Ecole inconnue' }}</mat-card-subtitle>
+                        }
+                        @if (editMode) {
+                          <div class="edit-row">
+                            <input [(ngModel)]="enemy.clan" class="edit-input" placeholder="Clan">
+                            <input [(ngModel)]="enemy.school" class="edit-input" placeholder="École">
+                          </div>
+                        }
+                      </mat-card-header>
+                      <mat-card-content>
+                        <p><strong>Relation:</strong> {{ enemy.relationship }}</p>
+                        @if (!editMode) {
+                          <p class="npc-description">{{ enemy.description }}</p>
+                        }
+                        @if (editMode) {
+                          <textarea [(ngModel)]="enemy.description"
+                                    class="edit-textarea"
+                                    rows="3"
+                                    placeholder="Description de la relation"></textarea>
+                        }
+                      </mat-card-content>
+                      @if (editMode) {
+                        <mat-card-actions>
+                          <button mat-raised-button color="warn" (click)="removeNPC('enemies', i)">
+                            Supprimer
+                          </button>
+                        </mat-card-actions>
+                      }
+                    </mat-card>
+                  }
+                </div>
+              }
+              @if (!character()?.enemies || character()!.enemies!.length === 0) {
+                <p class="no-items">
+                  {{ editMode ? 'Aucun ennemi - Cliquez pour en ajouter' : 'Aucun ennemi pour le moment' }}
+                </p>
+              }
+              @if (editMode) {
+                <button mat-raised-button (click)="addNPC('enemies')" class="add-npc-btn">
+                  + Ajouter un ennemi
+                </button>
+              }
             </div>
           </mat-card-content>
         </mat-card>
@@ -583,19 +741,25 @@ import { KIHO } from '../data/kiho.data';
             <mat-divider></mat-divider>
 
             <div class="weapons-section">
-              <h3>Armes ({{ character()?.equipment?.weapons?.length || 0 }})</h3>
+              <h3>Armes ({{ weaponsArray().length }})</h3>
               <div class="equipment-list">
-                <div class="equipment-card" *ngFor="let weapon of character()?.equipment?.weapons">
-                  <h4>{{ weapon.name }}</h4>
-                  <div class="item-stats">
-                    <span *ngIf="weapon.damage"><strong>Dégâts:</strong> {{ weapon.damage }}</span>
-                    <span *ngIf="weapon.reach"><strong>Portée:</strong> {{ weapon.reach }}</span>
-                    <span *ngIf="weapon.TN"><strong>TN:</strong> {{ weapon.TN }}</span>
+                @for (weapon of weaponsArray(); track weapon.name) {
+                  <div class="equipment-card">
+                    <h4>{{ weapon.name }}</h4>
+                    <div class="item-stats">
+                      @if (weapon.damage) { <span><strong>Dégâts:</strong> {{ weapon.damage }}</span> }
+                      @if (weapon.reach) { <span><strong>Portée:</strong> {{ weapon.reach }}</span> }
+                      @if (weapon.TN) { <span><strong>TN:</strong> {{ weapon.TN }}</span> }
+                    </div>
+                    <p class="item-description">{{ weapon.description }}</p>
+                    @if (weapon.special) {
+                      <p class="item-special"><em>{{ weapon.special }}</em></p>
+                    }
                   </div>
-                  <p class="item-description">{{ weapon.description }}</p>
-                  <p class="item-special" *ngIf="weapon.special"><em>{{ weapon.special }}</em></p>
-                </div>
-                <p *ngIf="!character()?.equipment?.weapons?.length" class="no-items">Aucune arme</p>
+                }
+                @if (weaponsArray().length === 0) {
+                  <p class="no-items">Aucune arme</p>
+                }
               </div>
             </div>
 
@@ -604,30 +768,39 @@ import { KIHO } from '../data/kiho.data';
             <div class="armor-section">
               <h3>Armure</h3>
               <div class="equipment-list">
-                <div class="equipment-card" *ngIf="character()?.equipment?.armor as armor">
-                  <h4>{{ getArmorName(armor) }}</h4>
-                  <div class="item-stats">
-                    <span><strong>Réduction:</strong> {{ getArmorReduction(armor) }}</span>
+                @if (character()?.equipment?.armor) {
+                  <div class="equipment-card">
+                    <h4>{{ getArmorName(character()!.equipment!.armor!) }}</h4>
+                    <div class="item-stats">
+                      <span><strong>Réduction:</strong> {{ getArmorReduction(character()!.equipment!.armor!) }}</span>
+                    </div>
+                    <p class="item-description">{{ getArmorDescription(character()!.equipment!.armor!) }}</p>
                   </div>
-                  <p class="item-description">{{ getArmorDescription(armor) }}</p>
-                </div>
-                <p *ngIf="!character()?.equipment?.armor" class="no-items">Aucune armure</p>
+                } @else {
+                  <p class="no-items">Aucune armure</p>
+                }
               </div>
             </div>
 
             <mat-divider></mat-divider>
 
             <div class="items-section">
-              <h3>Objets & Outils ({{ character()?.equipment?.items?.length || 0 }})</h3>
+              <h3>Objets & Outils ({{ itemsArray().length }})</h3>
               <div class="equipment-list">
-                <div class="equipment-card" *ngFor="let item of character()?.equipment?.items">
-                  <h4>{{ item.name }}</h4>
-                  <div class="item-stats" *ngIf="item.cost">
-                    <span><strong>Valeur:</strong> {{ item.cost }}</span>
+                @for (item of itemsArray(); track item.name) {
+                  <div class="equipment-card">
+                    <h4>{{ item.name }}</h4>
+                    @if (item.cost) {
+                      <div class="item-stats">
+                        <span><strong>Valeur:</strong> {{ item.cost }}</span>
+                      </div>
+                    }
+                    <p class="item-description">{{ item.description }}</p>
                   </div>
-                  <p class="item-description">{{ item.description }}</p>
-                </div>
-                <p *ngIf="!character()?.equipment?.items?.length" class="no-items">Aucun objet</p>
+                }
+                @if (itemsArray().length === 0) {
+                  <p class="no-items">Aucun objet</p>
+                }
               </div>
             </div>
           </mat-card-content>
@@ -654,7 +827,7 @@ import { KIHO } from '../data/kiho.data';
                 rows="20"
               ></textarea>
               <div class="notes-info">
-                <span>ℹ️ Les notes sont sauvegardées automatiquement</span>
+                <span>Les notes sont sauvegardées automatiquement</span>
               </div>
             </div>
           </mat-card-content>
@@ -663,6 +836,7 @@ import { KIHO } from '../data/kiho.data';
     </mat-tab>
   </mat-tab-group>
     </div>
+    }
   `,
   styles: [`
     .character-sheet-container {
@@ -794,6 +968,51 @@ export class CharacterSheet implements OnInit {
   private characterService = inject(CharacterService);
   
   character = signal<Character | null>(null);
+  
+  // Computed signals pour les compétences hiérarchisées
+  schoolAndClanSkills = computed(() => {
+    const char = this.character();
+    if (!char || !char.skills) return [];
+    return char.skills.filter(s => s.isSchoolSkill && s.rank > 0);
+  });
+
+  developedSkills = computed(() => {
+    const char = this.character();
+    if (!char || !char.skills) return [];
+    return char.skills.filter(s => s.rank > 0 && !s.isSchoolSkill);
+  });
+
+  nobleSkills = computed(() => {
+    const char = this.character();
+    if (!char || !char.skills) return [];
+    const nobleSkillIds = ['Défense', 'Divination', 'Jeux', 'Médecine', 'Connaissance'];
+    return char.skills.filter(s => nobleSkillIds.includes(s.name));
+  });
+
+  merchantSkills = computed(() => {
+    const char = this.character();
+    if (!char || !char.skills) return [];
+    const merchantSkillIds = ['Commerce', 'Artisan', 'Artisanat', 'Représentation', 'Herboristerie'];
+    return char.skills.filter(s => merchantSkillIds.includes(s.name));
+  });
+
+  bugeiSkills = computed(() => {
+    const char = this.character();
+    if (!char || !char.skills) return [];
+    const bugeiSkillIds = ['Kenjutsu', 'Iaijutsu', 'Kyujutsu', 'Jiujutsu', 'Défense', 'Athlétisme', 'Chasse', 'Furtivité'];
+    return char.skills.filter(s => bugeiSkillIds.includes(s.name));
+  });
+
+  // Computed signals pour les arrays sécurisés (évite les erreurs de template)
+  weaponsArray = computed(() => this.character()?.equipment?.weapons || []);
+  itemsArray = computed(() => this.character()?.equipment?.items || []);
+  spellsArray = computed(() => this.character()?.spells || []);
+  kihoArray = computed(() => this.character()?.kiho || []);
+  advantagesArray = computed(() => this.character()?.selectedAdvantages || []);
+  disadvantagesArray = computed(() => this.character()?.selectedDisadvantages || []);
+  alliesArray = computed(() => this.character()?.allies || []);
+  enemiesArray = computed(() => this.character()?.enemies || []);
+  
   characterNotes = '';
   showXpDialog = false;
   xpToAdd = 0;
@@ -1000,8 +1219,34 @@ export class CharacterSheet implements OnInit {
   // Méthodes helper pour le template
   getRingValue(ring: string): number {
     const char = this.character();
-    if (!char || !char.rings) return 1;
-    return char.rings[ring as keyof typeof char.rings] || 1;
+    if (!char) return 1;
+    
+    // Vide est stocké directement sur le personnage
+    if (ring === 'vide') {
+      return char.rings?.vide || 1;
+    }
+    
+    // Pour Terre/Eau/Air/Feu, calculer dynamiquement le min des deux traits
+    // IMPORTANT: utiliser les traits du personnage chargé dans cette fiche
+    const traits = char.traits;
+    if (!traits) return char.rings?.[ring as keyof typeof char.rings] || 1;
+    
+    const ringMap: Record<string, [keyof Traits, keyof Traits]> = {
+      terre: ['constitution', 'volonte'],
+      eau: ['force', 'perception'],
+      air: ['reflexes', 'intuition'],
+      feu: ['agilite', 'intelligence']
+    };
+    
+    const pair = ringMap[ring];
+    if (pair) {
+      const val1 = traits[pair[0]] || 2;
+      const val2 = traits[pair[1]] || 2;
+      return Math.min(val1, val2);
+    }
+    
+    // Fallback
+    return char.rings?.[ring as keyof typeof char.rings] || 1;
   }
 
   getVoidPointsArray(): number[] {
@@ -1017,36 +1262,49 @@ export class CharacterSheet implements OnInit {
     return char.skills.filter(s => nobleSkillIds.includes(s.name));
   }
 
-  getMerchantSkills() {
-    const char = this.character();
-    if (!char || !char.skills) return [];
-    const merchantSkillIds = ['Commerce', 'Artisan', 'Artisanat', 'Représentation', 'Herboristerie'];
-    return char.skills.filter(s => merchantSkillIds.includes(s.name));
-  }
-
-  getBugeiSkills() {
-    const char = this.character();
-    if (!char || !char.skills) return [];
-    const bugeiSkillIds = ['Kenjutsu', 'Iaijutsu', 'Kyujutsu', 'Jiujutsu', 'Défense', 'Athlétisme', 'Chasse', 'Furtivité'];
-    return char.skills.filter(s => bugeiSkillIds.includes(s.name));
-  }
-
   getWoundBoxes(level: string): number[] {
     const char = this.character();
     if (!char) return [];
-    const levels: { [key: string]: keyof typeof char.woundLevels } = {
-      'healthy': 'healthy',
-      'nicked': 'nicked',
-      'grazed': 'grazed',
-      'hurt': 'hurt',
-      'injured': 'injured',
-      'crippled': 'crippled',
-      'down': 'down',
-      'out': 'out'
+
+    // Si le personnage possède déjà des niveaux de blessure structurés, les utiliser
+    const existing = (char as any).woundLevels as | undefined | {
+      healthy: number; nicked: number; grazed: number; hurt: number; injured: number; crippled: number; down: number; out: number;
     };
-    const levelKey = levels[level];
-    const woundValue = char.woundLevels[levelKey] || 0;
-    return Array(Math.floor(woundValue / 2)).fill(0); // Division par 2 pour avoir le nombre de cases
+
+    let woundValue = 0;
+    if (existing) {
+      const map: Record<string, keyof typeof existing> = {
+        healthy: 'healthy',
+        nicked: 'nicked',
+        grazed: 'grazed',
+        hurt: 'hurt',
+        injured: 'injured',
+        crippled: 'crippled',
+        down: 'down',
+        out: 'out'
+      };
+      woundValue = existing[map[level]] || 0;
+    } else {
+      // Fallback robuste: calcule dynamiquement à partir de l'anneau de Terre
+      // Valeurs d'après la doc: base = Terre*2 puis +3, +6, +9, ...
+      const terreFromRings = char.rings?.terre;
+      const terreFromTraits = Math.min(char.traits?.constitution || 2, char.traits?.volonte || 2);
+      const terre = (terreFromRings ?? terreFromTraits);
+      const base = (terre || 2) * 2;
+      const offsets: Record<string, number> = {
+        healthy: 0,
+        nicked: 3,
+        grazed: 6,
+        hurt: 9,
+        injured: 12,
+        crippled: 15,
+        down: 18,
+        out: 21
+      };
+      woundValue = base + (offsets[level] ?? 0);
+    }
+
+    return Array(Math.floor((woundValue || 0) / 2)).fill(0);
   }
 
   getTN(): number {

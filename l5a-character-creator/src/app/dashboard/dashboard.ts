@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,12 +9,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatCardModule,
     MatButtonModule,
     MatGridListModule
-  ],
+],
   template: `
     <div class="dashboard-container">
       <div class="header">
@@ -98,17 +97,17 @@ import { MatGridListModule } from '@angular/material/grid-list';
           </mat-card-actions>
         </mat-card>
 
-        <mat-card class="menu-card" routerLink="/game-master">
+        <mat-card class="menu-card" routerLink="/play-character">
           <mat-card-header>
-            <mat-card-title>Lancer une campagne</mat-card-title>
-            <mat-card-subtitle>Outils de maître de jeu</mat-card-subtitle>
+            <mat-card-title>Jouer un personnage</mat-card-title>
+            <mat-card-subtitle>Mode hors ligne</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p>Créez et gérez vos propres campagnes, invitez des joueurs et menez des aventures épiques.</p>
+            <p>Vivez des événements aléatoires, réalisez des missions et progressez avec votre personnage en mode solo.</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary" routerLink="/game-master">
-              Devenir maître de jeu
+            <button mat-raised-button color="primary" routerLink="/play-character">
+              Jouer en solo
             </button>
           </mat-card-actions>
         </mat-card>

@@ -1,5 +1,5 @@
 import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,6 @@ import { CLANS } from '../data/clans.data';
   selector: 'app-library',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatCardModule,
     MatButtonModule,
@@ -27,7 +26,7 @@ import { CLANS } from '../data/clans.data';
     MatFormFieldModule,
     MatInputModule,
     FormsModule
-  ],
+],
   template: `
     <div class="library-container">
       <div class="header">
@@ -48,36 +47,50 @@ import { CLANS } from '../data/clans.data';
 
             <div class="filter-chips">
               <mat-chip-set>
-                <mat-chip 
-                  *ngFor="let element of ['Tous', 'Air', 'Terre', 'Eau', 'Feu', 'Vide', 'Universels']"
-                  [class.selected]="selectedSpellElement() === element"
-                  (click)="selectedSpellElement.set(element)">
-                  {{ element }}
-                </mat-chip>
+                @for (element of spellElements(); track element) {
+                  <mat-chip 
+                    [class.selected]="selectedSpellElement() === element"
+                    (click)="selectedSpellElement.set(element)">
+                    {{ element }}
+                  </mat-chip>
+                }
               </mat-chip-set>
             </div>
 
             <div class="items-grid">
-              <mat-card *ngFor="let spell of filteredSpells()" class="item-card">
-                <mat-card-header>
-                  <mat-card-title>
-                    {{ spell.name }}
-                    <span *ngIf="spell.universal" class="universal-badge">[Universel]</span>
-                  </mat-card-title>
-                  <mat-card-subtitle>
-                    Niveau {{ spell.mastery }} - {{ spell.element }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="spell-stats">
-                    <p><strong>Portée:</strong> {{ spell.range }}</p>
-                    <p><strong>Zone:</strong> {{ spell.area }}</p>
-                    <p><strong>Durée:</strong> {{ spell.duration }}</p>
-                    <p *ngIf="spell.raises"><strong>Augmentations:</strong> {{ spell.raises }}</p>
-                  </div>
-                  <p class="description">{{ spell.description }}</p>
-                </mat-card-content>
-              </mat-card>
+              @for (spell of filteredSpells(); track spell.name) {
+                <mat-card class="item-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      {{ spell.name }}
+                      @if (spell.universal) {
+                        <span class="universal-badge">[Universel]</span>
+                      }
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                      <div class="spell-badges">
+                        <span class="element-badge" [attr.data-element]="spell.element.toLowerCase()">
+                          {{ spell.element }}
+                        </span>
+                        <span class="mastery-badge" [attr.data-mastery]="spell.mastery">
+                          Rang {{ spell.mastery }}
+                        </span>
+                      </div>
+                    </mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="spell-stats">
+                      <p><strong>Portée:</strong> {{ spell.range }}</p>
+                      <p><strong>Zone:</strong> {{ spell.area }}</p>
+                      <p><strong>Durée:</strong> {{ spell.duration }}</p>
+                      @if (spell.raises) {
+                        <p><strong>Augmentations:</strong> {{ spell.raises }}</p>
+                      }
+                    </div>
+                    <p class="description">{{ spell.description }}</p>
+                  </mat-card-content>
+                </mat-card>
+              }
             </div>
           </div>
         </mat-tab>
@@ -94,36 +107,53 @@ import { CLANS } from '../data/clans.data';
 
             <div class="filter-chips">
               <mat-chip-set>
-                <mat-chip 
-                  *ngFor="let type of ['Tous', 'weapon', 'armor', 'item', 'tool', 'clothing']"
-                  [class.selected]="selectedEquipmentType() === type"
-                  (click)="selectedEquipmentType.set(type)">
-                  {{ getEquipmentTypeLabel(type) }}
-                </mat-chip>
+                @for (type of equipmentTypes(); track type) {
+                  <mat-chip 
+                    [class.selected]="selectedEquipmentType() === type"
+                    (click)="selectedEquipmentType.set(type)">
+                    {{ getEquipmentTypeLabel(type) }}
+                  </mat-chip>
+                }
               </mat-chip-set>
             </div>
 
             <div class="items-grid">
-              <mat-card *ngFor="let equipment of filteredEquipment()" class="item-card">
-                <mat-card-header>
-                  <mat-card-title>{{ equipment.name }}</mat-card-title>
-                  <mat-card-subtitle>
-                    {{ getEquipmentTypeLabel(equipment.type) }}
-                    <span *ngIf="equipment.cost"> - {{ equipment.cost }} Koku</span>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="equipment-stats">
-                    <p *ngIf="equipment.damage"><strong>Dégâts:</strong> {{ equipment.damage }}</p>
-                    <p *ngIf="equipment.reach"><strong>Allonge:</strong> {{ equipment.reach }}</p>
-                    <p *ngIf="equipment.TN"><strong>TN:</strong> {{ equipment.TN }}</p>
-                    <p *ngIf="equipment.reduction"><strong>Réduction:</strong> {{ equipment.reduction }}</p>
-                    <p *ngIf="equipment.weight"><strong>Poids:</strong> {{ equipment.weight }}</p>
-                  </div>
-                  <p class="description">{{ equipment.description }}</p>
-                  <p *ngIf="equipment.special" class="special"><strong>Spécial:</strong> {{ equipment.special }}</p>
-                </mat-card-content>
-              </mat-card>
+              @for (equipment of filteredEquipment(); track equipment.name) {
+                <mat-card class="item-card">
+                  <mat-card-header>
+                    <mat-card-title>{{ equipment.name }}</mat-card-title>
+                    <mat-card-subtitle>
+                      {{ getEquipmentTypeLabel(equipment.type) }}
+                      @if (equipment.cost) {
+                        <span> - {{ equipment.cost }} Koku</span>
+                      }
+                    </mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="equipment-stats">
+                      @if (equipment.damage) {
+                        <p><strong>Dégâts:</strong> {{ equipment.damage }}</p>
+                      }
+                      @if (equipment.reach) {
+                        <p><strong>Allonge:</strong> {{ equipment.reach }}</p>
+                      }
+                      @if (equipment.TN) {
+                        <p><strong>TN:</strong> {{ equipment.TN }}</p>
+                      }
+                      @if (equipment.reduction) {
+                        <p><strong>Réduction:</strong> {{ equipment.reduction }}</p>
+                      }
+                      @if (equipment.weight) {
+                        <p><strong>Poids:</strong> {{ equipment.weight }}</p>
+                      }
+                    </div>
+                    <p class="description">{{ equipment.description }}</p>
+                    @if (equipment.special) {
+                      <p class="special"><strong>Spécial:</strong> {{ equipment.special }}</p>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
             </div>
           </div>
         </mat-tab>
@@ -140,37 +170,46 @@ import { CLANS } from '../data/clans.data';
 
             <div class="filter-chips">
               <mat-chip-set>
-                <mat-chip 
-                  *ngFor="let type of ['Tous', 'bushi', 'shugenja', 'courtier', 'moine', 'ninja', 'artisan']"
-                  [class.selected]="selectedSchoolType() === type"
-                  (click)="selectedSchoolType.set(type)">
-                  {{ getSchoolTypeLabel(type) }}
-                </mat-chip>
+                @for (type of schoolTypes(); track type) {
+                  <mat-chip 
+                    [class.selected]="selectedSchoolType() === type"
+                    (click)="selectedSchoolType.set(type)">
+                    {{ getSchoolTypeLabel(type) }}
+                  </mat-chip>
+                }
               </mat-chip-set>
             </div>
 
             <div class="items-grid">
-              <mat-card *ngFor="let school of filteredSchools()" class="item-card">
-                <mat-card-header>
-                  <mat-card-title>{{ school.name }}</mat-card-title>
-                  <mat-card-subtitle>
-                    {{ getSchoolTypeLabel(school.type) }} - {{ school.clan }}
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="school-info">
-                    <p><strong>Trait bonus:</strong> {{ school.traitBonus }}</p>
-                    <p><strong>Honneur:</strong> {{ school.honor }}</p>
-                    <p><strong>Compétences:</strong> {{ school.skills.join(', ') }}</p>
-                  </div>
-                  <p class="technique"><strong>Technique:</strong> {{ school.technique }}</p>
-                  <div *ngIf="school.spellLimits" class="spell-limits">
-                    <p><strong>Sorts autorisés:</strong> {{ school.spellLimits.rank1 }} rang 1, {{ school.spellLimits.rank2 }} rang 2</p>
-                    <p *ngIf="school.spellLimits.affinity"><strong>Affinité:</strong> {{ school.spellLimits.affinity }}</p>
-                    <p *ngIf="school.spellLimits.deficiency"><strong>Déficience:</strong> {{ school.spellLimits.deficiency }}</p>
-                  </div>
-                </mat-card-content>
-              </mat-card>
+              @for (school of filteredSchools(); track school.name) {
+                <mat-card class="item-card">
+                  <mat-card-header>
+                    <mat-card-title>{{ school.name }}</mat-card-title>
+                    <mat-card-subtitle>
+                      {{ getSchoolTypeLabel(school.type) }} - {{ school.clan }}
+                    </mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="school-info">
+                      <p><strong>Trait bonus:</strong> {{ school.traitBonus }}</p>
+                      <p><strong>Honneur:</strong> {{ school.honor }}</p>
+                      <p><strong>Compétences:</strong> {{ school.skills.join(', ') }}</p>
+                    </div>
+                    <p class="technique"><strong>Technique:</strong> {{ school.technique }}</p>
+                    @if (school.spellLimits) {
+                      <div class="spell-limits">
+                        <p><strong>Sorts autorisés:</strong> {{ school.spellLimits.rank1 }} rang 1, {{ school.spellLimits.rank2 }} rang 2</p>
+                        @if (school.spellLimits.affinity) {
+                          <p><strong>Affinité:</strong> {{ school.spellLimits.affinity }}</p>
+                        }
+                        @if (school.spellLimits.deficiency) {
+                          <p><strong>Déficience:</strong> {{ school.spellLimits.deficiency }}</p>
+                        }
+                      </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              }
             </div>
           </div>
         </mat-tab>
@@ -179,30 +218,36 @@ import { CLANS } from '../data/clans.data';
         <mat-tab label="Clans ({{ CLANS.length }})">
           <div class="tab-content">
             <div class="items-grid">
-              <mat-card *ngFor="let clan of CLANS" class="item-card clan-card">
-                <mat-card-header>
-                  <mat-card-title>{{ clan.name }}</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                  <p class="description">{{ clan.description }}</p>
-                  <div class="clan-families">
-                    <h4>Familles</h4>
-                    <mat-chip-set>
-                      <mat-chip *ngFor="let family of clan.families">
-                        {{ family.name }}
-                      </mat-chip>
-                    </mat-chip-set>
-                  </div>
-                  <div class="clan-schools">
-                    <h4>Écoles</h4>
-                    <mat-chip-set>
-                      <mat-chip *ngFor="let school of clan.schools">
-                        {{ school.name }}
-                      </mat-chip>
-                    </mat-chip-set>
-                  </div>
-                </mat-card-content>
-              </mat-card>
+              @for (clan of clansArray(); track clan.name) {
+                <mat-card class="item-card clan-card">
+                  <mat-card-header>
+                    <mat-card-title>{{ clan.name }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p class="description">{{ clan.description }}</p>
+                    <div class="clan-families">
+                      <h4>Familles</h4>
+                      <mat-chip-set>
+                        @for (family of clan.families; track family.name) {
+                          <mat-chip>
+                            {{ family.name }}
+                          </mat-chip>
+                        }
+                      </mat-chip-set>
+                    </div>
+                    <div class="clan-schools">
+                      <h4>Écoles</h4>
+                      <mat-chip-set>
+                        @for (school of clan.schools; track school.name) {
+                          <mat-chip>
+                            {{ school.name }}
+                          </mat-chip>
+                        }
+                      </mat-chip-set>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
             </div>
           </div>
         </mat-tab>
@@ -330,6 +375,91 @@ import { CLANS } from '../data/clans.data';
       margin-left: 8px;
     }
 
+    .spell-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .element-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+    }
+
+    .element-badge[data-element="air"] {
+      background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%);
+      color: #0d47a1;
+      border: 1px solid #64b5f6;
+    }
+
+    .element-badge[data-element="terre"] {
+      background: linear-gradient(135deg, #efebe9 0%, #bcaaa4 100%);
+      color: #3e2723;
+      border: 1px solid #8d6e63;
+    }
+
+    .element-badge[data-element="eau"] {
+      background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+      color: #006064;
+      border: 1px solid #4dd0e1;
+    }
+
+    .element-badge[data-element="feu"] {
+      background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%);
+      color: #b71c1c;
+      border: 1px solid #e57373;
+    }
+
+    .element-badge[data-element="vide"] {
+      background: linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%);
+      color: #4a148c;
+      border: 1px solid #ba68c8;
+    }
+
+    .mastery-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .mastery-badge[data-mastery="1"] {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #66bb6a;
+    }
+
+    .mastery-badge[data-mastery="2"] {
+      background-color: #fff3e0;
+      color: #e65100;
+      border: 1px solid #fb8c00;
+    }
+
+    .mastery-badge[data-mastery="3"] {
+      background-color: #fce4ec;
+      color: #c2185b;
+      border: 1px solid #ec407a;
+    }
+
+    .mastery-badge[data-mastery="4"] {
+      background-color: #ede7f6;
+      color: #5e35b1;
+      border: 1px solid #7e57c2;
+    }
+
+    .mastery-badge[data-mastery="5"] {
+      background-color: #e0e0e0;
+      color: #424242;
+      border: 1px solid #757575;
+    }
+
     .spell-limits {
       margin-top: 12px;
       padding: 8px;
@@ -424,6 +554,12 @@ export class Library {
   selectedSpellElement = signal('Tous');
   selectedEquipmentType = signal('Tous');
   selectedSchoolType = signal('Tous');
+
+  // Computed pour les tableaux de filtres
+  spellElements = computed(() => ['Tous', 'Air', 'Terre', 'Eau', 'Feu', 'Vide', 'Universels']);
+  equipmentTypes = computed(() => ['Tous', 'weapon', 'armor', 'item', 'tool', 'clothing']);
+  schoolTypes = computed(() => ['Tous', 'bushi', 'shugenja', 'courtier', 'moine', 'ninja', 'artisan']);
+  clansArray = computed(() => this.CLANS);
 
   // Computed pour les listes filtrées
   filteredSpells = computed(() => {

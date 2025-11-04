@@ -94,7 +94,7 @@
     height: 48px;
     border-radius: 50%;
     border: 2px solid var(--primary-color);
-    background: radial-gradient(circle, white, var(--card-bg));
+    background: radial-gradient(var(--card-bg));
     display: flex;
     align-items: center;
     justify-content: center;

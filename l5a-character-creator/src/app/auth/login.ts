@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [FormsModule, RouterModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   template: `
     <div class="auth-container">
       <mat-card class="auth-card">
@@ -21,22 +21,24 @@ import { AuthService } from '../services/auth.service';
             <mat-label>Email</mat-label>
             <input matInput type="email" [(ngModel)]="email" name="email" required>
           </mat-form-field>
-
+    
           <mat-form-field appearance="outline" class="full">
             <mat-label>Mot de passe</mat-label>
             <input matInput type="password" [(ngModel)]="password" name="password" required>
           </mat-form-field>
-
+    
           <div class="actions">
             <button mat-raised-button color="primary" type="submit">Se connecter</button>
             <a routerLink="/register">Créer un compte</a>
           </div>
-
-          <p class="error" *ngIf="error">{{ error }}</p>
+    
+          @if (error) {
+            <p class="error">{{ error }}</p>
+          }
         </form>
       </mat-card>
     </div>
-  `,
+    `,
   styles: [`
     .auth-container { display: flex; justify-content: center; padding: 24px; }
     .auth-card { width: 400px; }

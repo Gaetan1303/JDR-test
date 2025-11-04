@@ -1,5 +1,5 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,13 +12,12 @@ import { Character, Equipment } from '../models/character.model';
   selector: 'app-characters',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatCardModule,
     MatButtonModule,
     MatChipsModule,
     MatDividerModule
-  ],
+],
   template: `
     <div class="characters-container">
       <div class="header">
@@ -29,83 +28,105 @@ import { Character, Equipment } from '../models/character.model';
         </button>
       </div>
 
-      <div class="characters-grid" *ngIf="savedCharacters().length > 0">
-        <mat-card *ngFor="let character of savedCharacters()" class="character-card">
-          <mat-card-header>
-            <mat-card-title>{{ character.name || 'Sans nom' }}</mat-card-title>
-            <mat-card-subtitle>{{ character.clan }} - {{ character.school }}</mat-card-subtitle>
-          </mat-card-header>
-          
-          <mat-card-content>
-            <div class="character-info">
-              <div class="rings-summary">
-                <h4>Anneaux</h4>
-                <mat-chip-set>
-                  <mat-chip>Terre: {{ character.rings.terre || 2 }}</mat-chip>
-                  <mat-chip>Eau: {{ character.rings.eau || 2 }}</mat-chip>
-                  <mat-chip>Air: {{ character.rings.air || 2 }}</mat-chip>
-                  <mat-chip>Feu: {{ character.rings.feu || 2 }}</mat-chip>
-                  <mat-chip>Vide: {{ character.rings.vide || 2 }}</mat-chip>
-                </mat-chip-set>
-              </div>
+      @if (savedCharacters().length > 0) {
+        <div class="characters-grid">
+          @for (character of savedCharacters(); track character.id) {
+            <mat-card class="character-card">
+              <mat-card-header>
+                <mat-card-title>{{ character.name || 'Sans nom' }}</mat-card-title>
+                <mat-card-subtitle>{{ character.clan }} - {{ character.school }}</mat-card-subtitle>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="character-info">
+                  <div class="rings-summary">
+                    <h4>Anneaux</h4>
+                    <mat-chip-set>
+                      <mat-chip>Terre: {{ getRingValue(character, 'terre') }}</mat-chip>
+                      <mat-chip>Eau: {{ getRingValue(character, 'eau') }}</mat-chip>
+                      <mat-chip>Air: {{ getRingValue(character, 'air') }}</mat-chip>
+                      <mat-chip>Feu: {{ getRingValue(character, 'feu') }}</mat-chip>
+                      <mat-chip>Vide: {{ character.rings.vide || 2 }}</mat-chip>
+                    </mat-chip-set>
+                  </div>
 
-              <mat-divider></mat-divider>
+                  <mat-divider></mat-divider>
 
-              <div class="stats-summary">
-                <p><strong>Honneur:</strong> {{ character.honor || 0 }}</p>
-                <p><strong>Points de Vide:</strong> {{ character.voidPoints || character.rings.vide || 2 }}</p>
-                <p><strong>XP disponibles:</strong> {{ getAvailableXP(character) }}</p>
-              </div>
+                  <div class="stats-summary">
+                    <p><strong>Honneur:</strong> {{ character.honor || 0 }}</p>
+                    <p><strong>Points de Vide:</strong> {{ character.voidPoints || character.rings.vide || 2 }}</p>
+                    <p><strong>XP disponibles:</strong> {{ getAvailableXP(character) }}</p>
+                  </div>
 
-              <div class="equipment-summary" *ngIf="character.equipment">
-                <h4>Équipement</h4>
-                <p *ngIf="character.equipment.weapons?.length">
-                  <strong>Armes:</strong> {{ character.equipment.weapons.length }}
-                </p>
-                <p *ngIf="character.equipment.armor">
-                  <strong>Armure:</strong> {{ getArmorName(character.equipment.armor) }}
-                </p>
-              </div>
+                  @if (character.equipment) {
+                    <div class="equipment-summary">
+                      <h4>Équipement</h4>
+                      @if (character.equipment.weapons && character.equipment.weapons.length) {
+                        <p>
+                          <strong>Armes:</strong> {{ character.equipment.weapons.length }}
+                        </p>
+                      }
+                      @if (character.equipment.armor) {
+                        <p>
+                          <strong>Armure:</strong> {{ getArmorName(character.equipment.armor) }}
+                        </p>
+                      }
+                    </div>
+                  }
 
-              <div class="spells-summary" *ngIf="character.spells?.length">
-                <h4>Sorts</h4>
-                <p>{{ character.spells.length }} sorts connus</p>
-              </div>
+                  @if (character.spells && character.spells.length) {
+                    <div class="spells-summary">
+                      <h4>Sorts</h4>
+                      <p>{{ character.spells.length }} sorts connus</p>
+                    </div>
+                  }
 
-              <div class="allies-summary" *ngIf="character.allies?.length">
-                <h4>Alliés</h4>
-                <p *ngFor="let ally of character.allies" class="npc-item">
-                  <strong>{{ ally.name }}</strong> ({{ ally.clan }})<br>
-                  <span class="npc-desc">{{ ally.description }}</span>
-                </p>
-              </div>
+                  @if (character.allies?.length) {
+                    <div class="allies-summary">
+                      <h4>Alliés</h4>
+                      @for (ally of character.allies; track ally.name) {
+                        <p class="npc-item">
+                          <strong>{{ ally.name }}</strong> ({{ ally.clan }})<br>
+                          <span class="npc-desc">{{ ally.description }}</span>
+                        </p>
+                      }
+                    </div>
+                  }
 
-              <div class="enemies-summary" *ngIf="character.enemies?.length">
-                <h4>Ennemis</h4>
-                <p *ngFor="let enemy of character.enemies" class="npc-item">
-                  <strong>{{ enemy.name }}</strong> ({{ enemy.clan }})<br>
-                  <span class="npc-desc">{{ enemy.description }}</span>
-                </p>
-              </div>
-            </div>
-          </mat-card-content>
-          
-          <mat-card-actions>
-            <button mat-button [routerLink]="['/character-sheet', character.id]">Voir la fiche</button>
-            <button mat-button (click)="loadCharacter(character)">Modifier</button>
-            <button mat-button (click)="duplicateCharacter(character)">Dupliquer</button>
-            <button mat-button color="warn" (click)="deleteCharacter(character)">Supprimer</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
+                  @if (character.enemies?.length) {
+                    <div class="enemies-summary">
+                      <h4>Ennemis</h4>
+                      @for (enemy of character.enemies; track enemy.name) {
+                        <p class="npc-item">
+                          <strong>{{ enemy.name }}</strong> ({{ enemy.clan }})<br>
+                          <span class="npc-desc">{{ enemy.description }}</span>
+                        </p>
+                      }
+                    </div>
+                  }
+                </div>
+              </mat-card-content>
+              
+              <mat-card-actions>
+                <button mat-button (click)="openSheet(character)">Voir la fiche</button>
+                <button mat-button (click)="loadCharacter(character)">Modifier</button>
+                <button mat-button (click)="duplicateCharacter(character)">Dupliquer</button>
+                <button mat-button color="warn" (click)="deleteCharacter(character)">Supprimer</button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      }
 
-      <div class="empty-state" *ngIf="savedCharacters().length === 0">
-        <h2>Aucun personnage créé</h2>
-        <p>Commencez par créer votre premier personnage pour Légende des 5 Anneaux</p>
-        <button mat-raised-button color="primary" routerLink="/character-creator">
-          Créer mon premier personnage
-        </button>
-      </div>
+      @if (savedCharacters().length === 0) {
+        <div class="empty-state">
+          <h2>Aucun personnage créé</h2>
+          <p>Commencez par créer votre premier personnage pour Légende des 5 Anneaux</p>
+          <button mat-raised-button color="primary" routerLink="/character-creator">
+            Créer mon premier personnage
+          </button>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -318,6 +339,19 @@ export class Characters implements OnInit {
     localStorage.setItem('myCharacters', JSON.stringify(this.savedCharacters()));
   }
 
+  // Ouvre la fiche en s'assurant que l'ID existe et est persisté
+  openSheet(character: Character) {
+    let char = character;
+    if (!char.id) {
+      // Génère un ID puis persiste la liste avec cet ID
+      char = { ...character, id: Date.now().toString() } as Character;
+      const updated = this.savedCharacters().map(c => (c === character ? char : c));
+      this.savedCharacters.set(updated);
+      this.saveCharacters();
+    }
+    this.router.navigate(['/character-sheet', char.id]);
+  }
+
   debugCharacter(character: Character) {
     console.log('[DEBUG] Personnage:', character.name);
     console.log('[DEBUG] ID:', character.id);
@@ -343,5 +377,31 @@ export class Characters implements OnInit {
       return armor.length > 0 ? armor[0].name : 'Aucune';
     }
     return armor.name;
+  }
+
+  // Calcul dynamique des anneaux basé sur les traits (comme sur la fiche)
+  getRingValue(character: Character, ring: string): number {
+    if (ring === 'vide') {
+      return character.rings?.vide || 2;
+    }
+
+    const traits = character.traits;
+    if (!traits) return character.rings?.[ring as keyof typeof character.rings] || 2;
+
+    const ringMap: Record<string, [string, string]> = {
+      terre: ['constitution', 'volonte'],
+      eau: ['force', 'perception'],
+      air: ['reflexes', 'intuition'],
+      feu: ['agilite', 'intelligence']
+    };
+
+    const pair = ringMap[ring];
+    if (pair) {
+      const val1 = (traits as any)[pair[0]] || 2;
+      const val2 = (traits as any)[pair[1]] || 2;
+      return Math.min(val1, val2);
+    }
+
+    return character.rings?.[ring as keyof typeof character.rings] || 2;
   }
 }

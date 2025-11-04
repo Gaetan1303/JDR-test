@@ -1,0 +1,218 @@
+<div class="play-character-container">
+  <div class="header">
+    <h1>Jouer un personnage</h1>
+    <p>Mode solo - Événements aléatoires et progression</p>
+    <button mat-raised-button (click)="goBack()">Retour au menu</button>
+  </div>
+
+  <!-- Sélection du personnage -->
+  @if (!selectedCharacter()) {
+    <div class="character-selection">
+      <h2>Sélectionnez un personnage</h2>
+      <div class="characters-grid">
+        @for (char of characters(); track char.name) {
+          <mat-card class="character-card" (click)="selectCharacter(char)">
+            <mat-card-header>
+              <mat-card-title>{{ char.name }}</mat-card-title>
+              <mat-card-subtitle>{{ char.clan }} - {{ char.school }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="character-stats">
+                <div class="stat">
+                  <span class="label">Honneur :</span>
+                  <span class="value">{{ char.honor || 0 }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Statut :</span>
+                  <span class="value">{{ char.status || 0 }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary">Sélectionner</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+
+      @if (characters().length === 0) {
+        <div class="no-characters">
+          <p>Aucun personnage disponible. Créez-en un d'abord !</p>
+          <button mat-raised-button color="primary" routerLink="/character-creator">
+            Créer un personnage
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Interface de jeu -->
+  @if (selectedCharacter()) {
+    <div class="game-interface">
+      <!-- Personnage sélectionné -->
+      <mat-card class="selected-character-card">
+        <mat-card-header>
+          <mat-card-title>{{ selectedCharacter()?.name }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ selectedCharacter()?.clan }} - {{ selectedCharacter()?.school }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="character-info">
+            <div class="stat-item">
+              <strong>Honneur :</strong> {{ selectedCharacter()?.honor || 0 }}
+            </div>
+            <div class="stat-item">
+              <strong>Statut :</strong> {{ selectedCharacter()?.status || 0 }}
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="viewCharacter(selectedCharacter()!)">Voir la fiche</button>
+          <button mat-button (click)="selectedCharacter.set(null)">Changer de personnage</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Zone d'événement -->
+      @if (!currentEvent()) {
+        <mat-card class="event-card">
+          <mat-card-header>
+            <mat-card-title>Prêt pour l'aventure ?</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Générez un événement aléatoire et testez vos compétences !</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="generateRandomEvent()"
+              [disabled]="!canPlayEvent()">
+              Générer un événement
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+
+      <!-- Événement actif -->
+      @if (currentEvent()) {
+        <mat-card class="active-event-card">
+          <mat-card-header>
+            <mat-card-title>{{ currentEvent()?.title }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-chip-set>
+                <mat-chip [color]="getEventTypeColor(currentEvent()!.type)">
+                  {{ getEventTypeLabel(currentEvent()!.type) }}
+                </mat-chip>
+                <mat-chip>Difficulté : {{ currentEvent()?.difficulty }}</mat-chip>
+              </mat-chip-set>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="event-description">{{ currentEvent()?.description }}</p>
+            
+            <mat-divider></mat-divider>
+            <mat-divider></mat-divider>
+            
+            <div class="event-info">
+              <h4>Jet de dés requis :</h4>
+              <p><strong>Trait :</strong> {{ currentEvent()?.trait }}</p>
+              @if (currentEvent()?.skill) {
+                <p><strong>Compétence :</strong> {{ currentEvent()?.skill }}</p>
+              }
+              <p><strong>Difficulté :</strong> {{ currentEvent()?.difficulty }}</p>
+            </div>
+
+            <mat-divider></mat-divider>
+            
+            <div class="event-rewards">
+              <h4>Récompenses potentielles :</h4>
+              <ul>
+                @if (currentEvent()?.rewards?.honor) {
+                  <li>
+                    +{{ currentEvent()!.rewards!.honor }} Honneur
+                  </li>
+                }
+                @if (currentEvent()?.rewards?.gold) {
+                  <li>
+                    +{{ currentEvent()!.rewards!.gold }} koku
+                  </li>
+                }
+                @if (currentEvent()?.rewards?.items) {
+                  <li>
+                    {{ currentEvent()!.rewards!.items?.join(', ') }}
+                  </li>
+                }
+              </ul>
+            </div>
+
+            @if (currentEvent()?.consequences) {
+              <div class="event-consequences">
+                <h4>Conséquences :</h4>
+                <p>{{ currentEvent()?.consequences }}</p>
+              </div>
+            }
+
+            <!-- Résultat du jet de dés -->
+            @if (diceResult() !== null) {
+              <div class="dice-result">
+                <h4>Résultat du jet : {{ diceResult() }}</h4>
+                @if (diceResult()! >= currentEvent()!.difficulty) {
+                  <p class="success">
+                    Succès ! Vous avez réussi l'épreuve.
+                  </p>
+                }
+                @if (diceResult()! < currentEvent()!.difficulty) {
+                  <p class="failure">
+                    Échec ! Vous n'avez pas atteint la difficulté requise.
+                  </p>
+                }
+              </div>
+            }
+          </mat-card-content>
+          <mat-card-actions>
+            @if (diceResult() === null) {
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="rollDice()"
+                [disabled]="!canRollDice() || isRolling()">
+                {{ isRolling() ? 'Lancement...' : 'Lancer les dés' }}
+              </button>
+            }
+            @if (diceResult() !== null) {
+              <button 
+                mat-raised-button 
+                color="accent" 
+                (click)="resolveEvent()">
+                Valider le résultat
+              </button>
+            }
+            <button mat-button (click)="currentEvent.set(null); diceResult.set(null)">
+              Annuler
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+
+      <!-- Historique des événements -->
+      @if (eventHistory().length > 0) {
+        <mat-card class="history-card">
+          <mat-card-header>
+            <mat-card-title>Historique des événements</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              @for (event of eventHistory(); track $index) {
+                <mat-list-item>
+                  <span matListItemTitle>{{ event.title }}</span>
+                  <span matListItemLine>{{ getEventTypeLabel(event.type) }} - Difficulté {{ event.difficulty }}</span>
+                </mat-list-item>
+              }
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

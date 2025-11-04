@@ -1,0 +1,242 @@
+.play-character-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 50%, rgba(139, 26, 26, 0.2) 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.4) 0%, rgba(101, 67, 33, 0.3) 100%);
+  border-radius: 8px;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  h1 {
+    color: #f5e6d3;
+    margin-bottom: 12px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+  }
+
+  p {
+    color: #d4af37;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    font-style: italic;
+  }
+}
+
+.character-selection {
+  h2 {
+    text-align: center;
+    color: #f5e6d3;
+    font-size: 2rem;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.characters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.character-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, rgba(58, 38, 24, 0.95) 0%, rgba(40, 26, 16, 0.95) 100%);
+  border: 2px solid rgba(139, 69, 19, 0.6);
+  border-radius: 8px;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.8),
+      0 0 30px rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.8);
+  }
+
+  .character-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+      .label {
+        color: #d4af37;
+        font-weight: 600;
+      }
+
+      .value {
+        color: #f5e6d3;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.no-characters {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(40, 26, 16, 0.8);
+  border-radius: 8px;
+  border: 2px solid rgba(139, 69, 19, 0.6);
+
+  p {
+    color: #f5e6d3;
+    font-size: 1.3rem;
+    margin-bottom: 24px;
+  }
+}
+
+.game-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.selected-character-card {
+  background: linear-gradient(135deg, rgba(58, 38, 24, 0.95) 0%, rgba(40, 26, 16, 0.95) 100%);
+  border: 2px solid rgba(212, 175, 55, 0.6);
+  border-radius: 8px;
+
+  .character-info {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+
+    .stat-item {
+      color: #f5e6d3;
+      
+      strong {
+        color: #d4af37;
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.event-card,
+.active-event-card {
+  background: linear-gradient(145deg, rgba(58, 38, 24, 0.95) 0%, rgba(40, 26, 16, 0.95) 100%);
+  border: 2px solid rgba(139, 69, 19, 0.6);
+  border-radius: 8px;
+}
+
+.active-event-card {
+  border-color: rgba(212, 175, 55, 0.8);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+
+  .event-description {
+    font-size: 1.2rem;
+    color: #f5e6d3;
+    margin: 16px 0;
+    line-height: 1.6;
+  }
+
+  .event-rewards,
+  .event-consequences,
+  .event-info {
+    margin: 16px 0;
+
+    h4 {
+      color: #d4af37;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    ul {
+      color: #f5e6d3;
+      list-style-position: inside;
+      
+      li {
+        margin: 4px 0;
+      }
+    }
+
+    p {
+      color: #f5e6d3;
+      font-style: italic;
+      
+      strong {
+        color: #d4af37;
+      }
+    }
+  }
+
+  .dice-result {
+    margin: 20px 0;
+    padding: 16px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 8px;
+    text-align: center;
+
+    h4 {
+      color: #d4af37;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .success {
+      color: #4caf50;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .failure {
+      color: #f44336;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.history-card {
+  background: linear-gradient(135deg, rgba(58, 38, 24, 0.95) 0%, rgba(40, 26, 16, 0.95) 100%);
+  border: 2px solid rgba(139, 69, 19, 0.6);
+  border-radius: 8px;
+
+  mat-list-item {
+    color: #f5e6d3;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// Style pour les Material Cards
+::ng-deep {
+  mat-card-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+  }
+
+  mat-card-subtitle {
+    color: #d4af37 !important;
+    font-size: 1rem !important;
+  }
+
+  mat-card-content {
+    color: #f44336 !important;
+  
+  }
+}

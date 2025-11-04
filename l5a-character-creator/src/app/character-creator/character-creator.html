@@ -13,663 +13,696 @@
 
   <div class="creator-content">
     <!-- Étape 1: Informations de base -->
-    <mat-card *ngIf="currentStep() === 1">
-      <mat-card-header>
-        <mat-card-title>1. Informations de Base</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <!-- Upload d'avatar -->
-        <div class="avatar-upload">
-          <div class="avatar-preview">
-            @if (character().avatar) {
-              <img [src]="character().avatar" alt="Avatar du personnage">
-            } @else {
-              <div class="avatar-placeholder">
-                <span>Aucun avatar</span>
-              </div>
-            }
-          </div>
-          <div class="avatar-input">
-            <input type="file" 
-                   id="avatar-input" 
-                   accept="image/*"
-                   (change)="onAvatarSelected($event)"
-                   style="display: none">
-            <button mat-raised-button (click)="document.getElementById('avatar-input')?.click()">
-              Choisir un avatar
-            </button>
-            @if (character().avatar) {
-              <button mat-button (click)="updateBasicInfo('avatar', null)">
-                Supprimer
+    @if (currentStep() === 1) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>1. Informations de Base</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Upload d'avatar -->
+          <div class="avatar-upload">
+            <div class="avatar-preview">
+              @if (character().avatar) {
+                <img [src]="character().avatar" alt="Avatar du personnage">
+              } @else {
+                <div class="avatar-placeholder">
+                  <span>Aucun avatar</span>
+                </div>
+              }
+            </div>
+            <div class="avatar-input">
+              <input type="file"
+                id="avatar-input"
+                accept="image/*"
+                (change)="onAvatarSelected($event)"
+                style="display: none">
+              <button mat-raised-button (click)="document.getElementById('avatar-input')?.click()">
+                Choisir un avatar
               </button>
-            }
+              @if (character().avatar) {
+                <button mat-button (click)="updateBasicInfo('avatar', null)">
+                  Supprimer
+                </button>
+              }
+            </div>
           </div>
-        </div>
-        
-        <div class="form-row">
-          <mat-form-field>
-            <mat-label>Nom du personnage *</mat-label>
-            <input matInput 
-                   required
-                   [value]="character().name || ''" 
-                   (input)="updateBasicInfo('name', $any($event.target).value)"
-                   matTooltip="Le nom est obligatoire">
-            <mat-error>Le nom est obligatoire</mat-error>
-          </mat-form-field>
-          
-          <mat-form-field>
-            <mat-label>Âge</mat-label>
-            <input matInput 
-                   type="number" 
-                   min="14"
-                   [value]="character().age || 15" 
-                   (input)="updateBasicInfo('age', +$any($event.target).value)"
-                   matTooltip="L'âge minimum est de 14 ans">
-            <mat-hint>Minimum 14 ans</mat-hint>
-          </mat-form-field>
-          
-          <mat-form-field>
-            <mat-label>Genre *</mat-label>
-            <mat-select [value]="character().gender || ''" 
-                       required
-                       (selectionChange)="updateBasicInfo('gender', $event.value)">
-              <mat-option value="masculin">Masculin</mat-option>
-              <mat-option value="féminin">Féminin</mat-option>
-              <mat-option value="autre">Autre</mat-option>
-            </mat-select>
-            <mat-error>Le genre est obligatoire</mat-error>
-          </mat-form-field>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button 
-                color="primary" 
-                [disabled]="!canGoToNextStep()"
-                (click)="nextStep()">Suivant</button>
-      </mat-card-actions>
-    </mat-card>
+          <div class="form-row">
+            <mat-form-field>
+              <mat-label>Nom du personnage *</mat-label>
+              <input matInput
+                required
+                [value]="character().name || ''"
+                (input)="updateBasicInfo('name', $any($event.target).value)"
+                matTooltip="Le nom est obligatoire">
+              <mat-error>Le nom est obligatoire</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Âge</mat-label>
+              <input matInput
+                type="number"
+                min="14"
+                [value]="character().age || 15"
+                (input)="updateBasicInfo('age', +$any($event.target).value)"
+                matTooltip="L'âge minimum est de 14 ans">
+              <mat-hint>Minimum 14 ans</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Genre *</mat-label>
+              <mat-select [value]="character().gender || ''"
+                required
+                (selectionChange)="updateBasicInfo('gender', $event.value)">
+                <mat-option value="masculin">Masculin</mat-option>
+                <mat-option value="féminin">Féminin</mat-option>
+                <mat-option value="autre">Autre</mat-option>
+              </mat-select>
+              <mat-error>Le genre est obligatoire</mat-error>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button
+            color="primary"
+            [disabled]="!canGoToNextStep()"
+          (click)="nextStep()">Suivant</button>
+        </mat-card-actions>
+      </mat-card>
+    }
 
     <!-- Étape 2: Choix du Clan -->
-    <mat-card *ngIf="currentStep() === 2">
-      <mat-card-header>
-        <mat-card-title>2. Choix du Clan</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="clan-selection-container">
-          <div class="clan-selection">
-            <mat-card 
-              *ngFor="let clan of availableClans(); trackBy: trackByClanName"
-              class="clan-card" 
-              [class.selected]="character().clan === clan.name"
-              (click)="selectClan(clan.name)">
-              <mat-card-header>
-                <mat-card-title>{{ clan.name }}</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <p>{{ clan.description }}</p>
-              </mat-card-content>
-            </mat-card>
+    @if (currentStep() === 2) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>2. Choix du Clan</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="clan-selection-container">
+            <div class="clan-selection">
+              @for (clan of availableClans(); track trackByClanName($index, clan)) {
+                <mat-card
+                  class="clan-card"
+                  [class.selected]="character().clan === clan.name"
+                  (click)="selectClan(clan.name)">
+                  <mat-card-header>
+                    <mat-card-title>{{ clan.name }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>{{ clan.description }}</p>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
           </div>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="previousStep()">Précédent</button>
-        <button mat-raised-button color="primary" 
-                [disabled]="!character().clan" 
-                (click)="nextStep()">Suivant</button>
-      </mat-card-actions>
-    </mat-card>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="previousStep()">Précédent</button>
+          <button mat-raised-button color="primary"
+            [disabled]="!character().clan"
+          (click)="nextStep()">Suivant</button>
+        </mat-card-actions>
+      </mat-card>
+    }
 
     <!-- Étape 3: Choix de la Famille -->
-    <mat-card *ngIf="currentStep() === 3">
-      <mat-card-header>
-        <mat-card-title>3. Choix de la Famille</mat-card-title>
-        <mat-card-subtitle>Clan sélectionné: {{ character().clan }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="family-selection">
-          <mat-card 
-            *ngFor="let family of availableFamilies(); trackBy: trackByFamilyName"
-            class="family-card" 
-            [class.selected]="character().family === family.name"
-            (click)="selectFamily(family.name)">
-            <mat-card-header>
-              <mat-card-title>{{ family.name }}</mat-card-title>
-              <mat-card-subtitle>Bonus: +1 {{ family.traitBonus | titlecase }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <p>{{ family.description }}</p>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="previousStep()">Précédent</button>
-        <button mat-raised-button color="primary" 
-                [disabled]="!character().family" 
-                (click)="nextStep()">Suivant</button>
-      </mat-card-actions>
-    </mat-card>
+    @if (currentStep() === 3) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>3. Choix de la Famille</mat-card-title>
+          <mat-card-subtitle>Clan sélectionné: {{ character().clan }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="family-selection">
+            @for (family of availableFamilies(); track trackByFamilyName($index, family)) {
+              <mat-card
+                class="family-card"
+                [class.selected]="character().family === family.name"
+                (click)="selectFamily(family.name)">
+                <mat-card-header>
+                  <mat-card-title>{{ family.name }}</mat-card-title>
+                  <mat-card-subtitle>Bonus: +1 {{ family.traitBonus | titlecase }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>{{ family.description }}</p>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="previousStep()">Précédent</button>
+          <button mat-raised-button color="primary"
+            [disabled]="!character().family"
+          (click)="nextStep()">Suivant</button>
+        </mat-card-actions>
+      </mat-card>
+    }
 
     <!-- Étape 4: Choix de l'École -->
-    <mat-card *ngIf="currentStep() === 4">
-      <mat-card-header>
-        <mat-card-title>4. Choix de l'École</mat-card-title>
-        <mat-card-subtitle>{{ character().clan }} - {{ character().family }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="school-selection">
-          <mat-card 
-            *ngFor="let school of availableSchools(); trackBy: trackBySchoolName"
-            class="school-card" 
-            [class.selected]="character().school === school.name"
-            (click)="selectSchool(school.name)">
-            <mat-card-header>
-              <mat-card-title>{{ school.name }}</mat-card-title>
-              <mat-card-subtitle>{{ school.type | titlecase }} - Bonus: +1 {{ school.traitBonus | titlecase }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <p><strong>Honneur de départ:</strong> {{ school.honor }}</p>
-              <p><strong>Compétences:</strong></p>
-              <mat-chip-set>
-                <mat-chip *ngFor="let skill of school.skills">{{ skill }}</mat-chip>
-              </mat-chip-set>
-              <p><strong>Technique:</strong> {{ school.technique }}</p>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="previousStep()">Précédent</button>
-        <button mat-raised-button color="primary" 
-                [disabled]="!character().school" 
-                (click)="nextStep()">Suivant</button>
-      </mat-card-actions>
-    </mat-card>
+    @if (currentStep() === 4) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>4. Choix de l'École</mat-card-title>
+          <mat-card-subtitle>{{ character().clan }} - {{ character().family }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="school-selection">
+            @for (school of availableSchools(); track trackBySchoolName($index, school)) {
+              <mat-card
+                class="school-card"
+                [class.selected]="character().school === school.name"
+                (click)="selectSchool(school.name)">
+                <mat-card-header>
+                  <mat-card-title>{{ school.name }}</mat-card-title>
+                  <mat-card-subtitle>{{ school.type | titlecase }} - Bonus: +1 {{ school.traitBonus | titlecase }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p><strong>Honneur de départ:</strong> {{ school.honor }}</p>
+                  <p><strong>Compétences:</strong></p>
+                  <mat-chip-set>
+                    @for (skill of school.skills; track skill) {
+                      <mat-chip>{{ skill }}</mat-chip>
+                    }
+                  </mat-chip-set>
+                  <p><strong>Technique:</strong> {{ school.technique }}</p>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="previousStep()">Précédent</button>
+          <button mat-raised-button color="primary"
+            [disabled]="!character().school"
+          (click)="nextStep()">Suivant</button>
+        </mat-card-actions>
+      </mat-card>
+    }
 
     <!-- Étape 5: Personnalisation avec XP -->
-    <mat-card *ngIf="currentStep() === 5">
-      <mat-card-header>
-        <mat-card-title>5. Personnalisation</mat-card-title>
-        <mat-card-subtitle>Points d'XP restants: {{ availableXP() }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-tab-group>
-          <!-- Onglet Anneaux -->
-          <mat-tab label="Anneaux">
-            <div class="tab-content">
-              <p class="info-text">Les Anneaux sont calculés automatiquement d'après les Traits, sauf le Vide.</p>
-              <div class="rings-grid">
-                <div class="ring-item">
-                  <span>Terre:</span>
-                  <span class="value">{{ calculatedRings().terre }}</span>
-                  <span class="formula">(min Constitution/Volonté)</span>
-                </div>
-                <div class="ring-item">
-                  <span>Eau:</span>
-                  <span class="value">{{ calculatedRings().eau }}</span>
-                  <span class="formula">(min Force/Perception)</span>
-                </div>
-                <div class="ring-item">
-                  <span>Air:</span>
-                  <span class="value">{{ calculatedRings().air }}</span>
-                  <span class="formula">(min Réflexes/Intuition)</span>
-                </div>
-                <div class="ring-item">
-                  <span>Feu:</span>
-                  <span class="value">{{ calculatedRings().feu }}</span>
-                  <span class="formula">(min Agilité/Intelligence)</span>
-                </div>
-                <div class="ring-item">
-                  <span [matTooltip]="getTraitDescription('vide')">Vide:</span>
-                  <span class="value">{{ calculatedRings().vide }}</span>
-                  <div class="trait-buttons">
-                    <button mat-button 
-                            [disabled]="calculatedRings().vide <= 2"
-                            (click)="decreaseVoidRing()"
-                            matTooltip="Diminuer le Vide">
-                      -
-                    </button>
-                    <button mat-button 
-                            [disabled]="!canAfford(getVoidRingCost(calculatedRings().vide)) || isAtMaximum(calculatedRings().vide)"
-                            (click)="improveVoidRing()"
-                            matTooltip="Améliorer le Vide">
-                      +
-                    </button>
+    @if (currentStep() === 5) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>5. Personnalisation</mat-card-title>
+          <mat-card-subtitle>Points d'XP restants: {{ availableXP() }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-tab-group>
+            <!-- Onglet Anneaux -->
+            <mat-tab label="Anneaux">
+              <div class="tab-content">
+                <p class="info-text">Les Anneaux sont calculés automatiquement d'après les Traits, sauf le Vide.</p>
+                <div class="rings-grid">
+                  <div class="ring-item">
+                    <span>Terre:</span>
+                    <span class="value">{{ calculatedRings().terre }}</span>
+                    <span class="formula">(min Constitution/Volonté)</span>
                   </div>
-                  <span class="cost">({{ getVoidRingCost(calculatedRings().vide) }} XP)</span>
+                  <div class="ring-item">
+                    <span>Eau:</span>
+                    <span class="value">{{ calculatedRings().eau }}</span>
+                    <span class="formula">(min Force/Perception)</span>
+                  </div>
+                  <div class="ring-item">
+                    <span>Air:</span>
+                    <span class="value">{{ calculatedRings().air }}</span>
+                    <span class="formula">(min Réflexes/Intuition)</span>
+                  </div>
+                  <div class="ring-item">
+                    <span>Feu:</span>
+                    <span class="value">{{ calculatedRings().feu }}</span>
+                    <span class="formula">(min Agilité/Intelligence)</span>
+                  </div>
+                  <div class="ring-item">
+                    <span [matTooltip]="getTraitDescription('vide')">Vide:</span>
+                    <span class="value">{{ calculatedRings().vide }}</span>
+                    <div class="trait-buttons">
+                      <button mat-button
+                        [disabled]="calculatedRings().vide <= 2"
+                        (click)="decreaseVoidRing()"
+                        matTooltip="Diminuer le Vide">
+                        -
+                      </button>
+                      <button mat-button
+                        [disabled]="!canAfford(getVoidRingCost(calculatedRings().vide)) || isAtMaximum(calculatedRings().vide)"
+                        (click)="improveVoidRing()"
+                        matTooltip="Améliorer le Vide">
+                        +
+                      </button>
+                    </div>
+                    <span class="cost">({{ getVoidRingCost(calculatedRings().vide) }} XP)</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </mat-tab>
-
-          <!-- Onglet Traits par Anneaux -->
-          <mat-tab label="Traits">
-            <div class="tab-content">
-              <div class="traits-by-rings-editor">
-                <!-- Terre -->
-                <div class="ring-traits-group">
-                  <h4>Terre</h4>
-                  <div class="traits-ring-grid">
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('constitution')">Constitution:</span>
-                      <span class="value">{{ getTraitValue('constitution') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('constitution') <= 2"
-                                (click)="decreaseTrait('constitution')"
-                                matTooltip="Diminuer Constitution">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('constitution'))) || isAtMaximum(getTraitValue('constitution'))"
-                                (click)="improveTrait('constitution')"
-                                matTooltip="Améliorer Constitution">
-                          +
-                        </button>
+            </mat-tab>
+            <!-- Onglet Traits par Anneaux -->
+            <mat-tab label="Traits">
+              <div class="tab-content">
+                <div class="traits-by-rings-editor">
+                  <!-- Terre -->
+                  <div class="ring-traits-group">
+                    <h4>Terre</h4>
+                    <div class="traits-ring-grid">
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('constitution')">Constitution:</span>
+                        <span class="value">{{ getTraitValue('constitution') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('constitution') <= 2"
+                            (click)="decreaseTrait('constitution')"
+                            matTooltip="Diminuer Constitution">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('constitution'))) || isAtMaximum(getTraitValue('constitution'))"
+                            (click)="improveTrait('constitution')"
+                            matTooltip="Améliorer Constitution">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('constitution')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('constitution')) }} XP)</span>
-                    </div>
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('volonte')">Volonté:</span>
-                      <span class="value">{{ getTraitValue('volonte') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('volonte') <= 2"
-                                (click)="decreaseTrait('volonte')"
-                                matTooltip="Diminuer Volonté">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('volonte'))) || isAtMaximum(getTraitValue('volonte'))"
-                                (click)="improveTrait('volonte')"
-                                matTooltip="Améliorer Volonté">
-                          +
-                        </button>
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('volonte')">Volonté:</span>
+                        <span class="value">{{ getTraitValue('volonte') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('volonte') <= 2"
+                            (click)="decreaseTrait('volonte')"
+                            matTooltip="Diminuer Volonté">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('volonte'))) || isAtMaximum(getTraitValue('volonte'))"
+                            (click)="improveTrait('volonte')"
+                            matTooltip="Améliorer Volonté">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('volonte')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('volonte')) }} XP)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Eau -->
-                <div class="ring-traits-group">
-                  <h4>Eau</h4>
-                  <div class="traits-ring-grid">
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('force')">Force:</span>
-                      <span class="value">{{ getTraitValue('force') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('force') <= 2"
-                                (click)="decreaseTrait('force')"
-                                matTooltip="Diminuer Force">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('force'))) || isAtMaximum(getTraitValue('force'))"
-                                (click)="improveTrait('force')"
-                                matTooltip="Améliorer Force">
-                          +
-                        </button>
-                      </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('force')) }} XP)</span>
-                    </div>
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('perception')">Perception:</span>
-                      <span class="value">{{ getTraitValue('perception') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('perception') <= 2"
-                                (click)="decreaseTrait('perception')"
-                                matTooltip="Diminuer Perception">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('perception'))) || isAtMaximum(getTraitValue('perception'))"
-                                (click)="improveTrait('perception')"
-                                matTooltip="Améliorer Perception">
-                          +
-                        </button>
-                      </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('perception')) }} XP)</span>
                     </div>
                   </div>
-                </div>
-
-                <!-- Air -->
-                <div class="ring-traits-group">
-                  <h4>Air</h4>
-                  <div class="traits-ring-grid">
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('reflexes')">Réflexes:</span>
-                      <span class="value">{{ getTraitValue('reflexes') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('reflexes') <= 2"
-                                (click)="decreaseTrait('reflexes')"
-                                matTooltip="Diminuer Réflexes">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('reflexes'))) || isAtMaximum(getTraitValue('reflexes'))"
-                                (click)="improveTrait('reflexes')"
-                                matTooltip="Améliorer Réflexes">
-                          +
-                        </button>
+                  <!-- Eau -->
+                  <div class="ring-traits-group">
+                    <h4>Eau</h4>
+                    <div class="traits-ring-grid">
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('force')">Force:</span>
+                        <span class="value">{{ getTraitValue('force') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('force') <= 2"
+                            (click)="decreaseTrait('force')"
+                            matTooltip="Diminuer Force">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('force'))) || isAtMaximum(getTraitValue('force'))"
+                            (click)="improveTrait('force')"
+                            matTooltip="Améliorer Force">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('force')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('reflexes')) }} XP)</span>
-                    </div>
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('intuition')">Intuition:</span>
-                      <span class="value">{{ getTraitValue('intuition') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('intuition') <= 2"
-                                (click)="decreaseTrait('intuition')"
-                                matTooltip="Diminuer Intuition">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('intuition'))) || isAtMaximum(getTraitValue('intuition'))"
-                                (click)="improveTrait('intuition')"
-                                matTooltip="Améliorer Intuition">
-                          +
-                        </button>
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('perception')">Perception:</span>
+                        <span class="value">{{ getTraitValue('perception') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('perception') <= 2"
+                            (click)="decreaseTrait('perception')"
+                            matTooltip="Diminuer Perception">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('perception'))) || isAtMaximum(getTraitValue('perception'))"
+                            (click)="improveTrait('perception')"
+                            matTooltip="Améliorer Perception">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('perception')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('intuition')) }} XP)</span>
                     </div>
                   </div>
-                </div>
-
-                <!-- Feu -->
-                <div class="ring-traits-group">
-                  <h4>Feu</h4>
-                  <div class="traits-ring-grid">
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('agilite')">Agilité:</span>
-                      <span class="value">{{ getTraitValue('agilite') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('agilite') <= 2"
-                                (click)="decreaseTrait('agilite')"
-                                matTooltip="Diminuer Agilité">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('agilite'))) || isAtMaximum(getTraitValue('agilite'))"
-                                (click)="improveTrait('agilite')"
-                                matTooltip="Améliorer Agilité">
-                          +
-                        </button>
+                  <!-- Air -->
+                  <div class="ring-traits-group">
+                    <h4>Air</h4>
+                    <div class="traits-ring-grid">
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('reflexes')">Réflexes:</span>
+                        <span class="value">{{ getTraitValue('reflexes') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('reflexes') <= 2"
+                            (click)="decreaseTrait('reflexes')"
+                            matTooltip="Diminuer Réflexes">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('reflexes'))) || isAtMaximum(getTraitValue('reflexes'))"
+                            (click)="improveTrait('reflexes')"
+                            matTooltip="Améliorer Réflexes">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('reflexes')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('agilite')) }} XP)</span>
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('intuition')">Intuition:</span>
+                        <span class="value">{{ getTraitValue('intuition') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('intuition') <= 2"
+                            (click)="decreaseTrait('intuition')"
+                            matTooltip="Diminuer Intuition">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('intuition'))) || isAtMaximum(getTraitValue('intuition'))"
+                            (click)="improveTrait('intuition')"
+                            matTooltip="Améliorer Intuition">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('intuition')) }} XP)</span>
+                      </div>
                     </div>
-                    <div class="trait-item">
-                      <span [matTooltip]="getTraitDescription('intelligence')">Intelligence:</span>
-                      <span class="value">{{ getTraitValue('intelligence') }}</span>
-                      <div class="trait-buttons">
-                        <button mat-button 
-                                [disabled]="getTraitValue('intelligence') <= 2"
-                                (click)="decreaseTrait('intelligence')"
-                                matTooltip="Diminuer Intelligence">
-                          -
-                        </button>
-                        <button mat-button 
-                                [disabled]="!canAfford(getTraitCost(getTraitValue('intelligence'))) || isAtMaximum(getTraitValue('intelligence'))"
-                                (click)="improveTrait('intelligence')"
-                                matTooltip="Améliorer Intelligence">
-                          +
-                        </button>
+                  </div>
+                  <!-- Feu -->
+                  <div class="ring-traits-group">
+                    <h4>Feu</h4>
+                    <div class="traits-ring-grid">
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('agilite')">Agilité:</span>
+                        <span class="value">{{ getTraitValue('agilite') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('agilite') <= 2"
+                            (click)="decreaseTrait('agilite')"
+                            matTooltip="Diminuer Agilité">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('agilite'))) || isAtMaximum(getTraitValue('agilite'))"
+                            (click)="improveTrait('agilite')"
+                            matTooltip="Améliorer Agilité">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('agilite')) }} XP)</span>
                       </div>
-                      <span class="cost">({{ getTraitCost(getTraitValue('intelligence')) }} XP)</span>
+                      <div class="trait-item">
+                        <span [matTooltip]="getTraitDescription('intelligence')">Intelligence:</span>
+                        <span class="value">{{ getTraitValue('intelligence') }}</span>
+                        <div class="trait-buttons">
+                          <button mat-button
+                            [disabled]="getTraitValue('intelligence') <= 2"
+                            (click)="decreaseTrait('intelligence')"
+                            matTooltip="Diminuer Intelligence">
+                            -
+                          </button>
+                          <button mat-button
+                            [disabled]="!canAfford(getTraitCost(getTraitValue('intelligence'))) || isAtMaximum(getTraitValue('intelligence'))"
+                            (click)="improveTrait('intelligence')"
+                            matTooltip="Améliorer Intelligence">
+                            +
+                          </button>
+                        </div>
+                        <span class="cost">({{ getTraitCost(getTraitValue('intelligence')) }} XP)</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </mat-tab>
-
-          <!-- Onglet Compétences -->
-          <mat-tab label="Compétences">
-            <div class="tab-content">
-              <div class="skills-grid">
-                <div class="skill-item" *ngFor="let skill of character().skills || []">
-                  <span>{{ skill.name }}:</span>
-                  <span class="value">{{ skill.rank }}</span>
-                  <mat-chip [color]="skill.isSchoolSkill ? 'primary' : 'accent'" class="skill-type">
-                    {{ skill.isSchoolSkill ? 'École' : 'Hors-École' }}
-                  </mat-chip>
-                  <div class="button-group">
-                    <button mat-button 
-                            [disabled]="skill.rank <= 1"
-                            (click)="decreaseSkill(skill.name)"
-                            [matTooltip]="'Diminuer ' + skill.name">
-                      -
-                    </button>
-                    <button mat-button 
-                            [disabled]="!canAfford(getSkillCost(skill)) || isAtMaximum(skill.rank)"
-                            (click)="improveSkill(skill.name)"
-                            [matTooltip]="'Améliorer ' + skill.name">
-                      +
-                    </button>
+            </mat-tab>
+            <!-- Onglet Compétences -->
+            <mat-tab label="Compétences">
+              <div class="tab-content">
+                <div class="skills-grid">
+                  @for (skill of character().skills || []; track skill) {
+                    <div class="skill-item">
+                      <span>{{ skill.name }}:</span>
+                      <span class="value">{{ skill.rank }}</span>
+                      <mat-chip [color]="skill.isSchoolSkill ? 'primary' : 'accent'" class="skill-type">
+                        {{ skill.isSchoolSkill ? 'École' : 'Hors-École' }}
+                      </mat-chip>
+                      <div class="button-group">
+                        <button mat-button
+                          [disabled]="skill.rank <= 1"
+                          (click)="decreaseSkill(skill.name)"
+                          [matTooltip]="'Diminuer ' + skill.name">
+                          -
+                        </button>
+                        <button mat-button
+                          [disabled]="!canAfford(getSkillCost(skill)) || isAtMaximum(skill.rank)"
+                          (click)="improveSkill(skill.name)"
+                          [matTooltip]="'Améliorer ' + skill.name">
+                          +
+                        </button>
+                      </div>
+                      <span class="cost">({{ getSkillCost(skill) }} XP)</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </mat-tab>
+            <!-- Onglet Avantages/Désavantages -->
+            <mat-tab label="Avantages/Désavantages">
+              <div class="tab-content">
+                <div class="xp-impact-summary">
+                  <div class="xp-info">
+                    <span class="advantage-cost">Coût avantages: {{ advantageXPCost() }} XP</span>
+                    <span class="disadvantage-gain">Gain désavantages: +{{ disadvantageXPGain() }} XP</span>
+                    <span class="net-impact">Impact net: {{ disadvantageXPGain() - advantageXPCost() }} XP</span>
                   </div>
-                  <span class="cost">({{ getSkillCost(skill) }} XP)</span>
                 </div>
-              </div>
-            </div>
-          </mat-tab>
-
-          <!-- Onglet Avantages/Désavantages -->
-          <mat-tab label="Avantages/Désavantages">
-            <div class="tab-content">
-              <div class="xp-impact-summary">
-                <div class="xp-info">
-                  <span class="advantage-cost">Coût avantages: {{ advantageXPCost() }} XP</span>
-                  <span class="disadvantage-gain">Gain désavantages: +{{ disadvantageXPGain() }} XP</span>
-                  <span class="net-impact">Impact net: {{ disadvantageXPGain() - advantageXPCost() }} XP</span>
-                </div>
-              </div>
-
-              <mat-tab-group>
-                <!-- Sous-onglet Avantages -->
-                <mat-tab label="Sélectionner Avantages">
-                  <div class="advantages-content">
-                    <!-- Avantages sélectionnés -->
-                    <div *ngIf="selectedAdvantages().length > 0" class="selected-section">
-                      <h3>Avantages sélectionnés</h3>
-                      <div class="selected-items">
-                        <div class="chip-list">
-                          <div *ngFor="let advantage of selectedAdvantages()" class="custom-chip advantage-chip">
-                            <span>{{ advantage.name }} ({{ advantage.cost }} XP)</span>
-                            <button class="chip-remove" (click)="deselectAdvantage(advantage.id)">✕</button>
+                <mat-tab-group>
+                  <!-- Sous-onglet Avantages -->
+                  <mat-tab label="Sélectionner Avantages">
+                    <div class="advantages-content">
+                      <!-- Avantages sélectionnés -->
+                      @if (selectedAdvantages().length > 0) {
+                        <div class="selected-section">
+                          <h3>Avantages sélectionnés</h3>
+                          <div class="selected-items">
+                            <div class="chip-list">
+                              @for (advantage of selectedAdvantages(); track advantage) {
+                                <div class="custom-chip advantage-chip">
+                                  <span>{{ advantage.name }} ({{ advantage.cost }} XP)</span>
+                                  <button class="chip-remove" (click)="deselectAdvantage(advantage.id)">✕</button>
+                                </div>
+                              }
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-
-                    <!-- Sélection par catégorie -->
-                    <div class="category-section" *ngFor="let category of advantageCategories()">
-                      <h4>{{ category }}</h4>
-                      <div class="advantages-grid">
-                        <mat-card *ngFor="let advantage of getAdvantagesByCategory(category)()" 
-                                  class="advantage-card"
-                                  [class.disabled]="availableXP() < advantage.cost">
-                          <mat-card-header>
-                            <mat-card-title>{{ advantage.name }}</mat-card-title>
-                            <mat-card-subtitle>{{ advantage.cost }} XP</mat-card-subtitle>
-                          </mat-card-header>
-                          <mat-card-content>
-                            <p>{{ advantage.description }}</p>
-                          </mat-card-content>
-                          <mat-card-actions>
-                            <button mat-button 
+                      }
+                      <!-- Sélection par catégorie -->
+                      @for (category of advantageCategories(); track category) {
+                        <div class="category-section">
+                          <h4>{{ category }}</h4>
+                          <div class="advantages-grid">
+                            @for (advantage of getAdvantagesByCategory(category)(); track advantage) {
+                              <mat-card
+                                class="advantage-card"
+                                [class.disabled]="availableXP() < advantage.cost">
+                                <mat-card-header>
+                                  <mat-card-title>{{ advantage.name }}</mat-card-title>
+                                  <mat-card-subtitle>{{ advantage.cost }} XP</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                  <p>{{ advantage.description }}</p>
+                                </mat-card-content>
+                                <mat-card-actions>
+                                  <button mat-button
                                     color="primary"
                                     (click)="selectAdvantage(advantage.id)"
                                     [disabled]="availableXP() < advantage.cost || isAdvantageSelected(advantage.id)">
-                              Sélectionner
-                            </button>
-                          </mat-card-actions>
-                        </mat-card>
-                      </div>
-                    </div>
-                  </div>
-                </mat-tab>
-
-                <!-- Sous-onglet Désavantages -->
-                <mat-tab label="Sélectionner Désavantages">
-                  <div class="disadvantages-content">
-                    <!-- Désavantages sélectionnés -->
-                    <div *ngIf="selectedDisadvantages().length > 0" class="selected-section">
-                      <h3>Désavantages sélectionnés</h3>
-                      <div class="selected-items">
-                        <div class="chip-list">
-                          <div *ngFor="let disadvantage of selectedDisadvantages()" class="custom-chip disadvantage-chip">
-                            <span>{{ disadvantage.name }} (+{{ disadvantage.xpGain }} XP)</span>
-                            <button class="chip-remove" (click)="deselectDisadvantage(disadvantage.id)">✕</button>
+                                    Sélectionner
+                                  </button>
+                                </mat-card-actions>
+                              </mat-card>
+                            }
                           </div>
                         </div>
-                      </div>
+                      }
                     </div>
-
-                    <!-- Sélection par catégorie -->
-                    <div class="category-section" *ngFor="let category of disadvantageCategories()">
-                      <h4>{{ category }}</h4>
-                      <div class="disadvantages-grid">
-                        <mat-card *ngFor="let disadvantage of getDisadvantagesByCategory(category)()" 
-                                  class="disadvantage-card">
-                          <mat-card-header>
-                            <mat-card-title>{{ disadvantage.name }}</mat-card-title>
-                            <mat-card-subtitle>+{{ disadvantage.xpGain }} XP</mat-card-subtitle>
-                          </mat-card-header>
-                          <mat-card-content>
-                            <p>{{ disadvantage.description }}</p>
-                          </mat-card-content>
-                          <mat-card-actions>
-                            <button mat-button 
+                  </mat-tab>
+                  <!-- Sous-onglet Désavantages -->
+                  <mat-tab label="Sélectionner Désavantages">
+                    <div class="disadvantages-content">
+                      <!-- Désavantages sélectionnés -->
+                      @if (selectedDisadvantages().length > 0) {
+                        <div class="selected-section">
+                          <h3>Désavantages sélectionnés</h3>
+                          <div class="selected-items">
+                            <div class="chip-list">
+                              @for (disadvantage of selectedDisadvantages(); track disadvantage) {
+                                <div class="custom-chip disadvantage-chip">
+                                  <span>{{ disadvantage.name }} (+{{ disadvantage.xpGain }} XP)</span>
+                                  <button class="chip-remove" (click)="deselectDisadvantage(disadvantage.id)">✕</button>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      <!-- Sélection par catégorie -->
+                      @for (category of disadvantageCategories(); track category) {
+                        <div class="category-section">
+                          <h4>{{ category }}</h4>
+                          <div class="disadvantages-grid">
+                            @for (disadvantage of getDisadvantagesByCategory(category)(); track disadvantage) {
+                              <mat-card
+                                class="disadvantage-card">
+                                <mat-card-header>
+                                  <mat-card-title>{{ disadvantage.name }}</mat-card-title>
+                                  <mat-card-subtitle>+{{ disadvantage.xpGain }} XP</mat-card-subtitle>
+                                </mat-card-header>
+                                <mat-card-content>
+                                  <p>{{ disadvantage.description }}</p>
+                                </mat-card-content>
+                                <mat-card-actions>
+                                  <button mat-button
                                     color="accent"
                                     (click)="selectDisadvantage(disadvantage.id)"
                                     [disabled]="isDisadvantageSelected(disadvantage.id)">
-                              Sélectionner
-                            </button>
-                          </mat-card-actions>
-                        </mat-card>
-                      </div>
+                                    Sélectionner
+                                  </button>
+                                </mat-card-actions>
+                              </mat-card>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </mat-tab>
+                </mat-tab-group>
+              </div>
+            </mat-tab>
+            <!-- Onglet Équipement -->
+            <mat-tab label="Équipement">
+              <div class="tab-content">
+                <div class="equipment-management">
+                  <!-- Argent disponible -->
+                  <div class="equipment-section">
+                    <h4>Argent disponible</h4>
+                    <p class="money-display">{{ getAvailableMoney() }} Koku</p>
+                  </div>
+                  <h3>Équipement actuel</h3>
+                  <!-- Armes -->
+                  <div class="equipment-section">
+                    <h4>Armes</h4>
+                    <div class="equipment-list">
+                      @for (weapon of characterEquipment().weapons; track weapon) {
+                        <div class="equipment-item">
+                          <span class="equipment-name">{{ weapon.name }}</span>
+                          @if (weapon.damage) {
+                            <span class="equipment-stats">{{ weapon.damage }} dégâts</span>
+                          }
+                          @if (weapon.cost) {
+                            <span class="equipment-cost">{{ weapon.cost }} Koku</span>
+                          }
+                          <span class="equipment-description">{{ weapon.description }}</span>
+                          <button mat-button (click)="sellEquipment(weapon.name, 'weapon')"
+                            [matTooltip]="'Vendre (' + getSellPrice(weapon.cost || '0') + ' Koku)'"
+                            class="sell-button">
+                            Vendre
+                          </button>
+                        </div>
+                      }
                     </div>
                   </div>
-                </mat-tab>
-              </mat-tab-group>
-            </div>
-          </mat-tab>
-
-          <!-- Onglet Équipement -->
-          <mat-tab label="Équipement">
-            <div class="tab-content">
-              <div class="equipment-management">
-                
-                <!-- Argent disponible -->
-                <div class="equipment-section">
-                  <h4>Argent disponible</h4>
-                  <p class="money-display">{{ getAvailableMoney() }} Koku</p>
-                </div>
-                
-                <h3>Équipement actuel</h3>
-                
-                <!-- Armes -->
-                <div class="equipment-section">
-                  <h4>Armes</h4>
-                  <div class="equipment-list">
-                    <div *ngFor="let weapon of characterEquipment().weapons" class="equipment-item">
-                      <span class="equipment-name">{{ weapon.name }}</span>
-                      <span class="equipment-stats" *ngIf="weapon.damage">{{ weapon.damage }} dégâts</span>
-                      <span class="equipment-cost" *ngIf="weapon.cost">{{ weapon.cost }} Koku</span>
-                      <span class="equipment-description">{{ weapon.description }}</span>
-                      <button mat-button (click)="sellEquipment(weapon.name, 'weapon')" 
-                              [matTooltip]="'Vendre (' + getSellPrice(weapon.cost || '0') + ' Koku)'" 
-                              class="sell-button">
-                        Vendre
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Armure -->
-                <div class="equipment-section">
-                  <h4>Armure</h4>
-                  <div class="equipment-item" *ngIf="currentArmor()">
-                    <span class="equipment-name">{{ currentArmor()!.name }}</span>
-                    <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
-                    <span class="equipment-cost" *ngIf="currentArmor()!.cost">{{ currentArmor()!.cost }} Koku</span>
-                    <span class="equipment-description">{{ currentArmor()!.description }}</span>
-                    <button mat-button (click)="sellEquipment(currentArmor()!.name, 'armor')" 
-                            [matTooltip]="'Vendre (' + getSellPrice(currentArmor()!.cost || '0') + ' Koku)'" 
+                  <!-- Armure -->
+                  <div class="equipment-section">
+                    <h4>Armure</h4>
+                    @if (currentArmor()) {
+                      <div class="equipment-item">
+                        <span class="equipment-name">{{ currentArmor()!.name }}</span>
+                        <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
+                        @if (currentArmor()!.cost) {
+                          <span class="equipment-cost">{{ currentArmor()!.cost }} Koku</span>
+                        }
+                        <span class="equipment-description">{{ currentArmor()!.description }}</span>
+                        @if (currentArmor()!.name !== 'Pas d\'armure') {
+                          <button mat-button (click)="sellEquipment(currentArmor()!.name, 'armor')"
+                            [matTooltip]="'Vendre (' + getSellPrice(currentArmor()!.cost || '0') + ' Koku)'"
                             class="sell-button"
-                            *ngIf="currentArmor()!.name !== 'Pas d\'armure'">
-                      Vendre
-                    </button>
+                            >
+                            Vendre
+                          </button>
+                        }
+                      </div>
+                    }
                   </div>
-                </div>
-
-                <!-- Objets -->
-                <div class="equipment-section">
-                  <h4>Objets et Équipements</h4>
-                  <div class="equipment-list">
-                    <div *ngFor="let item of characterEquipment().items" class="equipment-item">
-                      <span class="equipment-name">{{ item.name }}</span>
-                      <span class="equipment-cost" *ngIf="item.cost">{{ item.cost }} Koku</span>
-                      <span class="equipment-description">{{ item.description }}</span>
-                      <span class="equipment-special" *ngIf="item.special">{{ item.special }}</span>
-                      <button mat-button (click)="sellEquipment(item.name, 'item')" 
-                              [matTooltip]="'Vendre (' + getSellPrice(item.cost || '0') + ' Koku)'" 
-                              class="sell-button">
-                        Vendre
-                      </button>
+                  <!-- Objets -->
+                  <div class="equipment-section">
+                    <h4>Objets et Équipements</h4>
+                    <div class="equipment-list">
+                      @for (item of characterEquipment().items; track item) {
+                        <div class="equipment-item">
+                          <span class="equipment-name">{{ item.name }}</span>
+                          @if (item.cost) {
+                            <span class="equipment-cost">{{ item.cost }} Koku</span>
+                          }
+                          <span class="equipment-description">{{ item.description }}</span>
+                          @if (item.special) {
+                            <span class="equipment-special">{{ item.special }}</span>
+                          }
+                          <button mat-button (click)="sellEquipment(item.name, 'item')"
+                            [matTooltip]="'Vendre (' + getSellPrice(item.cost || '0') + ' Koku)'"
+                            class="sell-button">
+                            Vendre
+                          </button>
+                        </div>
+                      }
                     </div>
                   </div>
-                </div>
-
-                <h3>Marché d'équipement</h3>
-                
-                <!-- Acheter des armes -->
-                <div class="equipment-section">
-                  <h4>Armes disponibles</h4>
-                  <div class="equipment-shop">
-                    <div *ngFor="let weapon of shopWeapons" class="shop-item" [class.unaffordable]="!canAffordEquipment(weapon)">
-                      <span class="equipment-name">{{ weapon.name }}</span>
-                      <span class="equipment-stats" *ngIf="weapon.damage">{{ weapon.damage }} dégâts</span>
-                      <span class="equipment-cost">{{ weapon.cost }} Koku</span>
-                      <span class="equipment-description">{{ weapon.description }}</span>
-                      <button mat-raised-button 
-                              [disabled]="!canAffordEquipment(weapon)"
-                              (click)="buyEquipment(weapon)"
-                              class="buy-button">
-                        Acheter
-                      </button>
+                  <h3>Marché d'équipement</h3>
+                  <!-- Acheter des armes -->
+                  <div class="equipment-section">
+                    <h4>Armes disponibles</h4>
+                    <div class="equipment-shop">
+                      @for (weapon of shopWeapons; track weapon) {
+                        <div class="shop-item" [class.unaffordable]="!canAffordEquipment(weapon)">
+                          <span class="equipment-name">{{ weapon.name }}</span>
+                          @if (weapon.damage) {
+                            <span class="equipment-stats">{{ weapon.damage }} dégâts</span>
+                          }
+                          <span class="equipment-cost">{{ weapon.cost }} Koku</span>
+                          <span class="equipment-description">{{ weapon.description }}</span>
+                          <button mat-raised-button
+                            [disabled]="!canAffordEquipment(weapon)"
+                            (click)="buyEquipment(weapon)"
+                            class="buy-button">
+                            Acheter
+                          </button>
+                        </div>
+                      }
                     </div>
                   </div>
-                </div>
-
-                <!-- Acheter des armures -->
-                <div class="equipment-section">
-                  <h4>Armures disponibles</h4>
-                  <div class="equipment-shop">
-                    <div *ngFor="let armor of shopArmor" class="shop-item" [class.unaffordable]="!canAffordEquipment(armor)">
-                      <span class="equipment-name">{{ armor.name }}</span>
-                      <span class="equipment-stats">TN {{ armor.TN }}, Réduction {{ armor.reduction }}</span>
-                      <span class="equipment-cost">{{ armor.cost }} Koku</span>
-                      <span class="equipment-description">{{ armor.description }}</span>
-                      <button mat-raised-button 
-                              [disabled]="!canAffordEquipment(armor)"
-                              (click)="buyEquipment(armor)"
-                              class="buy-button">
-                        Acheter
-                      </button>
+                  <!-- Acheter des armures -->
+                  <div class="equipment-section">
+                    <h4>Armures disponibles</h4>
+                    <div class="equipment-shop">
+                      @for (armor of shopArmor; track armor) {
+                        <div class="shop-item" [class.unaffordable]="!canAffordEquipment(armor)">
+                          <span class="equipment-name">{{ armor.name }}</span>
+                          <span class="equipment-stats">TN {{ armor.TN }}, Réduction {{ armor.reduction }}</span>
+                          <span class="equipment-cost">{{ armor.cost }} Koku</span>
+                          <span class="equipment-description">{{ armor.description }}</span>
+                          <button mat-raised-button
+                            [disabled]="!canAffordEquipment(armor)"
+                            (click)="buyEquipment(armor)"
+                            class="buy-button">
+                            Acheter
+                          </button>
+                        </div>
+                      }
                     </div>
                   </div>
-                </div>
-
-                <div class="equipment-note">
-                  <p><strong>Note :</strong> L'équipement de base est déterminé par votre école. 
+                  <div class="equipment-note">
+                    <p><strong>Note :</strong> L'équipement de base est déterminé par votre école.
                   Vous pouvez acheter des équipements supplémentaires avec vos Koku.</p>
                 </div>
               </div>
@@ -682,249 +715,326 @@
         <button mat-raised-button color="primary" (click)="nextStep()">Suivant</button>
       </mat-card-actions>
     </mat-card>
+  }
 
-    <!-- Étape 6: Sélection des Sorts (pour les Shugenjas) -->
-    <mat-card *ngIf="currentStep() === 6">
+  <!-- Étape 6: Sélection des Sorts (pour les Shugenjas) -->
+  @if (currentStep() === 6) {
+    <mat-card>
       <mat-card-header>
         <mat-card-title>6. Sélection des Sorts et Kiho</mat-card-title>
-        <mat-card-subtitle *ngIf="canCastSpells()">
-          <div>Votre école vous permet de lancer des sorts :</div>
-          <div>
-            • Rang 1 : {{ getSpellCountByRank(1) }}/{{ maxStartingSpells().rank1 }} sorts
-          </div>
-          <div>
-            • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpells().rank2 }} sorts
-          </div>
-          <div *ngIf="canUseMaho()" class="maho-count-info">
-            • Sorts Maho : {{ getSelectedMahoCount() }} (séparé du quota de sorts)
-          </div>
-          <div *ngIf="schoolAffinityDeficiency().affinity" class="affinity-info">
-            Affinité : {{ schoolAffinityDeficiency().affinity }}
-          </div>
-          <div *ngIf="schoolAffinityDeficiency().deficiency" class="deficiency-info">
-            Déficience : {{ schoolAffinityDeficiency().deficiency }} (interdits)
-          </div>
-        </mat-card-subtitle>
-        <mat-card-subtitle *ngIf="characterService.isMonk()">
-          <div>Votre école vous permet d'apprendre des Kiho :</div>
-          <div>
-            • Kiho sélectionnés : {{ characterService.getSelectedKihoCount() }}
-          </div>
-          <div>
-            • Rang d'Insight actuel : {{ getInsightRank() }}
-          </div>
-        </mat-card-subtitle>
-        <mat-card-subtitle *ngIf="!canCastSpells() && !characterService.isMonk()">
-          Votre école ne permet ni de lancer des sorts ni d'apprendre des Kiho
-        </mat-card-subtitle>
+        @if (canCastSpells()) {
+          <mat-card-subtitle>
+            <div>Votre école vous permet de lancer des sorts :</div>
+            <div>
+              • Rang 1 : {{ getSpellCountByRank(1) }}/{{ maxStartingSpells().rank1 }} sorts
+            </div>
+            <div>
+              • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpells().rank2 }} sorts
+            </div>
+            @if (canUseMaho()) {
+              <div class="maho-count-info">
+                • Sorts Maho : {{ getSelectedMahoCount() }} (séparé du quota de sorts)
+              </div>
+            }
+            @if (schoolAffinityDeficiency().affinity) {
+              <div class="affinity-info">
+                Affinité : {{ schoolAffinityDeficiency().affinity }}
+              </div>
+            }
+            @if (schoolAffinityDeficiency().deficiency) {
+              <div class="deficiency-info">
+                Déficience : {{ schoolAffinityDeficiency().deficiency }} (interdits)
+              </div>
+            }
+          </mat-card-subtitle>
+        }
+        @if (characterService.isMonk()) {
+          <mat-card-subtitle>
+            <div>Votre école vous permet d'apprendre des Kiho :</div>
+            <div>
+              • Kiho sélectionnés : {{ characterService.getSelectedKihoCount() }}
+            </div>
+            <div>
+              • Rang d'Insight actuel : {{ getInsightRank() }}
+            </div>
+          </mat-card-subtitle>
+        }
+        @if (!canCastSpells() && !characterService.isMonk()) {
+          <mat-card-subtitle>
+            Votre école ne permet ni de lancer des sorts ni d'apprendre des Kiho
+          </mat-card-subtitle>
+        }
       </mat-card-header>
       <mat-card-content>
         <!-- Section Sorts (Shugenja) -->
-        <div *ngIf="canCastSpells()">
-          <div class="spells-selection">
-            <h3>Sorts Sélectionnés</h3>
-            <div class="selected-spells" *ngIf="selectedSpells().length > 0">
-              <mat-chip-set>
-                <mat-chip 
-                  *ngFor="let spell of selectedSpells()"
-                  [removable]="true"
-                  (removed)="removeSpell(spell.name)">
-                  {{ spell.name }} ({{ spell.element }}, Niveau {{ spell.mastery }})
-                  X
-                </mat-chip>
-              </mat-chip-set>
-            </div>
-            <p *ngIf="selectedSpells().length === 0" class="no-spells">Aucun sort sélectionné</p>
-
-            <h3>Sorts Disponibles par Élément</h3>
-            <mat-tab-group>
-              <mat-tab *ngFor="let element of ['Air', 'Terre', 'Eau', 'Feu', 'Vide']; let i = index" 
-                       [label]="element">
-                <div class="spells-list">
-                  <mat-card 
-                    *ngFor="let spell of availableSpellsByElement()[element] || []"
-                    class="spell-card"
-                    [class.spell-selected]="isSpellSelected(spell.name)">
-                    <mat-card-header>
-                      <mat-card-title>
-                        {{ spell.name }}
-                        <span *ngIf="spell.universal" class="universal-badge">[Universel]</span>
-                        <span *ngIf="isSpellSelected(spell.name)" class="selected-badge">Sélectionné</span>
-                      </mat-card-title>
-                      <mat-card-subtitle>
-                        Niveau {{ spell.mastery }} - {{ spell.element }}
-                        <span *ngIf="spell.universal" class="universal-note">(Ignore les déficiences)</span>
-                      </mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content>
-                      <div class="spell-details">
-                        <p><strong>Portée:</strong> {{ spell.range }}</p>
-                        <p><strong>Zone:</strong> {{ spell.area }}</p>
-                        <p><strong>Durée:</strong> {{ spell.duration }}</p>
-                        <p *ngIf="spell.raises"><strong>Augmentations:</strong> {{ spell.raises }}</p>
-                        <p class="spell-description">{{ spell.description }}</p>
-                      </div>
-                    </mat-card-content>
-                    <mat-card-actions>
-                      <button mat-button 
-                              color="primary"
-                              *ngIf="!isSpellSelected(spell.name)"
-                              [disabled]="!canAddMoreSpells()"
-                              (click)="addSpell(spell.name); $event.stopPropagation()">
-                        {{ canAddMoreSpells() ? 'Sélectionner' : 'Limite atteinte' }}
-                      </button>
-                      <button mat-button 
-                              color="warn"
-                              *ngIf="isSpellSelected(spell.name)"
-                              (click)="removeSpell(spell.name); $event.stopPropagation()">
-                        Retirer
-                      </button>
-                    </mat-card-actions>
-                  </mat-card>
+        @if (canCastSpells()) {
+          <div>
+            <div class="spells-selection">
+              <h3>Sorts Sélectionnés</h3>
+              @if (selectedSpells().length > 0) {
+                <div class="selected-spells">
+                  <mat-chip-set>
+                    @for (spell of selectedSpells(); track spell) {
+                      <mat-chip
+                        [removable]="true"
+                        (removed)="removeSpell(spell.name)">
+                        <span class="spell-chip-content">
+                          <span class="name">{{ spell.name }}</span>
+                          <span class="spell-chip-badges">
+                            <span class="mini-badge element" [attr.data-element]="spell.element">{{ spell.element }}</span>
+                            <span class="mini-badge mastery" [attr.data-mastery]="spell.mastery">Niv {{ spell.mastery }}</span>
+                          </span>
+                        </span>
+                        <button matChipRemove class="chip-remove-btn" aria-label="Retirer le sort">X</button>
+                      </mat-chip>
+                    }
+                  </mat-chip-set>
                 </div>
-              </mat-tab>
+              }
+              @if (selectedSpells().length === 0) {
+                <p class="no-spells">Aucun sort sélectionné</p>
+              }
+              <h3>Sorts Disponibles par Élément</h3>
+              <mat-tab-group>
+                @for (element of ['Air', 'Terre', 'Eau', 'Feu', 'Vide']; track element; let i = $index) {
+                  <mat-tab
+                    [label]="element">
+                    <div class="spells-list">
+                      @for (spell of availableSpellsByElement()[element] || []; track spell) {
+                        <mat-card
+                          class="spell-card"
+                          [class.spell-selected]="isSpellSelected(spell.name)">
+                          <mat-card-header>
+                            <mat-card-title>
+                              <span class="spell-title">
+                                <span class="spell-name">{{ spell.name }}</span>
+                                <span class="spell-badges">
+                                  <span class="element-badge" [attr.data-element]="spell.element">{{ spell.element }}</span>
+                                  <span class="mastery-badge" [attr.data-mastery]="spell.mastery">Rang {{ spell.mastery }}</span>
+                                </span>
+                              </span>
+                              @if (spell.universal) {
+                                <span class="universal-badge">[Universel]</span>
+                              }
+                              @if (isSpellSelected(spell.name)) {
+                                <span class="selected-badge">Sélectionné</span>
+                              }
+                            </mat-card-title>
+                            <mat-card-subtitle>
+                              Niveau {{ spell.mastery }} - {{ spell.element }}
+                              @if (spell.universal) {
+                                <span class="universal-note">(Ignore les déficiences)</span>
+                              }
+                            </mat-card-subtitle>
+                          </mat-card-header>
+                          <mat-card-content>
+                            <div class="spell-details">
+                              <p><strong>Portée:</strong> {{ spell.range }}</p>
+                              <p><strong>Zone:</strong> {{ spell.area }}</p>
+                              <p><strong>Durée:</strong> {{ spell.duration }}</p>
+                              @if (spell.raises) {
+                                <p><strong>Augmentations:</strong> {{ spell.raises }}</p>
+                              }
+                              <p class="spell-description">{{ spell.description }}</p>
+                            </div>
+                          </mat-card-content>
+                          <mat-card-actions>
+                            @if (!isSpellSelected(spell.name)) {
+                              <button mat-button
+                                color="primary"
+                                [disabled]="!canAddMoreSpells()"
+                                (click)="addSpell(spell.name); $event.stopPropagation()">
+                                {{ canAddMoreSpells() ? 'Sélectionner' : 'Limite atteinte' }}
+                              </button>
+                            }
+                            @if (isSpellSelected(spell.name)) {
+                              <button mat-button
+                                color="warn"
+                                (click)="removeSpell(spell.name); $event.stopPropagation()">
+                                Retirer
+                              </button>
+                            }
+                          </mat-card-actions>
+                        </mat-card>
+                      }
+                    </div>
+                  </mat-tab>
+                }
+              </mat-tab-group>
+            </div>
+            <!-- Section Sorts Maho (si le personnage a le désavantage Maho-Tsukai) -->
+            @if (canUseMaho()) {
+              <div class="maho-spells-section">
+                <mat-divider></mat-divider>
+                <h3 class="maho-warning">
+                  Sorts Maho (Magie de Sang)
+                </h3>
+                <p class="maho-description">
+                  <strong>ATTENTION :</strong> Les sorts Maho sont interdits dans tout l'Empire.
+                  Si votre pratique est découverte, vous serez chassé et exécuté sans pitié.
+                  Chaque utilisation augmente votre Souillure.
+                </p>
+                <div class="maho-spells-list">
+                  <h4>Sorts Maho Disponibles (Rang 1-2)</h4>
+                  @for (spell of getAvailableMahoByRank(2); track spell) {
+                    <mat-card
+                      class="spell-card maho-card"
+                      [class.spell-selected]="isMahoSelected(spell.name)">
+                      <mat-card-header>
+                        <mat-card-title>
+                          <span class="spell-title">
+                            <span class="spell-name">{{ spell.name }}</span>
+                            <span class="spell-badges">
+                              <span class="maho-badge">MAHO</span>
+                              <span class="mastery-badge" [attr.data-mastery]="spell.mastery">Rang {{ spell.mastery }}</span>
+                            </span>
+                          </span>
+                          @if (isMahoSelected(spell.name)) {
+                            <span class="selected-badge">Sélectionné</span>
+                          }
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                          Rang {{ spell.mastery }} - Maho (Magie Noire)
+                        </mat-card-subtitle>
+                      </mat-card-header>
+                      <mat-card-content>
+                        <div class="spell-details">
+                          <p><strong>Portée:</strong> {{ spell.range }}</p>
+                          <p><strong>Zone:</strong> {{ spell.area }}</p>
+                          <p><strong>Durée:</strong> {{ spell.duration }}</p>
+                          @if (spell.raises) {
+                            <p><strong>Augmentations:</strong> {{ spell.raises }}</p>
+                          }
+                          <p class="spell-description maho-description-text">{{ spell.description }}</p>
+                        </div>
+                      </mat-card-content>
+                      <mat-card-actions>
+                        @if (!isMahoSelected(spell.name)) {
+                          <button mat-button
+                            color="warn"
+                            [disabled]="!canAddMoreMahoSpells().canAddAny"
+                            (click)="addMahoSpell(spell.name); $event.stopPropagation()">
+                            {{ canAddMoreMahoSpells().canAddAny ? 'Apprendre (Souillure)' : 'Limite Maho atteinte' }}
+                          </button>
+                        }
+                        @if (isMahoSelected(spell.name)) {
+                          <button mat-button
+                            color="accent"
+                            (click)="removeMahoSpell(spell.name); $event.stopPropagation()">
+                            Oublier ce sort
+                          </button>
+                        }
+                      </mat-card-actions>
+                    </mat-card>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+        <!-- Section Kiho (Moines) -->
+        @if (characterService.isMonk()) {
+          <div class="kiho-selection">
+            <h3>Kiho Sélectionnés</h3>
+            @if (characterService.getSelectedKihoCount() > 0) {
+              <div class="selected-kiho">
+                <mat-chip-set>
+                  @for (kiho of characterService.getSelectedKihoDetails(); track kiho) {
+                    <mat-chip
+                      [removable]="true"
+                      (removed)="characterService.removeKiho(kiho.name)">
+                      {{ kiho.name }} ({{ kiho.element }}, Rang {{ kiho.mastery }})
+                      X
+                    </mat-chip>
+                  }
+                </mat-chip-set>
+              </div>
+            }
+            @if (characterService.getSelectedKihoCount() === 0) {
+              <p class="no-kiho">Aucun Kiho sélectionné</p>
+            }
+            <h3>Kiho Disponibles par Élément</h3>
+            <mat-tab-group>
+              @for (element of ['Air', 'Terre', 'Eau', 'Feu', 'Vide']; track element) {
+                <mat-tab
+                  [label]="element">
+                  <div class="kiho-list">
+                    @for (kiho of getKihoByElement(element); track kiho) {
+                      <mat-card
+                        class="kiho-card"
+                        [class.kiho-selected]="characterService.isKihoSelected(kiho.name)"
+                        [class.kiho-disabled]="kiho.mastery > getInsightRank()">
+                        <mat-card-header>
+                          <mat-card-title>
+                            {{ kiho.name }}
+                            @if (characterService.isKihoSelected(kiho.name)) {
+                              <span class="selected-badge">Sélectionné</span>
+                            }
+                            @if (kiho.mastery > getInsightRank()) {
+                              <span class="locked-badge">Rang insuffisant</span>
+                            }
+                          </mat-card-title>
+                          <mat-card-subtitle>
+                            <span class="kiho-type-badge" [class]="'type-' + kiho.type.toLowerCase()">{{ kiho.type }}</span>
+                            {{ element }} - Rang {{ kiho.mastery }}
+                          </mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                          <div class="kiho-details">
+                            <p><strong>Maîtrise:</strong> {{ kiho.mastery }}</p>
+                            <p><strong>Durée:</strong> {{ kiho.duration }}</p>
+                            <p class="kiho-description">{{ kiho.description }}</p>
+                            <p class="kiho-effect"><strong>Effet:</strong> {{ kiho.effect }}</p>
+                            @if (kiho.activation) {
+                              <p><strong>Activation:</strong> {{ kiho.activation }}</p>
+                            }
+                          </div>
+                        </mat-card-content>
+                        <mat-card-actions>
+                          @if (!characterService.isKihoSelected(kiho.name)) {
+                            <button mat-button
+                              color="primary"
+                              [disabled]="kiho.mastery > getInsightRank()"
+                              (click)="characterService.addKiho(kiho.name); $event.stopPropagation()">
+                              {{ kiho.mastery > getInsightRank() ? 'Rang insuffisant' : 'Sélectionner' }}
+                            </button>
+                          }
+                          @if (characterService.isKihoSelected(kiho.name)) {
+                            <button mat-button
+                              color="warn"
+                              (click)="characterService.removeKiho(kiho.name); $event.stopPropagation()">
+                              Retirer
+                            </button>
+                          }
+                        </mat-card-actions>
+                      </mat-card>
+                    }
+                  </div>
+                </mat-tab>
+              }
             </mat-tab-group>
           </div>
-
-          <!-- Section Sorts Maho (si le personnage a le désavantage Maho-Tsukai) -->
-          <div *ngIf="canUseMaho()" class="maho-spells-section">
-            <mat-divider></mat-divider>
-            <h3 class="maho-warning">
-              ⚠️ Sorts Maho (Magie de Sang) ⚠️
-            </h3>
-            <p class="maho-description">
-              <strong>ATTENTION :</strong> Les sorts Maho sont interdits dans tout l'Empire. 
-              Si votre pratique est découverte, vous serez chassé et exécuté sans pitié.
-              Chaque utilisation augmente votre Souillure.
-            </p>
-
-            <div class="maho-spells-list">
-              <h4>Sorts Maho Disponibles (Rang 1-2)</h4>
-              <mat-card 
-                *ngFor="let spell of getAvailableMahoByRank(2)"
-                class="spell-card maho-card"
-                [class.spell-selected]="isMahoSelected(spell.name)">
-                <mat-card-header>
-                  <mat-card-title>
-                    💀 {{ spell.name }}
-                    <span *ngIf="isMahoSelected(spell.name)" class="selected-badge">Sélectionné</span>
-                  </mat-card-title>
-                  <mat-card-subtitle>
-                    Rang {{ spell.mastery }} - Maho (Magie Noire)
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="spell-details">
-                    <p><strong>Portée:</strong> {{ spell.range }}</p>
-                    <p><strong>Zone:</strong> {{ spell.area }}</p>
-                    <p><strong>Durée:</strong> {{ spell.duration }}</p>
-                    <p *ngIf="spell.raises"><strong>Augmentations:</strong> {{ spell.raises }}</p>
-                    <p class="spell-description maho-description-text">{{ spell.description }}</p>
-                  </div>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button mat-button 
-                          color="warn"
-                          *ngIf="!isMahoSelected(spell.name)"
-                          [disabled]="!canAddMoreMahoSpells().canAddAny"
-                          (click)="addMahoSpell(spell.name); $event.stopPropagation()">
-                    {{ canAddMoreMahoSpells().canAddAny ? 'Apprendre (Souillure)' : 'Limite Maho atteinte' }}
-                  </button>
-                  <button mat-button 
-                          color="accent"
-                          *ngIf="isMahoSelected(spell.name)"
-                          (click)="removeMahoSpell(spell.name); $event.stopPropagation()">
-                    Oublier ce sort
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Kiho (Moines) -->
-        <div *ngIf="characterService.isMonk()" class="kiho-selection">
-          <h3>Kiho Sélectionnés</h3>
-          <div class="selected-kiho" *ngIf="characterService.getSelectedKihoCount() > 0">
-            <mat-chip-set>
-              <mat-chip 
-                *ngFor="let kiho of characterService.getSelectedKihoDetails()"
-                [removable]="true"
-                (removed)="characterService.removeKiho(kiho.name)">
-                {{ kiho.name }} ({{ kiho.element }}, Rang {{ kiho.mastery }})
-                X
-              </mat-chip>
-            </mat-chip-set>
-          </div>
-          <p *ngIf="characterService.getSelectedKihoCount() === 0" class="no-kiho">Aucun Kiho sélectionné</p>
-
-          <h3>Kiho Disponibles par Élément</h3>
-          <mat-tab-group>
-            <mat-tab *ngFor="let element of ['Air', 'Terre', 'Eau', 'Feu', 'Vide']" 
-                     [label]="element">
-              <div class="kiho-list">
-                <mat-card 
-                  *ngFor="let kiho of getKihoByElement(element)"
-                  class="kiho-card"
-                  [class.kiho-selected]="characterService.isKihoSelected(kiho.name)"
-                  [class.kiho-disabled]="kiho.mastery > getInsightRank()">
-                  <mat-card-header>
-                    <mat-card-title>
-                      {{ kiho.name }}
-                      <span *ngIf="characterService.isKihoSelected(kiho.name)" class="selected-badge">Sélectionné</span>
-                      <span *ngIf="kiho.mastery > getInsightRank()" class="locked-badge">Rang insuffisant</span>
-                    </mat-card-title>
-                    <mat-card-subtitle>
-                      <span class="kiho-type-badge" [class]="'type-' + kiho.type.toLowerCase()">{{ kiho.type }}</span>
-                      {{ element }} - Rang {{ kiho.mastery }}
-                    </mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="kiho-details">
-                      <p><strong>Maîtrise:</strong> {{ kiho.mastery }}</p>
-                      <p><strong>Durée:</strong> {{ kiho.duration }}</p>
-                      <p class="kiho-description">{{ kiho.description }}</p>
-                      <p class="kiho-effect"><strong>Effet:</strong> {{ kiho.effect }}</p>
-                      <p *ngIf="kiho.activation"><strong>Activation:</strong> {{ kiho.activation }}</p>
-                    </div>
-                  </mat-card-content>
-                  <mat-card-actions>
-                    <button mat-button 
-                            color="primary"
-                            *ngIf="!characterService.isKihoSelected(kiho.name)"
-                            [disabled]="kiho.mastery > getInsightRank()"
-                            (click)="characterService.addKiho(kiho.name); $event.stopPropagation()">
-                      {{ kiho.mastery > getInsightRank() ? 'Rang insuffisant' : 'Sélectionner' }}
-                    </button>
-                    <button mat-button 
-                            color="warn"
-                            *ngIf="characterService.isKihoSelected(kiho.name)"
-                            (click)="characterService.removeKiho(kiho.name); $event.stopPropagation()">
-                      Retirer
-                    </button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-            </mat-tab>
-          </mat-tab-group>
-        </div>
-
+        }
         <!-- Message pour les autres classes -->
-        <div *ngIf="!canCastSpells() && !characterService.isMonk()" class="no-magic-info">
-          <p>Votre école ne vous permet ni de lancer des sorts ni d'apprendre des Kiho.</p>
-          <p>• Les <strong>Shugenjas</strong> peuvent lancer des sorts élémentaires</p>
-          <p>• Les <strong>Moines</strong> peuvent apprendre des Kiho (pouvoirs mystiques)</p>
-          <p>Si vous souhaitez utiliser ces capacités, retournez à l'étape 4 et choisissez une école appropriée.</p>
-        </div>
+        @if (!canCastSpells() && !characterService.isMonk()) {
+          <div class="no-magic-info">
+            <p>Votre école ne vous permet ni de lancer des sorts ni d'apprendre des Kiho.</p>
+            <p>• Les <strong>Shugenjas</strong> peuvent lancer des sorts élémentaires</p>
+            <p>• Les <strong>Moines</strong> peuvent apprendre des Kiho (pouvoirs mystiques)</p>
+            <p>Si vous souhaitez utiliser ces capacités, retournez à l'étape 4 et choisissez une école appropriée.</p>
+          </div>
+        }
       </mat-card-content>
       <mat-card-actions>
         <button mat-button (click)="previousStep()">Précédent</button>
         <button mat-raised-button color="primary" (click)="nextStep()">Suivant</button>
       </mat-card-actions>
     </mat-card>
+  }
 
-    <!-- Étape 7: Techniques de Clan et Kata -->
-    <mat-card *ngIf="currentStep() === 7">
+  <!-- Étape 7: Techniques de Clan et Kata -->
+  @if (currentStep() === 7) {
+    <mat-card>
       <mat-card-header>
         <mat-card-title>7. Techniques de Clan et Kata</mat-card-title>
         <mat-card-subtitle>Choisissez vos techniques martiales et kata</mat-card-subtitle>
@@ -936,7 +1046,6 @@
           <p class="info-text">
             Découvrez les techniques spéciales de votre clan et de votre famille. Ces capacités représentent l'héritage et les traditions de votre lignée.
           </p>
-
           <!-- Technique de Clan -->
           <div class="clan-technique-subsection">
             <h4>Technique de Clan: {{ character().clan }}</h4>
@@ -964,7 +1073,6 @@
               <p class="no-data">Aucune technique de clan disponible pour {{ character().clan }}</p>
             }
           </div>
-
           <!-- Technique de Famille -->
           <div class="family-technique-subsection">
             <h4>Technique de Famille: {{ character().family }}</h4>
@@ -993,7 +1101,6 @@
             }
           </div>
         </div>
-
         <!-- Kata / Postures -->
         <div class="kata-section">
           <h3>Kata (Postures Martiales)</h3>
@@ -1003,42 +1110,48 @@
           <p class="selection-count">
             Kata sélectionnés: {{ (character().kata || []).length }} / 2
           </p>
-
           <div class="kata-grid">
-            <mat-card 
-              *ngFor="let kata of availableKata()"
-              class="kata-card"
-              [class.kata-selected]="isKataSelected(kata.name)">
-              <mat-card-header>
-                <mat-card-title>
-                  {{ kata.name }}
-                  <span *ngIf="isKataSelected(kata.name)" class="selected-badge">Sélectionné</span>
-                </mat-card-title>
-                <mat-card-subtitle>
-                  Rang {{ kata.rank }}
-                  <span *ngIf="kata.mastery"> ({{ kata.mastery }})</span>
-                </mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <p class="kata-description">{{ kata.description }}</p>
-                <p class="kata-effect"><strong>Effet:</strong> {{ kata.effect }}</p>
-              </mat-card-content>
-              <mat-card-actions>
-                <button mat-button 
-                        color="primary"
-                        *ngIf="!isKataSelected(kata.name)"
-                        [disabled]="!canAddMoreKata()"
-                        (click)="addKata(kata.name)">
-                  {{ canAddMoreKata() ? 'Sélectionner' : 'Limite atteinte' }}
-                </button>
-                <button mat-button 
-                        color="warn"
-                        *ngIf="isKataSelected(kata.name)"
-                        (click)="removeKata(kata.name)">
-                  Retirer
-                </button>
-              </mat-card-actions>
-            </mat-card>
+            @for (kata of availableKata(); track kata) {
+              <mat-card
+                class="kata-card"
+                [class.kata-selected]="isKataSelected(kata.name)">
+                <mat-card-header>
+                  <mat-card-title>
+                    {{ kata.name }}
+                    @if (isKataSelected(kata.name)) {
+                      <span class="selected-badge">Sélectionné</span>
+                    }
+                  </mat-card-title>
+                  <mat-card-subtitle>
+                    Rang {{ kata.rank }}
+                    @if (kata.mastery) {
+                      <span> ({{ kata.mastery }})</span>
+                    }
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="kata-description">{{ kata.description }}</p>
+                  <p class="kata-effect"><strong>Effet:</strong> {{ kata.effect }}</p>
+                </mat-card-content>
+                <mat-card-actions>
+                  @if (!isKataSelected(kata.name)) {
+                    <button mat-button
+                      color="primary"
+                      [disabled]="!canAddMoreKata()"
+                      (click)="addKata(kata.name)">
+                      {{ canAddMoreKata() ? 'Sélectionner' : 'Limite atteinte' }}
+                    </button>
+                  }
+                  @if (isKataSelected(kata.name)) {
+                    <button mat-button
+                      color="warn"
+                      (click)="removeKata(kata.name)">
+                      Retirer
+                    </button>
+                  }
+                </mat-card-actions>
+              </mat-card>
+            }
           </div>
         </div>
       </mat-card-content>
@@ -1047,12 +1160,14 @@
         <button mat-raised-button color="primary" (click)="nextStep()">Suivant</button>
       </mat-card-actions>
     </mat-card>
+  }
 
-    <!-- Étape 8: Résumé final -->
-    <mat-card *ngIf="currentStep() === 8">
+  <!-- Étape 8: Résumé final -->
+  @if (currentStep() === 8) {
+    <mat-card>
       <mat-card-header>
         <mat-card-title>8. Résumé du Personnage</mat-card-title>
-```
+        ```
       </mat-card-header>
       <mat-card-content>
         <div class="summary-grid">
@@ -1065,7 +1180,6 @@
             <p><strong>Clan:</strong> {{ character().clan }}</p>
             <p><strong>Famille:</strong> {{ character().family }}</p>
           </div>
-
           <!-- Statistiques dérivées -->
           <div class="summary-section">
             <h3>Statistiques</h3>
@@ -1076,7 +1190,6 @@
             <p><strong>Statut:</strong> {{ character().status }}</p>
             <p><strong>XP Dépensés:</strong> {{ character().spentExperiencePoints }}/40</p>
           </div>
-
           <!-- Anneaux et Traits -->
           <div class="summary-section">
             <h3>Anneaux</h3>
@@ -1088,7 +1201,6 @@
               <p data-ring="Vide">{{ calculatedRings().vide }}</p>
             </div>
           </div>
-
           <!-- Traits par Anneaux -->
           <div class="summary-section">
             <h3>Traits par Anneaux</h3>
@@ -1115,177 +1227,213 @@
               </div>
             </div>
           </div>
-
           <!-- Compétences -->
           <div class="summary-section">
             <h3>Compétences</h3>
             <div class="final-skills">
-              <div *ngFor="let skill of character().skills" class="skill-line">
-                <span>{{ skill.name }} {{ skill.rank }}</span>
-                <span *ngIf="skill.isSchoolSkill" class="school-skill-icon" matTooltip="Compétence d'École">[École]</span>
-              </div>
+              @for (skill of character().skills; track skill) {
+                <div class="skill-line">
+                  <span>{{ skill.name }} {{ skill.rank }}</span>
+                  @if (skill.isSchoolSkill) {
+                    <span class="school-skill-icon" matTooltip="Compétence d'École">[École]</span>
+                  }
+                </div>
+              }
             </div>
           </div>
-
           <!-- Avantages et Désavantages -->
-          <div class="summary-section" *ngIf="selectedAdvantages().length > 0 || selectedDisadvantages().length > 0">
-            <h3>Avantages et Désavantages</h3>
-            
-            <div *ngIf="selectedAdvantages().length > 0" class="advantages-summary">
-              <h4>Avantages ({{ advantageXPCost() }} XP)</h4>
-              <div *ngFor="let advantage of selectedAdvantages()" class="advantage-line">
-                <span><strong>{{ advantage.name }}</strong> ({{ advantage.cost }} XP)</span>
-                <p class="description">{{ advantage.description }}</p>
-              </div>
-            </div>
-
-            <div *ngIf="selectedDisadvantages().length > 0" class="disadvantages-summary">
-              <h4>Désavantages (+{{ disadvantageXPGain() }} XP)</h4>
-              <div *ngFor="let disadvantage of selectedDisadvantages()" class="disadvantage-line">
-                <span><strong>{{ disadvantage.name }}</strong> (+{{ disadvantage.xpGain }} XP)</span>
-                <p class="description">{{ disadvantage.description }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sorts (si Shugenja) -->
-          <div class="summary-section" *ngIf="selectedSpells().length > 0">
-            <h3>Sorts</h3>
-            <div class="spells-summary">
-              <div *ngFor="let spell of selectedSpells()" class="spell-line">
-                <span><strong>{{ spell.name }}</strong> ({{ spell.element }}, Niveau {{ spell.mastery }})</span>
-                <div class="spell-details-summary">
-                  <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
-                  <p class="spell-description">{{ spell.description }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sorts Maho (si Maho-Tsukai) -->
-          <div class="summary-section maho-summary" *ngIf="getSelectedMahoCount() > 0">
-            <h3 class="maho-warning">
-              ⚠️ Sorts Maho (INTERDIT) ⚠️
-            </h3>
-            <p class="maho-alert">
-              <strong>⚠️ DANGER :</strong> Vous pratiquez la magie noire interdite. 
-              Votre Souillure commence à 2 points. Si découvert, vous serez exécuté.
-            </p>
-            <div class="maho-spells-summary">
-              <div *ngFor="let spell of getSelectedMahoDetails()" class="maho-spell-line">
-                <span><strong>{{ spell.name }}</strong> (Maho, Rang {{ spell.mastery }})</span>
-                <div class="spell-details-summary">
-                  <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
-                  <p class="spell-description">{{ spell.description }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Kiho (si Moine) -->
-          <div class="summary-section" *ngIf="characterService.getSelectedKihoCount() > 0">
-            <h3>Kiho</h3>
-            <div class="kiho-summary">
-              <div *ngFor="let kiho of characterService.getSelectedKihoDetails()" class="kiho-line">
-                <span><strong>{{ kiho.name }}</strong> ({{ kiho.element }}, Rang {{ kiho.mastery }})</span>
-                <span class="kiho-type-badge" [class]="'type-' + kiho.type.toLowerCase()">{{ kiho.type }}</span>
-                <div class="kiho-details-summary">
-                  <p><strong>Maîtrise:</strong> {{ kiho.mastery }} | <strong>Durée:</strong> {{ kiho.duration }}</p>
-                  <p class="kiho-description">{{ kiho.description }}</p>
-                  <p class="kiho-effect"><strong>Effet:</strong> {{ kiho.effect }}</p>
-                  <p *ngIf="kiho.activation"><strong>Activation:</strong> {{ kiho.activation }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Techniques de Clan et de Famille -->
-          <div class="summary-section" *ngIf="(character().clanTechniques || []).length > 0 || (character().techniques || []).length > 0">
-            <h3>Techniques de Clan et de Famille</h3>
-            
-            <!-- Techniques de Clan/Famille (nouvelles) -->
-            @if ((character().clanTechniques || []).length > 0) {
-              <div class="clan-techniques-summary">
-                @for (techniqueName of character().clanTechniques; track techniqueName) {
-                  @if (characterService.getClanTechniqueDetails(techniqueName); as technique) {
-                    <div class="clan-technique-detail">
-                      <h4>
-                        {{ technique.name }}
-                        <span class="technique-badge" [class.clan-badge]="technique.type === 'clan'" [class.family-badge]="technique.type === 'famille'">
-                          {{ technique.type === 'clan' ? 'Clan' : 'Famille' }}
-                        </span>
-                      </h4>
-                      <p class="technique-clan-info">{{ technique.clan }}{{ technique.family ? ' - ' + technique.family : '' }}</p>
-                      <p class="technique-description"><em>{{ technique.description }}</em></p>
-                      <p class="technique-effect"><strong>Effet:</strong> {{ technique.effect }}</p>
+          @if (selectedAdvantages().length > 0 || selectedDisadvantages().length > 0) {
+            <div class="summary-section">
+              <h3>Avantages et Désavantages</h3>
+              @if (selectedAdvantages().length > 0) {
+                <div class="advantages-summary">
+                  <h4>Avantages ({{ advantageXPCost() }} XP)</h4>
+                  @for (advantage of selectedAdvantages(); track advantage) {
+                    <div class="advantage-line">
+                      <span><strong>{{ advantage.name }}</strong> ({{ advantage.cost }} XP)</span>
+                      <p class="description">{{ advantage.description }}</p>
                     </div>
                   }
-                }
-              </div>
-            }
-            
-            <!-- Techniques d'école (anciennes) -->
-            @if ((character().techniques || []).length > 0) {
-              <div class="school-techniques-summary">
-                <h4>Techniques d'École</h4>
-                @for (techniqueName of character().techniques; track techniqueName) {
-                  <div class="technique-line">
-                    <span><strong>{{ techniqueName }}</strong></span>
+                </div>
+              }
+              @if (selectedDisadvantages().length > 0) {
+                <div class="disadvantages-summary">
+                  <h4>Désavantages (+{{ disadvantageXPGain() }} XP)</h4>
+                  @for (disadvantage of selectedDisadvantages(); track disadvantage) {
+                    <div class="disadvantage-line">
+                      <span><strong>{{ disadvantage.name }}</strong> (+{{ disadvantage.xpGain }} XP)</span>
+                      <p class="description">{{ disadvantage.description }}</p>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+          <!-- Sorts (si Shugenja) -->
+          @if (selectedSpells().length > 0) {
+            <div class="summary-section">
+              <h3>Sorts</h3>
+              <div class="spells-summary">
+                @for (spell of selectedSpells(); track spell) {
+                  <div class="spell-line">
+                    <span><strong>{{ spell.name }}</strong> ({{ spell.element }}, Niveau {{ spell.mastery }})</span>
+                    <div class="spell-details-summary">
+                      <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
+                      <p class="spell-description">{{ spell.description }}</p>
+                    </div>
                   </div>
                 }
               </div>
-            }
-          </div>
-
-          <!-- Kata -->
-          <div class="summary-section" *ngIf="(character().kata || []).length > 0">
-            <h3>Kata</h3>
-            <div class="kata-summary">
-              <div *ngFor="let kataName of character().kata" class="kata-line">
-                <span><strong>{{ kataName }}</strong></span>
+            </div>
+          }
+          <!-- Sorts Maho (si Maho-Tsukai) -->
+          @if (getSelectedMahoCount() > 0) {
+            <div class="summary-section maho-summary">
+              <h3 class="maho-warning">
+                ⚠️ Sorts Maho (INTERDIT) ⚠️
+              </h3>
+              <p class="maho-alert">
+                <strong>⚠️ DANGER :</strong> Vous pratiquez la magie noire interdite.
+                Votre Souillure commence à 2 points. Si découvert, vous serez exécuté.
+              </p>
+              <div class="maho-spells-summary">
+                @for (spell of getSelectedMahoDetails(); track spell) {
+                  <div class="maho-spell-line">
+                    <span><strong>{{ spell.name }}</strong> (Maho, Rang {{ spell.mastery }})</span>
+                    <div class="spell-details-summary">
+                      <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
+                      <p class="spell-description">{{ spell.description }}</p>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
-          </div>
-
+          }
+          <!-- Kiho (si Moine) -->
+          @if (characterService.getSelectedKihoCount() > 0) {
+            <div class="summary-section">
+              <h3>Kiho</h3>
+              <div class="kiho-summary">
+                @for (kiho of characterService.getSelectedKihoDetails(); track kiho) {
+                  <div class="kiho-line">
+                    <span><strong>{{ kiho.name }}</strong> ({{ kiho.element }}, Rang {{ kiho.mastery }})</span>
+                    <span class="kiho-type-badge" [class]="'type-' + kiho.type.toLowerCase()">{{ kiho.type }}</span>
+                    <div class="kiho-details-summary">
+                      <p><strong>Maîtrise:</strong> {{ kiho.mastery }} | <strong>Durée:</strong> {{ kiho.duration }}</p>
+                      <p class="kiho-description">{{ kiho.description }}</p>
+                      <p class="kiho-effect"><strong>Effet:</strong> {{ kiho.effect }}</p>
+                      @if (kiho.activation) {
+                        <p><strong>Activation:</strong> {{ kiho.activation }}</p>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          <!-- Techniques de Clan et de Famille -->
+          @if ((character().clanTechniques || []).length > 0 || (character().techniques || []).length > 0) {
+            <div class="summary-section">
+              <h3>Techniques de Clan et de Famille</h3>
+              <!-- Techniques de Clan/Famille (nouvelles) -->
+              @if ((character().clanTechniques || []).length > 0) {
+                <div class="clan-techniques-summary">
+                  @for (techniqueName of character().clanTechniques; track techniqueName) {
+                    @if (characterService.getClanTechniqueDetails(techniqueName); as technique) {
+                      <div class="clan-technique-detail">
+                        <h4>
+                          {{ technique.name }}
+                          <span class="technique-badge" [class.clan-badge]="technique.type === 'clan'" [class.family-badge]="technique.type === 'famille'">
+                            {{ technique.type === 'clan' ? 'Clan' : 'Famille' }}
+                          </span>
+                        </h4>
+                        <p class="technique-clan-info">{{ technique.clan }}{{ technique.family ? ' - ' + technique.family : '' }}</p>
+                        <p class="technique-description"><em>{{ technique.description }}</em></p>
+                        <p class="technique-effect"><strong>Effet:</strong> {{ technique.effect }}</p>
+                      </div>
+                    }
+                  }
+                </div>
+              }
+              <!-- Techniques d'école (anciennes) -->
+              @if ((character().techniques || []).length > 0) {
+                <div class="school-techniques-summary">
+                  <h4>Techniques d'École</h4>
+                  @for (techniqueName of character().techniques; track techniqueName) {
+                    <div class="technique-line">
+                      <span><strong>{{ techniqueName }}</strong></span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+          <!-- Kata -->
+          @if ((character().kata || []).length > 0) {
+            <div class="summary-section">
+              <h3>Kata</h3>
+              <div class="kata-summary">
+                @for (kataName of character().kata; track kataName) {
+                  <div class="kata-line">
+                    <span><strong>{{ kataName }}</strong></span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
           <!-- Équipement -->
           <div class="summary-section">
             <h3>Équipement</h3>
             <div class="equipment-summary">
-              
               <!-- Armes -->
-              <div class="equipment-category" *ngIf="characterEquipment().weapons.length > 0">
-                <h4>Armes</h4>
-                <div *ngFor="let weapon of characterEquipment().weapons" class="equipment-summary-item">
-                  <span><strong>{{ weapon.name }}</strong></span>
-                  <span class="equipment-stats" *ngIf="weapon.damage">{{ weapon.damage }} dégâts, TN {{ weapon.TN }}</span>
-                  <p class="equipment-description">{{ weapon.description }}</p>
-                  <p class="equipment-special" *ngIf="weapon.special"><em>{{ weapon.special }}</em></p>
+              @if (characterEquipment().weapons.length > 0) {
+                <div class="equipment-category">
+                  <h4>Armes</h4>
+                  @for (weapon of characterEquipment().weapons; track weapon) {
+                    <div class="equipment-summary-item">
+                      <span><strong>{{ weapon.name }}</strong></span>
+                      @if (weapon.damage) {
+                        <span class="equipment-stats">{{ weapon.damage }} dégâts, TN {{ weapon.TN }}</span>
+                      }
+                      <p class="equipment-description">{{ weapon.description }}</p>
+                      @if (weapon.special) {
+                        <p class="equipment-special"><em>{{ weapon.special }}</em></p>
+                      }
+                    </div>
+                  }
                 </div>
-              </div>
-
+              }
               <!-- Armure -->
-              <div class="equipment-category" *ngIf="currentArmor() && currentArmor()!.name !== 'Pas d\'armure'">
-                <h4>Armure</h4>
-                <div class="equipment-summary-item">
-                  <span><strong>{{ currentArmor()!.name }}</strong></span>
-                  <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
-                  <p class="equipment-description">{{ currentArmor()!.description }}</p>
-                  <p class="equipment-special" *ngIf="currentArmor()!.special"><em>{{ currentArmor()!.special }}</em></p>
-                </div>
-              </div>
-
-              <!-- Objets -->
-              <div class="equipment-category" *ngIf="characterEquipment().items.length > 0">
-                <h4>Objets et Équipements</h4>
-                <div class="equipment-items-grid">
-                  <div *ngFor="let item of characterEquipment().items" class="equipment-summary-item compact">
-                    <span><strong>{{ item.name }}</strong></span>
-                    <p class="equipment-description">{{ item.description }}</p>
-                    <p class="equipment-special" *ngIf="item.special"><em>{{ item.special }}</em></p>
+              @if (currentArmor() && currentArmor()!.name !== 'Pas d\'armure') {
+                <div class="equipment-category">
+                  <h4>Armure</h4>
+                  <div class="equipment-summary-item">
+                    <span><strong>{{ currentArmor()!.name }}</strong></span>
+                    <span class="equipment-stats">TN {{ currentArmor()!.TN }}, Réduction {{ currentArmor()!.reduction }}</span>
+                    <p class="equipment-description">{{ currentArmor()!.description }}</p>
+                    @if (currentArmor()!.special) {
+                      <p class="equipment-special"><em>{{ currentArmor()!.special }}</em></p>
+                    }
                   </div>
                 </div>
-              </div>
-
+              }
+              <!-- Objets -->
+              @if (characterEquipment().items.length > 0) {
+                <div class="equipment-category">
+                  <h4>Objets et Équipements</h4>
+                  <div class="equipment-items-grid">
+                    @for (item of characterEquipment().items; track item) {
+                      <div class="equipment-summary-item compact">
+                        <span><strong>{{ item.name }}</strong></span>
+                        <p class="equipment-description">{{ item.description }}</p>
+                        @if (item.special) {
+                          <p class="equipment-special"><em>{{ item.special }}</em></p>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
               <!-- Argent -->
               <div class="equipment-category">
                 <h4>Argent</h4>
@@ -1293,7 +1441,6 @@
               </div>
             </div>
           </div>
-
           <!-- Niveaux de blessure -->
           <div class="summary-section">
             <h3>Niveaux de Blessure</h3>
@@ -1315,9 +1462,11 @@
         <button mat-raised-button color="primary" (click)="exportCharacter()">Sauvegarder et Exporter JSON</button>
       </mat-card-actions>
     </mat-card>
+  }
 
-    <!-- Panneau des statistiques en temps réel -->
-    <mat-card class="stats-display" *ngIf="currentStep() < 7">
+  <!-- Panneau des statistiques en temps réel -->
+  @if (currentStep() < 7) {
+    <mat-card class="stats-display">
       <mat-card-header>
         <mat-card-title>Statistiques Actuelles</mat-card-title>
       </mat-card-header>
@@ -1331,7 +1480,6 @@
             <p>Feu: {{ calculatedRings().feu }}</p>
             <p>Vide: {{ calculatedRings().vide }}</p>
           </div>
-          
           <div class="stat-section">
             <h4>Statistiques Dérivées</h4>
             <p>Rang d'Insight: {{ insightRank() }}</p>
@@ -1339,7 +1487,6 @@
             <p>Honneur: {{ character().honor }}</p>
             <p>XP Restants: {{ availableXP() }}</p>
           </div>
-
           <div class="stat-section">
             <h4>Combat (ND)</h4>
             <p>ND Corps à Corps: {{ combatStats().meleeDefenseND }}</p>
@@ -1349,28 +1496,29 @@
         </div>
       </mat-card-content>
     </mat-card>
-  </div>
+  }
+</div>
 
-  <!-- Navigation -->
-  <div class="navigation-footer">
-    <mat-card>
-      <mat-card-content>
-        <div class="step-indicator">
-          <div class="progress-bar">
-            <mat-progress-bar mode="determinate" [value]="(currentStep() / 8) * 100"></mat-progress-bar>
-          </div>
-          <div class="step-labels">
-            <span [class.active]="currentStep() === 1">Info</span>
-            <span [class.active]="currentStep() === 2">Clan</span>
-            <span [class.active]="currentStep() === 3">Famille</span>
-            <span [class.active]="currentStep() === 4">École</span>
-            <span [class.active]="currentStep() === 5">XP</span>
-            <span [class.active]="currentStep() === 6">Sorts/Kiho</span>
-            <span [class.active]="currentStep() === 7">Techniques</span>
-            <span [class.active]="currentStep() === 8">Résumé</span>
-          </div>
+<!-- Navigation -->
+<div class="navigation-footer">
+  <mat-card>
+    <mat-card-content>
+      <div class="step-indicator">
+        <div class="progress-bar">
+          <mat-progress-bar mode="determinate" [value]="(currentStep() / 8) * 100"></mat-progress-bar>
         </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        <div class="step-labels">
+          <span [class.active]="currentStep() === 1">Info</span>
+          <span [class.active]="currentStep() === 2">Clan</span>
+          <span [class.active]="currentStep() === 3">Famille</span>
+          <span [class.active]="currentStep() === 4">École</span>
+          <span [class.active]="currentStep() === 5">XP</span>
+          <span [class.active]="currentStep() === 6">Sorts/Kiho</span>
+          <span [class.active]="currentStep() === 7">Techniques</span>
+          <span [class.active]="currentStep() === 8">Résumé</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
 </div>

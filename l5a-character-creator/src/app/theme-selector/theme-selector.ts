@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { ThemeService, Theme } from '../services/theme.service';
@@ -8,10 +8,9 @@ import { ThemeService, Theme } from '../services/theme.service';
   selector: 'app-theme-selector',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatMenuModule
-  ],
+],
   template: `
     <button 
       mat-button 

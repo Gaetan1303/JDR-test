@@ -770,9 +770,222 @@
   }
 }
 
+/* Compétences innées */
+.innate-skills-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f5e6d3;
+  border: 2px solid #8B4513;
+  border-radius: 8px;
+  
+  .innate-category {
+    margin: 15px 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    border-left: 4px solid #4caf50;
+    
+    &.degrading {
+      border-left-color: #f44336;
+      background: rgba(255, 235, 235, 0.3);
+    }
+    
+    h4 {
+      color: #2d1a0d;
+      font-size: 1.1em;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .category-description {
+      color: #2d1a0d;
+      font-size: 0.9em;
+      margin: 8px 0;
+      font-style: italic;
+      font-weight: 600;
+    }
+    
+    .warning-note {
+      color: #8b0000;
+      font-size: 0.85em;
+      font-weight: 700;
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(255, 205, 210, 0.4);
+      border-radius: 4px;
+      border-left: 3px solid #f44336;
+    }
+  }
+  
+  .innate-skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 12px 0;
+    
+    .innate-skill {
+      padding: 8px 14px;
+      border-radius: 4px;
+      border: 2px solid #8B4513;
+      font-weight: 700;
+      font-size: 1em;
+      cursor: help;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+      
+      &.noble {
+        background: #66bb6a;
+        color: #1b5e20;
+        border-color: #388e3c;
+        
+        &:hover {
+          background: #4caf50;
+          border-color: #2e7d32;
+        }
+      }
+      
+      &.merchant {
+        background: #ef5350;
+        color: #b71c1c;
+        border-color: #c62828;
+        
+        &:hover {
+          background: #e53935;
+          border-color: #b71c1c;
+        }
+      }
+    }
+  }
+  
+  .innate-note {
+    font-style: italic;
+    font-size: 0.9em;
+    color: #2d1a0d;
+    font-weight: 600;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(139, 69, 19, 0.3);
+  }
+}
+
 /* Compétences */
 .skills-section {
   margin: 30px 0;
+  
+  .skills-category {
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    
+    &.school-skills {
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+      border: 3px solid #ff6f00;
+      box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
+    }
+    
+    &.developed-skills {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      border: 3px solid #2e7d32;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    }
+    
+    &.innate-skills-group {
+      background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+      border: 3px solid #6a1b9a;
+      box-shadow: 0 4px 12px rgba(106, 27, 154, 0.2);
+    }
+    
+    h3 {
+      color: #1a0d00;
+      font-size: 1.4em;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 3px solid currentColor;
+      padding-bottom: 8px;
+    }
+    
+    .category-info {
+      color: #2d1a0d;
+      font-size: 0.95em;
+      font-style: italic;
+      margin: 10px 0 15px 0;
+      font-weight: 600;
+    }
+  }
+  
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+    
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid #8B4513;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      
+      &.school-skill {
+        background: rgba(255, 193, 7, 0.2);
+        border: 2px solid #ff6f00;
+        font-weight: 700;
+        
+        .skill-name {
+          color: #e65100;
+          font-weight: 800;
+        }
+      }
+      
+      &.developed-skill {
+        background: rgba(76, 175, 80, 0.15);
+        border: 2px solid #2e7d32;
+        
+        .skill-name {
+          color: #1b5e20;
+          font-weight: 700;
+        }
+      }
+      
+      .skill-name {
+        color: #1a0d00;
+        font-size: 1em;
+        font-weight: 700;
+        flex: 1;
+      }
+      
+      .skill-boxes {
+        display: flex;
+        gap: 3px;
+        
+        .skill-box {
+          width: 18px;
+          height: 18px;
+          border: 2px solid #1a0d00;
+          background: white;
+          
+          &.filled {
+            background: #1a0d00;
+          }
+        }
+      }
+    }
+  }
   
   h2 {
     font-size: 1.3em;
@@ -781,59 +994,6 @@
     padding-bottom: 5px;
     margin-bottom: 15px;
     text-transform: uppercase;
-  }
-}
-
-.skills-category {
-  margin-bottom: 25px;
-  
-  h3 {
-    font-size: 1.1em;
-    font-weight: bold;
-    background: #f0e68c;
-    padding: 5px 10px;
-    border: 1px solid #000;
-    margin-bottom: 10px;
-  }
-}
-
-.skill-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  gap: 10px;
-  padding: 5px 0;
-  border-bottom: 1px solid #ddd;
-  align-items: center;
-  
-  &.school-skill {
-    background: #fff8dc;
-    font-weight: bold;
-  }
-  
-  .skill-name {
-    font-size: 0.95em;
-  }
-  
-  .skill-trait {
-    font-size: 0.85em;
-    color: #666;
-    text-align: center;
-  }
-  
-  .skill-boxes {
-    display: flex;
-    gap: 3px;
-    
-    .skill-box {
-      width: 18px;
-      height: 18px;
-      border: 1px solid #000;
-      background: white;
-      
-      &.filled {
-        background: #000;
-      }
-    }
   }
 }
 
@@ -1119,34 +1279,78 @@
   }
 }
 
-.technique-category {
-  margin-bottom: 20px;
-  
-  h3 {
-    font-size: 1.1em;
-    font-weight: bold;
-    background: #f0e68c;
-    padding: 5px 10px;
-    border: 1px solid #000;
-    margin-bottom: 10px;
-  }
-  
-  .technique-item {
-    padding: 8px 10px;
-    border-bottom: 1px dotted #999;
+  .technique-category {
+    margin-bottom: 20px;
     
-    .technique-name {
+    h3 {
+      font-size: 1.1em;
       font-weight: bold;
+      background: #f0e68c;
+      padding: 5px 10px;
+      border: 1px solid #000;
+      margin-bottom: 10px;
     }
     
-    .technique-detail {
-      font-size: 0.85em;
-      color: #666;
-      margin-left: 10px;
+    .technique-item {
+      padding: 8px 10px;
+      border-bottom: 1px dotted #999;
+      
+      .technique-name {
+        font-weight: bold;
+      }
+      
+      .technique-detail {
+        font-size: 0.85em;
+        color: #666;
+        margin-left: 10px;
+      }
     }
-  }
-}
 
+    /* Enrichissement visuel pour sorts/kiho */
+    .spell-item, .kiho-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .spell-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spell-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .spell-badges {
+      display: inline-flex;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .mini-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      line-height: 1;
+      padding: 4px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.15);
+      background: #fafafa;
+      color: #333;
+    }
+
+    /* Couleurs par élément */
+    .element.element-air { background: #e8f4ff; color: #0b6aa8; border-color: #9ed0ff; }
+    .element.element-terre { background: #f3f0e6; color: #6b5e3e; border-color: #d5ccae; }
+    .element.element-eau { background: #e6f7f9; color: #0a6c74; border-color: #a7e3ea; }
+    .element.element-feu { background: #fff1e6; color: #a0460b; border-color: #ffd0a6; }
+    .element.element-vide { background: #f1f1f1; color: #444; border-color: #d0d0d0; }
+
+    .mini-badge.mastery { background: #edf6ff; color: #195fa3; border-color: #bcdcff; }
+    .mini-badge.maho { background: #fff0f0; color: #b00020; border-color: #f5bcbc; font-weight: 700; }
+  }
 /* XP */
 .xp-section {
   margin: 30px 0;

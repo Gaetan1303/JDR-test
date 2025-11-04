@@ -1356,6 +1356,181 @@ mat-card {
   margin-left: 8px;
 }
 
+// Badges pour les sorts
+.spell-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.element-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.element-badge[data-element="air"] {
+  background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%);
+  color: #0d47a1;
+  border: 1px solid #64b5f6;
+}
+
+.element-badge[data-element="terre"] {
+  background: linear-gradient(135deg, #efebe9 0%, #bcaaa4 100%);
+  color: #3e2723;
+  border: 1px solid #8d6e63;
+}
+
+.element-badge[data-element="eau"] {
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+  color: #006064;
+  border: 1px solid #4dd0e1;
+}
+
+.element-badge[data-element="feu"] {
+  background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%);
+  color: #b71c1c;
+  border: 1px solid #e57373;
+}
+
+.element-badge[data-element="vide"] {
+  background: linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%);
+  color: #4a148c;
+  border: 1px solid #ba68c8;
+}
+
+.mastery-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.mastery-badge[data-mastery="1"] {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #66bb6a;
+}
+
+.mastery-badge[data-mastery="2"] {
+  background-color: #fff3e0;
+  color: #e65100;
+  border: 1px solid #fb8c00;
+}
+
+.mastery-badge[data-mastery="3"] {
+  background-color: #fce4ec;
+  color: #c2185b;
+  border: 1px solid #ec407a;
+}
+
+.mastery-badge[data-mastery="4"] {
+  background-color: #ede7f6;
+  color: #5e35b1;
+  border: 1px solid #7e57c2;
+}
+
+.mastery-badge[data-mastery="5"] {
+  background-color: #e0e0e0;
+  color: #424242;
+  border: 1px solid #757575;
+}
+
+.maho-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
+  color: #ff0000;
+  border: 1px solid #8b0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.5);
+}
+
+// Mini badges pour les chips de sorts sélectionnés
+.spell-chip {
+  padding: 8px 12px !important;
+}
+
+.spell-chip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.spell-chip-badges {
+  display: flex;
+  gap: 4px;
+}
+
+.mini-badge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+  
+  &.element[data-element="air"] {
+    background: #90caf9;
+    color: #0d47a1;
+  }
+  
+  &.element[data-element="terre"] {
+    background: #bcaaa4;
+    color: #3e2723;
+  }
+  
+  &.element[data-element="eau"] {
+    background: #80deea;
+    color: #006064;
+  }
+  
+  &.element[data-element="feu"] {
+    background: #ef9a9a;
+    color: #b71c1c;
+  }
+  
+  &.element[data-element="vide"] {
+    background: #ce93d8;
+    color: #4a148c;
+  }
+  
+  &.mastery[data-mastery="1"] {
+    background: #66bb6a;
+    color: #1b5e20;
+  }
+  
+  &.mastery[data-mastery="2"] {
+    background: #fb8c00;
+    color: #e65100;
+  }
+  
+  &.mastery[data-mastery="3"] {
+    background: #ec407a;
+    color: #880e4f;
+  }
+  
+  &.mastery[data-mastery="4"] {
+    background: #7e57c2;
+    color: #4527a0;
+  }
+  
+  &.mastery[data-mastery="5"] {
+    background: #757575;
+    color: #212121;
+  }
+}
+
 // Style pour l'onglet des sorts universels
 mat-tab[label="Universels"] {
   .mat-tab-label {

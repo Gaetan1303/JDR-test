@@ -1,6 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -14,14 +14,13 @@ import { AuthService } from './services/auth.service';
   imports: [
     RouterOutlet,
     RouterModule,
-    CommonModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
     MatListModule,
     MatCardModule,
     ThemeSelectorComponent
-  ],
+],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
