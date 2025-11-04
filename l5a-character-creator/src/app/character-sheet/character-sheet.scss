@@ -1729,3 +1729,6 @@ mat-card-actions {
   border: 2px dashed #ddd;
   margin: 15px 0;
 }
+
+/* Import du fichier responsive séparé */
+@import './character-sheet-responsive.scss';

@@ -1,0 +1,1012 @@
+/* ============================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   Système de responsive pour l'application L5A
+   ============================================ */
+
+/* ============================================
+   CHARACTER CREATOR RESPONSIVE FIXES
+   ============================================ */
+
+/* Tablet et Mobile - Corrections pour le créateur de personnage */
+@media (max-width: 991px) {
+  /* Repositionner et réduire les statistiques actuelles sur mobile */
+  .current-stats,
+  .stats-display,
+  .statistiques-actuelles,
+  .mat-mdc-card.stats-display,
+  .mdc-card.stats-display,
+  mat-card.stats-display {
+    position: fixed !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    max-width: 280px !important;
+    font-size: 0.8rem !important;
+    padding: 10px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    z-index: 999 !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  /* Bouton accueil bien visible */
+  .home-button,
+  .accueil-button,
+  button[routerLink="/"] {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    z-index: 1000 !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 10px 15px !important;
+    background: rgba(139, 69, 19, 0.95) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Liste des clans mieux organisée */
+  .clan-selection,
+  .clan-list,
+  mat-radio-group {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    max-height: 65vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 15px !important;
+    background: linear-gradient(135deg, #f5f5dc 0%, #fff8dc 100%) !important;
+    border-radius: 12px !important;
+    border: 3px solid #d4af37 !important;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+
+    /* Scrollbar stylisée */
+    &::-webkit-scrollbar {
+      width: 8px !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f5f5dc !important;
+      border-radius: 4px !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #d4af37 0%, #8b4513 100%) !important;
+      border-radius: 4px !important;
+
+      &:hover {
+        background: linear-gradient(135deg, #e0c050 0%, #a0522d 100%) !important;
+      }
+    }
+  }
+
+  mat-radio-button {
+    margin: 0 !important;
+    padding: 12px 15px !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 10px !important;
+    background: white !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+
+    /* Effet de brillance au survol */
+    &::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: -100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent) !important;
+      transition: left 0.5s ease !important;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, #fff8dc 0%, #fffef8 100%) !important;
+      border-color: #8b4513 !important;
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3) !important;
+
+      &::before {
+        left: 100% !important;
+      }
+    }
+
+    &.mat-radio-checked {
+      background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+      border-color: #8b4513 !important;
+      border-width: 3px !important;
+      color: white !important;
+      font-weight: 700 !important;
+      transform: scale(1.05) !important;
+      box-shadow: 0 6px 16px rgba(139, 69, 19, 0.4) !important;
+      z-index: 10 !important;
+
+      /* Marque de sélection */
+      &::after {
+        content: '✓' !important;
+        position: absolute !important;
+        top: 5px !important;
+        right: 8px !important;
+        font-size: 1.2rem !important;
+        color: white !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+      }
+
+      label {
+        color: white !important;
+      }
+    }
+
+    label {
+      cursor: pointer !important;
+      user-select: none !important;
+      width: 100% !important;
+      padding-right: 25px !important;
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      color: #8b4513 !important;
+      transition: color 0.3s ease !important;
+    }
+
+    /* Animation au focus (accessibilité) */
+    &:focus-within {
+      outline: 3px solid rgba(212, 175, 55, 0.5) !important;
+      outline-offset: 2px !important;
+    }
+  }
+
+  /* Boutons d'action en colonne sans superposition */
+  .action-buttons,
+  .creator-actions,
+  .button-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 10px !important;
+    
+    button {
+      width: 100% !important;
+      min-height: 48px !important;
+      margin: 0 !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  /* Boutons spécifiques qui se superposent */
+  .save-button,
+  .import-button,
+  .restart-button,
+  button:contains('Sauvegarder'),
+  button:contains('Importer'),
+  button:contains('Recommencer') {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+/* Mobile spécifique - 1 colonne pour les clans */
+@media (max-width: 575px) {
+  .clan-selection,
+  .clan-list,
+  mat-radio-group {
+    grid-template-columns: 1fr !important;
+    max-height: 55vh !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  mat-radio-button {
+    font-size: 0.9rem !important;
+    padding: 10px 12px !important;
+
+    label {
+      font-size: 0.85rem !important;
+    }
+
+    &.mat-radio-checked::after {
+      top: 3px !important;
+      right: 6px !important;
+      font-size: 1rem !important;
+    }
+  }
+
+  /* Bouton accueil encore plus visible */
+  .home-button,
+  .accueil-button,
+  button[routerLink="/"] {
+    top: 5px !important;
+    left: 5px !important;
+    width: auto !important;
+    min-width: 100px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ============================================
+   CHARACTER SHEET RESPONSIVE
+   ============================================ */
+
+/* Extra Large Desktops (1920px+) */
+@media (min-width: 1920px) {
+  .character-sheet-container {
+    max-width: 1600px;
+  }
+
+  .sheet-header .header-info h1 {
+    font-size: 3rem;
+  }
+
+  .rings-display {
+    gap: 30px;
+  }
+
+  .ring-item {
+    min-width: 200px;
+  }
+}
+
+/* Large Desktop (1200px - 1919px) */
+@media (min-width: 1200px) and (max-width: 1919px) {
+  .character-sheet-container {
+    max-width: 1200px;
+  }
+
+  .equipment-grid.inventory-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet Landscape & Small Desktop (992px - 1199px) */
+@media (max-width: 1199px) {
+  .character-sheet-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .sheet-header {
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px 20px;
+    min-height: 80px;
+
+    .header-info {
+      order: 1;
+      width: 100%;
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .character-subtitle {
+        font-size: 1rem;
+      }
+    }
+
+    .back-button {
+      order: 0;
+      flex-shrink: 0;
+      min-width: 48px;
+      min-height: 48px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .xp-display {
+      order: 2;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+
+      button {
+        order: 2;
+        flex-shrink: 0;
+      }
+
+      .xp-info {
+        order: 1;
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  .rings-display {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+
+    .center-ring {
+      grid-column: span 2;
+      justify-self: center;
+    }
+  }
+
+  .equipment-grid.inventory-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .inventory-header {
+    gap: 15px;
+  }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (max-width: 991px) {
+  .sheet-header {
+    padding: 15px;
+    min-height: auto;
+
+    .back-button {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      flex-shrink: 0;
+    }
+
+    .header-info h1 {
+      font-size: 1.75rem;
+    }
+
+    .xp-display {
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+        order: 1;
+      }
+
+      .xp-info {
+        order: 2;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        span {
+          display: block;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .rings-section {
+    .rings-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  .ring-item {
+    padding: 10px;
+
+    .ring-icon-large {
+      width: 80px;
+      height: 80px;
+
+      .ring-kanji {
+        font-size: 2rem;
+      }
+
+      .ring-value-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+      }
+    }
+
+    .ring-name {
+      font-size: 1rem;
+    }
+
+    .trait-card {
+      padding: 8px;
+
+      .trait-label {
+        font-size: 0.75rem;
+      }
+
+      .trait-value-big {
+        font-size: 1.3rem;
+      }
+    }
+  }
+
+  .skills-section {
+    .skill-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .skill-name {
+        width: 100%;
+        font-size: 0.9rem;
+      }
+
+      .skill-boxes {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .combat-section {
+    flex-direction: column;
+
+    .wounds-section,
+    .initiative-section {
+      width: 100%;
+    }
+  }
+
+  .equipment-grid {
+    gap: 12px;
+  }
+
+  .equipment-item {
+    .item-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .item-name {
+        font-size: 0.95rem;
+      }
+
+      .item-badges {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    .item-stats-row {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+
+  .techniques-list {
+    gap: 10px;
+  }
+
+  .technique-item {
+    .spell-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .spell-badges {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+}
+
+/* Mobile Landscape (576px - 767px) */
+@media (max-width: 767px) {
+  .character-sheet-container {
+    padding: 10px;
+  }
+
+  .sheet-header {
+    padding: 12px;
+    border-radius: 6px;
+    flex-direction: column;
+    align-items: stretch;
+
+    .back-button {
+      width: 100%;
+      height: 44px;
+      min-height: 44px;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      order: 0;
+      margin-bottom: 10px;
+    }
+
+    .header-info {
+      order: 1;
+      margin-bottom: 10px;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .xp-display {
+      order: 2;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+
+      button {
+        width: 100%;
+        order: 1;
+        min-height: 44px;
+      }
+
+      .xp-info {
+        order: 2;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 8px 12px;
+
+        span {
+          font-size: 0.85rem;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .tab-content {
+    padding: 15px;
+  }
+
+  .sheet-page {
+    padding: 15px;
+  }
+
+  .rings-display {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .center-ring {
+      grid-column: span 1;
+    }
+  }
+
+  .ring-item {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+
+    .ring-traits-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+  }
+
+  .skills-category {
+    margin: 20px 0;
+
+    h3 {
+      font-size: 1.1rem;
+    }
+
+    .category-info {
+      font-size: 0.85rem;
+    }
+  }
+
+  .inventory-header {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .wealth-display,
+    .weight-display {
+      padding: 15px;
+
+      .wealth-info,
+      .weight-info {
+        label {
+          font-size: 0.8rem;
+        }
+
+        .koku-amount,
+        .weight-amount {
+          font-size: 1.3rem;
+        }
+      }
+    }
+  }
+
+  .equipment-category {
+    margin: 20px 0;
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+  }
+
+  .equipment-grid,
+  .equipment-grid.inventory-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .equipment-item {
+    .item-header {
+      padding: 10px 12px;
+
+      .item-name {
+        font-size: 0.9rem;
+      }
+
+      .item-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+      }
+    }
+
+    .item-body {
+      padding: 12px;
+
+      .item-stats-row {
+        gap: 6px;
+
+        .stat-chip {
+          min-width: 60px;
+          padding: 6px 10px;
+
+          .stat-label {
+            font-size: 0.65rem;
+          }
+
+          .stat-value {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .item-description {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .wound-level {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+
+    span {
+      font-size: 0.85rem;
+    }
+
+    .wound-boxes {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  .npc-card {
+    margin-bottom: 12px;
+
+    mat-card-header {
+      mat-card-title {
+        font-size: 1.1rem;
+      }
+
+      mat-card-subtitle {
+        font-size: 0.85rem;
+      }
+    }
+
+    .edit-row {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+
+  .advantages-disadvantages {
+    flex-direction: column;
+    gap: 20px;
+
+    .advantages-section,
+    .disadvantages-section {
+      width: 100%;
+    }
+  }
+}
+
+/* Mobile Portrait (320px - 575px) */
+@media (max-width: 575px) {
+  .character-sheet-container {
+    padding: 8px;
+  }
+
+  .sheet-header {
+    padding: 10px;
+    flex-direction: column;
+    gap: 10px;
+
+    .back-button {
+      width: 100%;
+      height: 48px;
+      min-height: 48px;
+      border-radius: 6px;
+      font-size: 1rem;
+      order: 0;
+    }
+
+    .header-info {
+      order: 1;
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .character-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+
+    .xp-display {
+      order: 2;
+      width: 100%;
+
+      button {
+        width: 100%;
+        min-height: 48px;
+      }
+
+      .xp-info {
+        width: 100%;
+      }
+    }
+  }
+
+  .xp-dialog {
+    width: 95%;
+    max-width: 350px;
+    padding: 20px;
+
+    h2 {
+      font-size: 1.3rem;
+    }
+
+    input {
+      font-size: 1rem;
+      padding: 10px;
+    }
+  }
+
+  .rings-section .rings-title {
+    font-size: 1.3rem;
+  }
+
+  .ring-item {
+    .ring-icon-large {
+      width: 70px;
+      height: 70px;
+
+      .ring-kanji {
+        font-size: 1.8rem;
+      }
+
+      .ring-value-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .skill-boxes {
+    gap: 3px;
+
+    .skill-box {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .innate-skills-list {
+    gap: 6px;
+
+    .innate-skill {
+      font-size: 0.75rem;
+      padding: 5px 10px;
+    }
+  }
+
+  .wound-boxes {
+    gap: 3px;
+
+    .wound-box {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .equipment-category h3 {
+    font-size: 1rem;
+    padding-bottom: 8px;
+  }
+
+  .empty-slot {
+    padding: 30px 15px;
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .mini-badge {
+    font-size: 0.65rem;
+    padding: 3px 6px;
+  }
+
+  .notes-textarea {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+
+/* Animations et transitions pour la responsivité */
+@media (prefers-reduced-motion: no-preference) {
+  .character-sheet-container,
+  .sheet-header,
+  .ring-item,
+  .equipment-item,
+  .technique-item {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .equipment-grid,
+  .inventory-header,
+  .rings-display {
+    transition: grid-template-columns 0.3s ease, gap 0.3s ease;
+  }
+}
+
+/* Mode paysage mobile spécifique */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sheet-header {
+    .header-info h1 {
+      font-size: 1.3rem;
+    }
+
+    .xp-display {
+      flex-direction: row;
+      gap: 10px;
+
+      .xp-info {
+        flex-direction: row;
+        gap: 10px;
+      }
+    }
+  }
+
+  .xp-dialog {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .rings-display {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    .center-ring {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+}
+
+/* Touch-friendly enhancements pour mobile */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  .equipment-item,
+  .technique-item,
+  .npc-card,
+  .skill-item {
+    -webkit-tap-highlight-color: rgba(212, 175, 55, 0.3);
+  }
+
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .back-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .equipment-item,
+  .technique-item {
+    cursor: pointer;
+    user-select: none;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+
+  .skill-box,
+  .wound-box,
+  .track-box {
+    min-width: 20px;
+    min-height: 20px;
+  }
+}
+
+/* Mode sombre (si l'utilisateur préfère) */
+@media (prefers-color-scheme: dark) {
+  .character-sheet-container {
+    background: #2a2419;
+    color: #f5f5dc;
+  }
+
+  .equipment-item,
+  .technique-item,
+  .npc-card {
+    background: #3a3429;
+    border-color: #5a5439;
+
+    &:hover {
+      border-color: #d4af37;
+      background: #4a4439;
+    }
+  }
+
+  .empty-slot {
+    background: #3a3429;
+    border-color: #5a5439;
+  }
+
+  .stat-chip {
+    background: #2a2419;
+    border-color: #5a5439;
+  }
+
+  .edit-textarea,
+  .edit-input {
+    background: #3a3429;
+    color: #f5f5dc;
+    border-color: #5a5439;
+
+    &:focus {
+      border-color: #d4af37;
+      background: #4a4439;
+    }
+  }
+}
+
+/* Print styles */
+@media print {
+  .sheet-header .back-button,
+  .sheet-header .xp-display button,
+  .add-npc-btn,
+  mat-card-actions,
+  .card-actions {
+    display: none;
+  }
+
+  .character-sheet-container {
+    max-width: 100%;
+    padding: 0;
+    background: white;
+  }
+
+  .equipment-item,
+  .technique-item {
+    break-inside: avoid;
+  }
+
+  .rings-display,
+  .equipment-grid {
+    break-inside: avoid;
+  }
+}

@@ -25,7 +25,7 @@ import { AuthService } from './services/auth.service';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('Légende des 5 Anneaux - 4e édition');
+  protected readonly title = signal('Légende des 5 Anneaux');
   protected auth = inject(AuthService);
 
   logout() {

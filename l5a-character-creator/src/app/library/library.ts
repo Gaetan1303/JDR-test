@@ -31,7 +31,7 @@ import { CLANS } from '../data/clans.data';
     <div class="library-container">
       <div class="header">
         <h1>Bibliothèque L5A</h1>
-        <p>Ressources complètes pour Légende des 5 Anneaux - 4e édition</p>
+        <p>Ressources complètes pour Légende des 5 Anneaux</p>
       </div>
 
       <mat-tab-group class="library-tabs">

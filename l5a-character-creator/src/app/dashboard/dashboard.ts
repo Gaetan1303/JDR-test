@@ -18,7 +18,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     <div class="dashboard-container">
       <div class="header">
         <h1>Menu Principal</h1>
-        <p>Bienvenue dans l'univers de Légende des 5 Anneaux - 4e édition</p>
+        <p>Bienvenue dans l'univers de Légende des 5 Anneaux</p>
       </div>
 
       <div class="menu-grid">
