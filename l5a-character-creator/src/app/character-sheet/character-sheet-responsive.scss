@@ -12,10 +12,7 @@
   /* Repositionner et réduire les statistiques actuelles sur mobile */
   .current-stats,
   .stats-display,
-  .statistiques-actuelles,
-  .mat-mdc-card.stats-display,
-  .mdc-card.stats-display,
-  mat-card.stats-display {
+  .statistiques-actuelles {
     position: fixed !important;
     bottom: 10px !important;
     right: 10px !important;

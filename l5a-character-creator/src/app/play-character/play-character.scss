@@ -201,7 +201,7 @@
     }
 
     .failure {
-      color: #f44336;
+  color: var(--red-primary);
       font-size: 1.2rem;
       font-weight: 600;
     }
@@ -236,7 +236,7 @@
   }
 
   mat-card-content {
-    color: #f44336 !important;
+  color: var(--red-primary) !important;
   
   }
 }

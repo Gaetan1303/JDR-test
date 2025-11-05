@@ -3,7 +3,7 @@
   margin-top: 2rem;
   
   h3 {
-    color: #ff6b6b;
+  color: var(--red-primary);
     font-size: 1.5rem;
     margin-bottom: 1rem;
     text-align: center;
@@ -12,7 +12,7 @@
 
   .kiho-info {
     background: rgba(139, 26, 26, 0.3);
-    border: 1px solid #ff6b6b;
+  border: 1px solid var(--red-primary);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -37,7 +37,7 @@
       padding: 0.75rem;
       background: #1a1a1a;
       color: #fff;
-      border: 1px solid #ff6b6b;
+  border: 1px solid var(--red-primary);
       border-radius: 4px;
       font-size: 1rem;
       cursor: pointer;
@@ -79,13 +79,13 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
+  background: linear-gradient(90deg, transparent, var(--red-primary), transparent);
       opacity: 0;
       transition: opacity 0.3s ease;
     }
 
     &:hover {
-      border-color: #ff6b6b;
+  border-color: var(--red-primary);
       transform: translateY(-5px);
       box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
 
@@ -131,7 +131,7 @@
       margin-bottom: 1rem;
 
       h4 {
-        color: #ff6b6b;
+  color: var(--red-primary);
         font-size: 1.2rem;
         margin: 0;
         flex: 1;
@@ -219,7 +219,7 @@
     }
 
     .kiho-activation {
-      color: #ff6b6b;
+  color: var(--red-primary);
       font-size: 0.85rem;
       margin-top: 0.5rem;
       font-style: italic;
@@ -233,7 +233,7 @@
   .selected-kiho {
     margin-top: 2rem;
     background: rgba(139, 26, 26, 0.3);
-    border: 1px solid #ff6b6b;
+  border: 1px solid var(--red-primary);
     border-radius: 8px;
     padding: 1.5rem;
 
@@ -273,14 +273,14 @@
       button {
         background: #8B1A1A;
         color: #fff;
-        border: 1px solid #ff6b6b;
+  border: 1px solid var(--red-primary);
         padding: 0.5rem 1rem;
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.3s ease;
 
         &:hover {
-          background: #ff6b6b;
+          background: var(--red-primary);
           transform: scale(1.05);
         }
       }

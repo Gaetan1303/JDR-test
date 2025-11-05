@@ -148,6 +148,18 @@ export class CharacterService {
   // Données disponibles
   readonly availableClans = signal(CLANS);
   readonly availableSchools = signal(SCHOOLS);
+  
+  // Signal pour le nom de famille sélectionné
+  readonly selectedFamilyName = computed(() => {
+    const familyKey = this.character().family;
+    if (!familyKey) return '';
+    
+    const clan = this.availableClans().find(c => c.name === this.character().clan);
+    if (!clan) return '';
+    
+    const family = clan.families.find(f => f.name === familyKey);
+    return family?.name || '';
+  });
   readonly availableAdvantages = signal(ADVANTAGES);
   readonly availableDisadvantages = signal(DISADVANTAGES);
   

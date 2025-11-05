@@ -86,8 +86,8 @@ import { KIHO } from '../data/kiho.data';
               <div class="field-value">{{ character()?.name }}</div>
             </div>
             <div class="field-group">
-              <label>PRÉNOM</label>
-              <div class="field-value">{{ character()?.name }}</div>
+              <label>FAMILLE</label>
+              <div class="field-value">{{ characterService.selectedFamilyName() }}</div>
             </div>
           </div>
 
@@ -729,7 +729,7 @@ import { KIHO } from '../data/kiho.data';
         <!-- Richesses et Poids -->
         <div class="inventory-header">
           <div class="wealth-display">
-            <div class="wealth-icon">💰</div>
+            <div class="wealth-icon">文</div>
             <div class="wealth-info">
               <label>Richesses</label>
               <span class="koku-amount">{{ character()?.equipment?.koku || 0 }} Koku</span>
@@ -1028,7 +1028,7 @@ import { KIHO } from '../data/kiho.data';
 export class CharacterSheet implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private characterService = inject(CharacterService);
+  readonly characterService = inject(CharacterService);
   
   character = signal<Character | null>(null);
   

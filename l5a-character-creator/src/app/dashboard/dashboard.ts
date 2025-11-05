@@ -17,7 +17,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
   template: `
     <div class="dashboard-container">
       <div class="header">
-        <h1>Menu Principal</h1>
+        <h1>Menu principal</h1>
         <p>Bienvenue dans l'univers de Légende des 5 Anneaux</p>
       </div>
 
@@ -248,27 +248,31 @@ import { MatGridListModule } from '@angular/material/grid-list';
     .menu-card mat-card-content {
       flex-grow: 1;
       color: #e0d5c7;
-      padding: 16px 20px;
+      
     }
 
     .menu-card mat-card-actions {
       margin-top: auto;
       padding: 12px 20px 20px;
+      background: linear-gradient(135deg, rgba(139, 69, 19, 0.4), rgba(101, 67, 33, 0.3));
+      border-top: 1px solid rgba(212, 175, 55, 0.3);
       
       button {
-        background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-        color: #f5e6d3;
-        border: 1px solid #d4af37;
+        /* Fond retiré pour ne pas masquer le texte */
+        background: none !important;
+        background-color: transparent !important;
+        color: var(--red-primary, #6b3e2e) !important;
+        border: 1px solid #b8925e;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        transition: all 0.3s;
+        box-shadow: none;
+        transition: all 0.2s ease;
         
         &:hover {
-          background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
-          box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
-          transform: translateY(-2px);
+          background: rgba(200, 170, 110, 0.15);
+          box-shadow: none;
+          transform: translateY(-1px);
         }
       }
     }
@@ -278,7 +282,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
       font-size: 1.4rem;
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-      margin-bottom: 8px;
     }
 
     .menu-card mat-card-subtitle {

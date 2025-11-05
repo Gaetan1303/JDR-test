@@ -4,7 +4,7 @@
   margin-bottom: 32px;
   
   h3 {
-    color: #ff4444;
+  color: var(--red-primary);
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 2px solid rgba(212, 175, 55, 0.3);
@@ -51,7 +51,7 @@
   }
   
   mat-card-title {
-    color: #ff6b6b;
+  color: var(--red-primary);
     font-size: 1.1rem;
     display: flex;
     align-items: center;
@@ -91,7 +91,7 @@
       margin-top: 8px;
       
       strong {
-        color: #ff6b6b;
+  color: var(--red-primary);
       }
     }
   }
@@ -115,7 +115,7 @@
     border-left: 3px solid #ffd700;
     
     strong {
-      color: #ff6b6b;
+  color: var(--red-primary);
       font-size: 1.05rem;
     }
   }

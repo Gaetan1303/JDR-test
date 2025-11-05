@@ -13,6 +13,13 @@
 // Import de la police japonaise
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&family=Cinzel:wght@400;600;700&display=swap');
 
+:root {
+  /* Couleur texte principale (marron chaud cohérent avec le thème) */
+  --red-primary: #6b3e2e;
+  /* Fond des en-têtes/pieds des cartes */
+  --card-header-bg: rgba(107, 62, 46, 0.08);
+}
+
 html {
   @include mat.theme((
     color: (
@@ -61,20 +68,20 @@ body {
     height: 6px;
     background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.6);
+    box-shadow: none;
   }
 }
 
 // ===== STYLES GLOBAUX JAPONAIS MÉDIÉVAL =====
 
 // Amélioration des mat-cards avec style japonais
-mat-card {
-  background: linear-gradient(to bottom, rgba(26, 26, 46, 0.92) 0%, rgba(22, 33, 62, 0.92) 100%) !important;
+mat-card,
+.mat-mdc-card,
+.mdc-card {
+  /* Fond marron clair doux (beige sable) */
+  background: linear-gradient(to bottom, #f5efe6 0%, #eadfcd 100%) !important;
   border: 2px solid rgba(212, 175, 55, 0.5) !important;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(212, 175, 55, 0.3),
-    inset 0 1px 0 rgba(212, 175, 55, 0.2) !important;
+  box-shadow: none !important;
   border-radius: 8px !important;
   position: relative;
   
@@ -89,7 +96,7 @@ mat-card {
   }
   
   mat-card-title, mat-card-subtitle, h1, h2, h3, h4, h5, h6, p, span, label {
-    color: #ff6b6b !important;
+    color: var(--red-primary) !important;
   }
   
   mat-card-subtitle {
@@ -97,12 +104,44 @@ mat-card {
   }
 }
 
+/* Harmonisation légère et sûre des sections des cartes (fond seulement) */
+mat-card-header,
+.mat-mdc-card-header {
+  background: var(--card-header-bg) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.mat-mdc-card-actions,
+.mdc-card__actions,
+mat-card-actions,
+.card-actions {
+  background: var(--card-header-bg) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* Harmonisation des sections des cartes (scopé ailleurs si nécessaire) */
+/* Note: retiré globalement pour éviter de casser les mises en page locales (Dashboard, etc.) */
+
 // Titres avec style japonais
 h1, h2, h3, h4 {
   font-family: 'Cinzel', 'Noto Serif JP', serif;
-  color: #ff4444;
+  color: var(--red-primary);
   font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: none;
+}
+
+/* Espacement cohérent H1 → P dans les cartes Material */
+.mat-mdc-card h1,
+.mdc-card h1,
+mat-card h1 {
+  margin-bottom: 16px !important;
+  line-height: 1.2 !important;
+}
+
+.mat-mdc-card h1 + p,
+.mdc-card h1 + p,
+mat-card h1 + p {
+  margin-top: 0 !important;
 }
 
 // Boutons avec style japonais
@@ -112,53 +151,93 @@ button[mat-raised-button] {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   border-radius: 4px !important;
-  box-shadow: 
-    0 2px 5px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  box-shadow: none !important;
   transition: all 0.3s ease;
   
   &:hover:not([disabled]) {
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
   }
+}
+
+/* Bouton "Suivant" (mat-raised-button color="primary") adouci */
+button[mat-raised-button][color="primary"] {
+  /* Brun doré doux, moins agressif que rouge/bleu vifs */
+  background-color: #c9a66b !important; /* camel doux */
+  color: #2b1a0f !important;           /* texte brun foncé pour bon contraste */
+  border: 1px solid #b8925e !important;
+}
+
+button[mat-raised-button][color="primary"]:hover {
+  background-color: #b8945d !important; /* légère assombrissement au hover */
+}
+
+button[mat-raised-button][color="primary"][disabled] {
+  opacity: 0.7;
+}
+
+/* Boutons d'action à l'intérieur des cartes: style transparent et lisible */
+.mat-mdc-card-actions button[mat-raised-button],
+.mdc-card__actions button[mat-raised-button],
+mat-card-actions button[mat-raised-button] {
+  background: none !important;
+  background-color: transparent !important;
+  color: var(--red-primary) !important;
+  border: 1px solid #b8925e !important;
+  box-shadow: none !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.mat-mdc-card-actions button[mat-raised-button]:hover:not([disabled]),
+.mdc-card__actions button[mat-raised-button]:hover:not([disabled]),
+mat-card-actions button[mat-raised-button]:hover:not([disabled]) {
+  background-color: rgba(200, 170, 110, 0.15) !important;
+  box-shadow: none !important;
+  transform: translateY(-1px);
+}
+
+.mat-mdc-card-actions button[mat-raised-button][disabled],
+.mdc-card__actions button[mat-raised-button][disabled],
+mat-card-actions button[mat-raised-button][disabled] {
+  opacity: 0.7;
 }
 
 // Form fields pour bonne visibilité sur fond rouge
 mat-form-field {
-  .mat-mdc-text-field-wrapper {
-    background-color: rgba(20, 10, 10, 0.6) !important;
-  }
+  // .mat-mdc-text-field-wrapper {
+
+  // }
   
   .mat-mdc-form-field-focus-overlay {
     background-color: rgba(212, 175, 55, 0.1) !important;
   }
   
   label, .mat-mdc-floating-label {
-    color: #ff6b6b !important;
+    color: var(--red-primary) !important;
   }
   
   input, textarea, .mat-mdc-select-value {
-    color: #ff4444 !important;
-    caret-color: #ff4444 !important;
+    color: var(--red-primary) !important;
+    caret-color: var(--red-primary) !important;
   }
   
   .mat-mdc-form-field-hint, .mat-mdc-form-field-error {
-    color: #ff6b6b !important;
+    color: var(--red-primary) !important;
   }
 }
 
-// Mat-select dropdown
+// Mat-select dropdown (menu déroulant Genre, etc.)
 .mat-mdc-select-panel {
-  background-color: rgba(20, 10, 10, 0.98) !important;
+  /* Fond clair cohérent avec les cards (beige) */
+  background-color: #f5efe6 !important;
   border: 2px solid rgba(212, 175, 55, 0.5) !important;
   
   .mat-mdc-option {
-    color: #ff6b6b !important;
+    color: var(--red-primary) !important;
     
     &:hover, &.mdc-list-item--selected {
-      background-color: rgba(212, 175, 55, 0.2) !important;
-      color: #ff4444 !important;
+      background-color: rgba(212, 175, 55, 0.3) !important;
+      color: #2b1a0f !important;
     }
   }
 }
@@ -170,14 +249,14 @@ mat-form-field {
 }
 
 ::-webkit-scrollbar-track {
-  background: #6B0F0F;
+  background: var(--red-primary);
   border-left: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #d4af37, #b8941f);
   border-radius: 6px;
-  border: 2px solid #6B0F0F;
+  border: 2px solid var(--red-primary);
   
   &:hover {
     background: linear-gradient(180deg, #ffd700, #d4af37);
@@ -195,13 +274,19 @@ mat-form-field {
   font-size: 0.95em !important;
   max-width: 350px !important;
   line-height: 1.6 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: none !important;
   
   &.warning {
-    border-color: #f44336 !important;
+    border-color: var(--red-primary) !important;
     background: rgba(60, 20, 20, 0.98) !important;
   }
 }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif; }
+
+/* Suppression globale des ombres (box-shadow et text-shadow) */
+:where(*), :where(*::before), :where(*::after) {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
