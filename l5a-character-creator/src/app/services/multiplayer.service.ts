@@ -59,8 +59,13 @@ export class MultiplayerService {
     if (this.socket?.connected) return;
     
     this.socket = io(this.serverUrl, {
-      transports: ['websocket'],
-      autoConnect: true
+      transports: ['websocket', 'polling'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+      timeout: 20000
     });
 
     this.socket.on('connect', () => {
@@ -69,8 +74,13 @@ export class MultiplayerService {
       this.refreshRooms();
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('[WS] Déconnecté du serveur');
+    this.socket.on('disconnect', (reason) => {
+      console.log('[WS] Déconnecté du serveur:', reason);
+      this.connected.set(false);
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('[WS] Erreur de connexion:', error.message);
       this.connected.set(false);
     });
 
