@@ -41,7 +41,7 @@ export interface DiceRoll {
 @Injectable({ providedIn: 'root' })
 export class MultiplayerService {
   private socket: Socket | null = null;
-  private serverUrl = 'http://localhost:3000'; // Backend GM_L5R
+  private serverUrl = 'https://gm-l5r.onrender.com'; // Backend GM_L5R
 
   private _rooms = signal<Room[]>([]);
   readonly rooms = this._rooms.asReadonly();
