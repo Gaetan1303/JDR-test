@@ -55,8 +55,14 @@ export class Login {
   error = '';
 
   submit() {
-    const res = this.auth.login(this.email.trim(), this.password);
-    if (!res.ok) { this.error = res.error || 'Erreur de connexion'; return; }
-    this.router.navigateByUrl('/multiplayer');
+      this.error = '';
+      this.auth.loginWithBackend(this.email.trim(), this.password)
+        .then(res => {
+          if (!res.ok) {
+            this.error = res.error || 'Erreur de connexion';
+            return;
+          }
+          this.router.navigateByUrl('/multiplayer');
+        });
   }
 }
