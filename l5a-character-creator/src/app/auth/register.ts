@@ -60,9 +60,13 @@ export class Register {
   password = '';
   error = '';
 
-  submit() {
-    const res = this.auth.register(this.name.trim(), this.email.trim(), this.password);
-    if (!res.ok) { this.error = res.error || 'Erreur lors de la création'; return; }
+  async submit() {
+    this.error = '';
+    const res = await this.auth.registerWithBackend(this.name.trim(), this.email.trim(), this.password);
+    if (!res.ok) {
+      this.error = res.error || 'Erreur lors de la création';
+      return;
+    }
     this.router.navigateByUrl('/multiplayer');
   }
 }
