@@ -157,7 +157,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     }
 
     .header h1 {
-      color: #f5e6d3;
+  color: #1c1c1c;
       margin-bottom: 16px;
       font-size: 3rem;
       font-weight: 700;
@@ -278,7 +278,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     }
 
     .menu-card mat-card-title {
-      color: #f5e6d3;
+  color: #1c1c1c;
       font-size: 1.4rem;
       font-weight: 700;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);

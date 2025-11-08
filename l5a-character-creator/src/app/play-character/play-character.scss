@@ -18,7 +18,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 
   h1 {
-    color: #f5e6d3;
+  color: #1c1c1c;
     margin-bottom: 12px;
     font-size: 2.5rem;
     font-weight: 700;
@@ -38,7 +38,7 @@
 .character-selection {
   h2 {
     text-align: center;
-    color: #f5e6d3;
+  color: #1c1c1c;
     font-size: 2rem;
     margin-bottom: 24px;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
@@ -84,7 +84,7 @@
       }
 
       .value {
-        color: #f5e6d3;
+  color: #1c1c1c;
         font-weight: 700;
       }
     }
@@ -99,7 +99,7 @@
   border: 2px solid rgba(139, 69, 19, 0.6);
 
   p {
-    color: #f5e6d3;
+  color: #1c1c1c;
     font-size: 1.3rem;
     margin-bottom: 24px;
   }
@@ -122,7 +122,7 @@
     flex-wrap: wrap;
 
     .stat-item {
-      color: #f5e6d3;
+  color: #1c1c1c;
       
       strong {
         color: #d4af37;
@@ -145,7 +145,7 @@
 
   .event-description {
     font-size: 1.2rem;
-    color: #f5e6d3;
+  color: #1c1c1c;
     margin: 16px 0;
     line-height: 1.6;
   }
@@ -162,7 +162,7 @@
     }
 
     ul {
-      color: #f5e6d3;
+  color: #1c1c1c;
       list-style-position: inside;
       
       li {
@@ -171,7 +171,7 @@
     }
 
     p {
-      color: #f5e6d3;
+    color: #1c1c1c;
       font-style: italic;
       
       strong {
@@ -214,7 +214,7 @@
   border-radius: 8px;
 
   mat-list-item {
-    color: #f5e6d3;
+  color: #1c1c1c;
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 
     &:last-child {
