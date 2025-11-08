@@ -144,7 +144,7 @@ import { Character, Equipment } from '../models/character.model';
         right: 0;
         bottom: 0;
         background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 100%),
-                    url('/assets/images/background2.png');
+                    url('assets/images/background2.png');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
