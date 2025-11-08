@@ -242,9 +242,10 @@ export class PlayCharacter implements OnInit {
     // Ajouter à l'historique
     this.eventHistory.update(history => [...history, event]);
 
-    // Réinitialiser l'événement actuel
-    this.currentEvent.set(null);
-    this.diceResult.set(null);
+  // Réinitialiser l'événement actuel et le résultat du jet
+  this.currentEvent.set(null);
+  this.diceResult.set(null);
+  this.jetResult.set(null);
 
     // Recharger les personnages
     this.loadCharacters();
