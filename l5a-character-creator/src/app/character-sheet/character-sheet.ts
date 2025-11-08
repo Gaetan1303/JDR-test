@@ -88,6 +88,7 @@ import { KIHO } from '../data/kiho.data';
             <div class="field-group">
               <label>FAMILLE</label>
               <div class="field-value">{{ characterService.selectedFamilyName() }}</div>
+              <div class="debug-family">Debug: {{ character()?.family }} / {{ characterService.selectedFamilyName() }}</div>
             </div>
           </div>
 

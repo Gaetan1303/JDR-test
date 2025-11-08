@@ -120,8 +120,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
       max-width: 1400px;
       margin: 0 auto;
       min-height: 100vh;
-      background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 50%, rgba(139, 26, 26, 0.2) 100%),
-                  url('/assets/images/background.png');
+  background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 50%, rgba(139, 26, 26, 0.2) 100%),
+      url('/images/background.png');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -134,7 +134,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: url('/assets/images/background2.png');
+        background-image: url('/images/background2.png');
         background-size: cover;
         background-position: center;
         opacity: 0.08;
