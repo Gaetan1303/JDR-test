@@ -103,7 +103,12 @@ export class PlayCharacter implements OnInit {
     // Récupérer la valeur de l'anneau et de la compétence associée à l'événement
     const traitKey = event.trait.toLowerCase() as keyof typeof char.traits;
     const anneau = char.traits[traitKey] || 0;
-    const skill = char.skills.find(s => s.name.toLowerCase() === (event.skill || '').toLowerCase());
+    // Normalisation du nom de compétence pour matcher les variantes (ex: "Artisanat (Armurier)")
+    function normalizeSkillName(name: string) {
+      return name.toLowerCase().replace(/\s+/g, '').replace(/[()]/g, '');
+    }
+    const eventSkill = event.skill ? normalizeSkillName(event.skill) : '';
+    const skill = char.skills.find(s => normalizeSkillName(s.name) === eventSkill);
     const competence = skill ? skill.rank : 0;
 
     setTimeout(() => {

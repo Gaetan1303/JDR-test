@@ -27,7 +27,7 @@ export class EventService {
       type: 'magie',
       difficulty: 15,
       trait: 'Intelligence',
-      skill: 'Sorts',
+      skill: 'Spellcraft', 
       rewards: { items: ['Artefact magique'] },
       consequences: 'Succès : Artefact maîtrisé | Échec : Effet magique aléatoire'
     },
