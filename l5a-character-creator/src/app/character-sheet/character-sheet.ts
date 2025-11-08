@@ -1131,16 +1131,8 @@ export class CharacterSheet implements OnInit {
 
     console.log('[CharacterSheet] Force génération d\'un allié...');
     
-    // Générer UN seul allié avec un vrai nom japonais
-    const ally = this.characterService['generateRandomNPC']('Allié');
-    
-    console.log('[CharacterSheet] Allié généré:', ally);
-    
-    if (!char.allies) char.allies = [];
-    char.allies.push(ally);
-    
-    this.character.set({...char});
-    this.saveCharacter(char);
+    // TODO: Implémenter la génération d'un allié (méthode generateRandomNPC supprimée)
+    console.error('[CharacterSheet] La génération d\'allié doit être ré-implémentée.');
   }
 
   forceGenerateEnemies() {
@@ -1149,16 +1141,8 @@ export class CharacterSheet implements OnInit {
 
     console.log('[CharacterSheet] Force génération d\'un ennemi...');
     
-    // Générer UN seul ennemi avec un vrai nom japonais
-    const enemy = this.characterService['generateRandomNPC']('Ennemi');
-    
-    console.log('[CharacterSheet] Ennemi généré:', enemy);
-    
-    if (!char.enemies) char.enemies = [];
-    char.enemies.push(enemy);
-    
-    this.character.set({...char});
-    this.saveCharacter(char);
+    // TODO: Implémenter la génération d'un ennemi (méthode generateRandomNPC supprimée)
+    console.error('[CharacterSheet] La génération d\'ennemi doit être ré-implémentée.');
   }
 
   addNPC(type: 'allies' | 'enemies') {

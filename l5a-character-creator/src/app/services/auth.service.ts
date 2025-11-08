@@ -7,7 +7,7 @@ export interface AuthUser {
 }
 
 interface StoredUser extends AuthUser {
-  password: string; // NOTE: stored in clear for local-only demo; do NOT use in production
+  password: string;
   createdAt: string;
 }
 

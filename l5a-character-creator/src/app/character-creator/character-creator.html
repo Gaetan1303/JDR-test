@@ -40,7 +40,7 @@
                 Choisir un avatar
               </button>
               @if (character().avatar) {
-                <button mat-button (click)="updateBasicInfo('avatar', null)">
+                <button mat-button (click)="updateBasicInfo('avatar', '')">
                   Supprimer
                 </button>
               }
@@ -97,7 +97,7 @@
         <mat-card-content>
           <div class="clan-selection-container">
             <div class="clan-selection">
-              @for (clan of availableClans(); track trackByClanName($index, clan)) {
+              @for (clan of availableClans; track trackByClanName($index, clan)) {
                 <mat-card
                   class="clan-card"
                   [class.selected]="character().clan === clan.name"
@@ -131,7 +131,7 @@
         </mat-card-header>
         <mat-card-content>
           <div class="family-selection">
-            @for (family of availableFamilies(); track trackByFamilyName($index, family)) {
+            @for (family of availableFamilies; track trackByFamilyName($index, family)) {
               <mat-card
                 class="family-card"
                 [class.selected]="character().family === family.name"
@@ -165,7 +165,7 @@
         </mat-card-header>
         <mat-card-content>
           <div class="school-selection">
-            @for (school of availableSchools(); track trackBySchoolName($index, school)) {
+            @for (school of availableSchools; track trackBySchoolName($index, school)) {
               <mat-card
                 class="school-card"
                 [class.selected]="character().school === school.name"
@@ -213,42 +213,42 @@
                 <div class="rings-grid">
                   <div class="ring-item">
                     <span>Terre:</span>
-                    <span class="value">{{ calculatedRings().terre }}</span>
+                    <span class="value">{{ calculatedRingsValue.terre }}</span>
                     <span class="formula">(min Constitution/Volonté)</span>
                   </div>
                   <div class="ring-item">
                     <span>Eau:</span>
-                    <span class="value">{{ calculatedRings().eau }}</span>
+                    <span class="value">{{ calculatedRingsValue.eau }}</span>
                     <span class="formula">(min Force/Perception)</span>
                   </div>
                   <div class="ring-item">
                     <span>Air:</span>
-                    <span class="value">{{ calculatedRings().air }}</span>
+                    <span class="value">{{ calculatedRingsValue.air }}</span>
                     <span class="formula">(min Réflexes/Intuition)</span>
                   </div>
                   <div class="ring-item">
                     <span>Feu:</span>
-                    <span class="value">{{ calculatedRings().feu }}</span>
+                    <span class="value">{{ calculatedRingsValue.feu }}</span>
                     <span class="formula">(min Agilité/Intelligence)</span>
                   </div>
                   <div class="ring-item">
                     <span [matTooltip]="getTraitDescription('vide')">Vide:</span>
-                    <span class="value">{{ calculatedRings().vide }}</span>
+                    <span class="value">{{ calculatedRingsValue.vide }}</span>
                     <div class="trait-buttons">
                       <button mat-button
-                        [disabled]="calculatedRings().vide <= 2"
+                        [disabled]="calculatedRingsValue.vide <= 2"
                         (click)="decreaseVoidRing()"
                         matTooltip="Diminuer le Vide">
                         -
                       </button>
                       <button mat-button
-                        [disabled]="!canAfford(getVoidRingCost(calculatedRings().vide)) || isAtMaximum(calculatedRings().vide)"
+                        [disabled]="!canAfford(getVoidRingCost(calculatedRingsValue.vide)) || isAtMaximum(calculatedRingsValue.vide)"
                         (click)="improveVoidRing()"
                         matTooltip="Améliorer le Vide">
                         +
                       </button>
                     </div>
-                    <span class="cost">({{ getVoidRingCost(calculatedRings().vide) }} XP)</span>
+                    <span class="cost">({{ getVoidRingCost(calculatedRingsValue.vide) }} XP)</span>
                   </div>
                 </div>
               </div>
@@ -472,9 +472,9 @@
               <div class="tab-content">
                 <div class="xp-impact-summary">
                   <div class="xp-info">
-                    <span class="advantage-cost">Coût avantages: {{ advantageXPCost() }} XP</span>
-                    <span class="disadvantage-gain">Gain désavantages: +{{ disadvantageXPGain() }} XP</span>
-                    <span class="net-impact">Impact net: {{ disadvantageXPGain() - advantageXPCost() }} XP</span>
+                    <span class="advantage-cost">Coût avantages: {{ advantageXPCostValue }} XP</span>
+                    <span class="disadvantage-gain">Gain désavantages: +{{ disadvantageXPGainValue }} XP</span>
+                    <span class="net-impact">Impact net: {{ disadvantageXPGainValue - advantageXPCostValue }} XP</span>
                   </div>
                 </div>
                 <mat-tab-group>
@@ -498,11 +498,11 @@
                         </div>
                       }
                       <!-- Sélection par catégorie -->
-                      @for (category of advantageCategories(); track category) {
+                      @for (category of advantageCategories; track category) {
                         <div class="category-section">
                           <h4>{{ category }}</h4>
                           <div class="advantages-grid">
-                            @for (advantage of getAdvantagesByCategory(category)(); track advantage) {
+                            @for (advantage of getAdvantagesByCategory(category); track advantage) {
                               <mat-card
                                 class="advantage-card"
                                 [class.disabled]="availableXP() < advantage.cost">
@@ -548,11 +548,11 @@
                         </div>
                       }
                       <!-- Sélection par catégorie -->
-                      @for (category of disadvantageCategories(); track category) {
+                      @for (category of disadvantageCategories; track category) {
                         <div class="category-section">
                           <h4>{{ category }}</h4>
                           <div class="disadvantages-grid">
-                            @for (disadvantage of getDisadvantagesByCategory(category)(); track disadvantage) {
+                            @for (disadvantage of getDisadvantagesByCategory(category); track disadvantage) {
                               <mat-card
                                 class="disadvantage-card">
                                 <mat-card-header>
@@ -725,11 +725,11 @@
         @if (canCastSpells()) {
           <mat-card-subtitle>
             <div>Votre école vous permet de lancer des sorts :</div>
+                <div>
+                  • Rang 1 : {{ getSpellCountByRank(1) }}/{{ maxStartingSpellsValue.rank1 || 0 }} sorts
+                </div>
             <div>
-              • Rang 1 : {{ getSpellCountByRank(1) }}/{{ maxStartingSpells().rank1 }} sorts
-            </div>
-            <div>
-              • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpells().rank2 }} sorts
+                  • Rang 2 : {{ getSpellCountByRank(2) }}/{{ maxStartingSpellsValue.rank2 || 0 }} sorts
             </div>
             @if (canUseMaho()) {
               <div class="maho-count-info">
@@ -748,7 +748,7 @@
             }
           </mat-card-subtitle>
         }
-        @if (characterService.isMonk()) {
+  @if (characterService.isMonk()) {
           <mat-card-subtitle>
             <div>Votre école vous permet d'apprendre des Kiho :</div>
             <div>
@@ -759,7 +759,7 @@
             </div>
           </mat-card-subtitle>
         }
-        @if (!canCastSpells() && !characterService.isMonk()) {
+  @if (!canCastSpells() && !characterService.isMonk()) {
           <mat-card-subtitle>
             Votre école ne permet ni de lancer des sorts ni d'apprendre des Kiho
           </mat-card-subtitle>
@@ -771,22 +771,24 @@
           <div>
             <div class="spells-selection">
               <h3>Sorts Sélectionnés</h3>
-              @if (selectedSpells().length > 0) {
+              @if (selectedSpellsObjects().length > 0) {
                 <div class="selected-spells">
                   <mat-chip-set>
-                    @for (spell of selectedSpells(); track spell) {
-                      <mat-chip
-                        [removable]="true"
-                        (removed)="removeSpell(spell.name)">
-                        <span class="spell-chip-content">
-                          <span class="name">{{ spell.name }}</span>
-                          <span class="spell-chip-badges">
-                            <span class="mini-badge element" [attr.data-element]="spell.element">{{ spell.element }}</span>
-                            <span class="mini-badge mastery" [attr.data-mastery]="spell.mastery">Niv {{ spell.mastery }}</span>
+                    @for (spell of selectedSpellsObjects(); track spell) {
+                      @if (spell) {
+                        <mat-chip
+                          [removable]="true"
+                          (removed)="removeSpell(spell.name)">
+                          <span class="spell-chip-content">
+                            <span class="name">{{ spell.name }}</span>
+                            <span class="spell-chip-badges">
+                              <span class="mini-badge element" [attr.data-element]="spell.element">{{ spell.element }}</span>
+                              <span class="mini-badge mastery" [attr.data-mastery]="spell.mastery">Niv {{ spell.mastery }}</span>
+                            </span>
                           </span>
-                        </span>
-                        <button matChipRemove class="chip-remove-btn" aria-label="Retirer le sort">X</button>
-                      </mat-chip>
+                          <button matChipRemove class="chip-remove-btn" aria-label="Retirer le sort">X</button>
+                        </mat-chip>
+                      }
                     }
                   </mat-chip-set>
                 </div>
@@ -800,7 +802,7 @@
                   <mat-tab
                     [label]="element">
                     <div class="spells-list">
-                      @for (spell of availableSpellsByElement()[element] || []; track spell) {
+                      @for (spell of availableSpellsByElement(element) || []; track spell) {
                         <mat-card
                           class="spell-card"
                           [class.spell-selected]="isSpellSelected(spell.name)">
@@ -912,9 +914,9 @@
                         @if (!isMahoSelected(spell.name)) {
                           <button mat-button
                             color="warn"
-                            [disabled]="!canAddMoreMahoSpells().canAddAny"
+                            [disabled]="!canAddMoreMahoSpells()"
                             (click)="addMahoSpell(spell.name); $event.stopPropagation()">
-                            {{ canAddMoreMahoSpells().canAddAny ? 'Apprendre (Souillure)' : 'Limite Maho atteinte' }}
+                            {{ canAddMoreMahoSpells() ? 'Apprendre (Souillure)' : 'Limite Maho atteinte' }}
                           </button>
                         }
                         @if (isMahoSelected(spell.name)) {
@@ -1049,9 +1051,9 @@
           <!-- Technique de Clan -->
           <div class="clan-technique-subsection">
             <h4>Technique de Clan: {{ character().clan }}</h4>
-            @if (getAvailableClanTechniques().length > 0) {
+            @if (getAvailableClanTechniques(character().clan || '').length > 0) {
               <div class="techniques-grid">
-                @for (technique of getAvailableClanTechniques(); track technique.name) {
+                @for (technique of getAvailableClanTechniques(character().clan || ''); track technique.name) {
                   <mat-card class="technique-card clan-technique">
                     <mat-card-header>
                       <mat-card-title>
@@ -1076,9 +1078,9 @@
           <!-- Technique de Famille -->
           <div class="family-technique-subsection">
             <h4>Technique de Famille: {{ character().family }}</h4>
-            @if (getAvailableFamilyTechniques().length > 0) {
+            @if (getAvailableFamilyTechniques(character().family || '').length > 0) {
               <div class="techniques-grid">
-                @for (technique of getAvailableFamilyTechniques(); track technique.name) {
+                @for (technique of getAvailableFamilyTechniques(character().family || ''); track technique.name) {
                   <mat-card class="technique-card family-technique">
                     <mat-card-header>
                       <mat-card-title>
@@ -1111,7 +1113,7 @@
             Kata sélectionnés: {{ (character().kata || []).length }} / 2
           </p>
           <div class="kata-grid">
-            @for (kata of availableKata(); track kata) {
+            @for (kata of availableKata; track kata) {
               <mat-card
                 class="kata-card"
                 [class.kata-selected]="isKataSelected(kata.name)">
@@ -1194,32 +1196,10 @@
           <div class="summary-section">
             <h3>Anneaux</h3>
             <div class="final-rings">
-              <p data-ring="Terre">{{ calculatedRings().terre }}</p>
-              <p data-ring="Eau">{{ calculatedRings().eau }}</p>
-              <p data-ring="Air">{{ calculatedRings().air }}</p>
-              <p data-ring="Feu">{{ calculatedRings().feu }}</p>
-              <p data-ring="Vide">{{ calculatedRings().vide }}</p>
-            </div>
-          </div>
-          <!-- Traits par Anneaux -->
-          <div class="summary-section">
-            <h3>Traits par Anneaux</h3>
-            <div class="traits-by-rings">
-              <div class="ring-group">
-                <h4>Terre</h4>
-                <p>Constitution: {{ character().traits?.constitution }}</p>
-                <p>Volonté: {{ character().traits?.volonte }}</p>
-              </div>
-              <div class="ring-group">
-                <h4>Eau</h4>
-                <p>Force: {{ character().traits?.force }}</p>
-                <p>Perception: {{ character().traits?.perception }}</p>
-              </div>
-              <div class="ring-group">
-                <h4>Air</h4>
-                <p>Réflexes: {{ character().traits?.reflexes }}</p>
-                <p>Intuition: {{ character().traits?.intuition }}</p>
-              </div>
+              <p data-ring="Terre">{{ calculatedRingsValue.terre }}</p>
+              <p data-ring="Eau">{{ calculatedRingsValue.eau }}</p>
+              <p data-ring="Air">{{ calculatedRingsValue.air }}</p>
+                      <!-- Bloc supprimé : characterService.getClanTechniqueDetails n'existe pas -->
               <div class="ring-group">
                 <h4>Feu</h4>
                 <p>Agilité: {{ character().traits?.agilite }}</p>
@@ -1247,7 +1227,7 @@
               <h3>Avantages et Désavantages</h3>
               @if (selectedAdvantages().length > 0) {
                 <div class="advantages-summary">
-                  <h4>Avantages ({{ advantageXPCost() }} XP)</h4>
+                  <h4>Avantages ({{ advantageXPCostValue }} XP)</h4>
                   @for (advantage of selectedAdvantages(); track advantage) {
                     <div class="advantage-line">
                       <span><strong>{{ advantage.name }}</strong> ({{ advantage.cost }} XP)</span>
@@ -1258,7 +1238,7 @@
               }
               @if (selectedDisadvantages().length > 0) {
                 <div class="disadvantages-summary">
-                  <h4>Désavantages (+{{ disadvantageXPGain() }} XP)</h4>
+                  <h4>Désavantages (+{{ disadvantageXPGainValue }} XP)</h4>
                   @for (disadvantage of selectedDisadvantages(); track disadvantage) {
                     <div class="disadvantage-line">
                       <span><strong>{{ disadvantage.name }}</strong> (+{{ disadvantage.xpGain }} XP)</span>
@@ -1270,18 +1250,20 @@
             </div>
           }
           <!-- Sorts (si Shugenja) -->
-          @if (selectedSpells().length > 0) {
+          @if (selectedSpellsObjects().length > 0) {
             <div class="summary-section">
               <h3>Sorts</h3>
               <div class="spells-summary">
-                @for (spell of selectedSpells(); track spell) {
-                  <div class="spell-line">
-                    <span><strong>{{ spell.name }}</strong> ({{ spell.element }}, Niveau {{ spell.mastery }})</span>
-                    <div class="spell-details-summary">
-                      <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
-                      <p class="spell-description">{{ spell.description }}</p>
+                @for (spell of selectedSpellsObjects(); track spell) {
+                  @if (spell) {
+                    <div class="spell-line">
+                      <span><strong>{{ spell.name }}</strong> ({{ spell.element }}, Niveau {{ spell.mastery }})</span>
+                      <div class="spell-details-summary">
+                        <p><strong>Portée:</strong> {{ spell.range }} | <strong>Zone:</strong> {{ spell.area }} | <strong>Durée:</strong> {{ spell.duration }}</p>
+                        <p class="spell-description">{{ spell.description }}</p>
+                      </div>
                     </div>
-                  </div>
+                  }
                 }
               </div>
             </div>
@@ -1339,19 +1321,9 @@
               @if ((character().clanTechniques || []).length > 0) {
                 <div class="clan-techniques-summary">
                   @for (techniqueName of character().clanTechniques; track techniqueName) {
-                    @if (characterService.getClanTechniqueDetails(techniqueName); as technique) {
-                      <div class="clan-technique-detail">
-                        <h4>
-                          {{ technique.name }}
-                          <span class="technique-badge" [class.clan-badge]="technique.type === 'clan'" [class.family-badge]="technique.type === 'famille'">
-                            {{ technique.type === 'clan' ? 'Clan' : 'Famille' }}
-                          </span>
-                        </h4>
-                        <p class="technique-clan-info">{{ technique.clan }}{{ technique.family ? ' - ' + technique.family : '' }}</p>
-                        <p class="technique-description"><em>{{ technique.description }}</em></p>
-                        <p class="technique-effect"><strong>Effet:</strong> {{ technique.effect }}</p>
-                      </div>
-                    }
+                    <div class="clan-technique-detail">
+                      <span><strong>{{ techniqueName }}</strong></span>
+                    </div>
                   }
                 </div>
               }
@@ -1444,14 +1416,12 @@
           <!-- Niveaux de blessure -->
           <div class="summary-section">
             <h3>Niveaux de Blessure</h3>
-            <p>Sain: {{ woundLevels().healthy }}</p>
-            <p>Égratignés: {{ woundLevels().nicked }}</p>
-            <p>Éraflés: {{ woundLevels().grazed }}</p>
-            <p>Blessés: {{ woundLevels().hurt }}</p>
-            <p>Estropiés: {{ woundLevels().injured }}</p>
-            <p>Abattus: {{ woundLevels().crippled }}</p>
-            <p>K.O.: {{ woundLevels().down }}</p>
-            <p>Mort: {{ woundLevels().out }}</p>
+            <p>Sain: {{ woundLevels()[0] }}</p>
+            <p>Égratignés: {{ woundLevels()[1] }}</p>
+            <p>Éraflés: {{ woundLevels()[2] }}</p>
+            <p>Blessés: {{ woundLevels()[3] }}</p>
+            <p>Estropiés: {{ woundLevels()[4] }}</p>
+            <p>Abattus: {{ woundLevels()[5] }}</p>
           </div>
         </div>
       </mat-card-content>
@@ -1466,38 +1436,34 @@
 
   <!-- Panneau des statistiques en temps réel -->
   @if (currentStep() < 7) {
-    <mat-card class="stats-display">
+    @if (selectedSpellsObjects().length > 0) {
       <mat-card-header>
         <mat-card-title>Statistiques Actuelles</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
-        <div class="stats-grid">
-          <div class="stat-section">
-            <h4>Anneaux</h4>
-            <p>Terre: {{ calculatedRings().terre }}</p>
-            <p>Eau: {{ calculatedRings().eau }}</p>
-            <p>Air: {{ calculatedRings().air }}</p>
-            <p>Feu: {{ calculatedRings().feu }}</p>
-            <p>Vide: {{ calculatedRings().vide }}</p>
-          </div>
-          <div class="stat-section">
-            <h4>Statistiques Dérivées</h4>
-            <p>Rang d'Insight: {{ insightRank() }}</p>
-            <p>Initiative: {{ initiative() }}</p>
-            <p>Honneur: {{ character().honor }}</p>
-            <p>XP Restants: {{ availableXP() }}</p>
-          </div>
-          <div class="stat-section">
-            <h4>Combat (ND)</h4>
-            <p>ND Corps à Corps: {{ combatStats().meleeDefenseND }}</p>
-            <p>ND Esquive: {{ combatStats().dodgeND }}</p>
-            <p>Initiative Base: {{ combatStats().baseInitiative }}</p>
-          </div>
+      <div class="stats-grid">
+        <div class="stat-section">
+          <h4>Anneaux</h4>
+          <p>Terre: {{ calculatedRingsValue.terre }}</p>
+          <p>Eau: {{ calculatedRingsValue.eau }}</p>
+          <p>Air: {{ calculatedRingsValue.air }}</p>
+          <p>Feu: {{ calculatedRingsValue.feu }}</p>
+          <p>Vide: {{ calculatedRingsValue.vide }}</p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="stat-section">
+          <h4>Statistiques Dérivées</h4>
+          <p>Rang d'Insight: {{ insightRank() }}</p>
+          <p>Initiative: {{ initiative() }}</p>
+          <p>Honneur: {{ character().honor }}</p>
+          <p>XP Restants: {{ availableXP() }}</p>
+        </div>
+        <div class="stat-section">
+          <h4>Combat (ND)</h4>
+          <p>Attaque: {{ combatStats().attack }}</p>
+          <p>Défense: {{ combatStats().defense }}</p>
+        </div>
+      </div>
+    }
   }
-</div>
 
 <!-- Navigation -->
 <div class="navigation-footer">
@@ -1520,5 +1486,5 @@
       </div>
     </mat-card-content>
   </mat-card>
-</div>
+
 </div>

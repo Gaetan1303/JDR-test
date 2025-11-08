@@ -1,3 +1,4 @@
+@use 'sass:map';
 // ==========================================
 // Thèmes L5R - Legend of the Five Rings
 // ==========================================
@@ -36,7 +37,7 @@ $colors: (
 
 // Fonction pour récupérer une couleur
 @function color($name) {
-  @return map-get($colors, $name);
+  @return map.get($colors, $name);
 }
 
 // ==========================================
@@ -46,14 +47,13 @@ $colors: (
   --primary-color: #{color('beni')};
   --secondary-color: #{color('sumi')};
   --accent-color: #{color('kogane')};
-  --background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 100%);
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --header-bg: linear-gradient(135deg, #{color('beni')}, #8b0000);
+  --background: url('assets/images/background.png') center/cover no-repeat fixed, linear-gradient(135deg, #232323 0%, #b94a5a 100%);
+  --card-bg: rgba(255, 255, 255, 0.93);
+  --header-bg: linear-gradient(135deg, #{color('beni')}, #b94a5a);
   --text-primary: #{color('sumi')};
   --text-secondary: #{color('hai')};
   --border-color: #{color('beni')};
-  --hover-shadow: 0 8px 24px rgba(208, 16, 76, 0.3);
-  
+  --hover-shadow: 0 8px 24px rgba(185, 74, 90, 0.18);
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 }
 
@@ -64,14 +64,13 @@ $colors: (
   --primary-color: #{color('murasaki')};
   --secondary-color: #{color('ai')};
   --accent-color: #{color('kuchinashi')};
-  --background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
-  --card-bg: rgba(255, 255, 255, 0.97);
+  --background: url('assets/images/background2.png') center/cover no-repeat fixed, linear-gradient(135deg, #cfcbe6 0%, #3a6a8a 100%);
+  --card-bg: rgba(255, 255, 255, 0.96);
   --header-bg: linear-gradient(135deg, #{color('murasaki')}, #{color('fuji')});
-  --text-primary: #{color('sumi')};
+  --text-primary: #{color('ai')};
   --text-secondary: #{color('hai')};
   --border-color: #{color('murasaki')};
-  --hover-shadow: 0 8px 24px rgba(136, 72, 152, 0.4);
-  
+  --hover-shadow: 0 8px 24px rgba(161, 138, 183, 0.18);
   font-family: 'Noto Serif JP', 'Georgia', serif;
 }
 
@@ -82,14 +81,13 @@ $colors: (
   --primary-color: #{color('moegi')};
   --secondary-color: #{color('tokiwa')};
   --accent-color: #{color('kogane')};
-  --background: linear-gradient(135deg, #1a1f1a 0%, #2d3a2d 100%);
-  --card-bg: rgba(250, 248, 240, 0.98);
+  --background: url('assets/images/Monastere.png') center/cover no-repeat fixed, linear-gradient(135deg, #b2c2a2 0%, #4a8c5c 100%);
+  --card-bg: rgba(250, 248, 240, 0.97);
   --header-bg: linear-gradient(135deg, #{color('moegi')}, #{color('tokiwa')});
-  --text-primary: #{color('sumi')};
+  --text-primary: #{color('tokiwa')};
   --text-secondary: #{color('hai')};
   --border-color: #{color('tokiwa')};
-  --hover-shadow: 0 8px 24px rgba(0, 123, 67, 0.3);
-  
+  --hover-shadow: 0 8px 24px rgba(74, 140, 92, 0.18);
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
   letter-spacing: 0.5px;
 }
@@ -101,14 +99,13 @@ $colors: (
   --primary-color: #{color('kogane')};
   --secondary-color: #{color('karashi')};
   --accent-color: #{color('beni')};
-  --background: linear-gradient(135deg, #1f1a0f 0%, #3a2f1a 100%);
-  --card-bg: rgba(255, 250, 240, 0.96);
+  --background: url('assets/images/foret.png') center/cover no-repeat fixed, linear-gradient(135deg, #e6c97a 0%, #b94a5a 100%);
+  --card-bg: rgba(255, 250, 240, 0.95);
   --header-bg: linear-gradient(135deg, #{color('kogane')}, #{color('karashi')});
-  --text-primary: #{color('sumi')};
+  --text-primary: #{color('karashi')};
   --text-secondary: #{color('hai')};
   --border-color: #{color('kogane')};
-  --hover-shadow: 0 8px 24px rgba(230, 180, 34, 0.35);
-  
+  --hover-shadow: 0 8px 24px rgba(230, 193, 122, 0.18);
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 }
 
@@ -119,14 +116,13 @@ $colors: (
   --primary-color: #{color('sakura')};
   --secondary-color: #{color('akebono')};
   --accent-color: #{color('fuji')};
-  --background: linear-gradient(135deg, #2a1f1f 0%, #3d2d2d 100%);
-  --card-bg: rgba(254, 244, 244, 0.98);
+  --background: url('assets/images/image.png') center/cover no-repeat fixed, linear-gradient(135deg, #f8eaea 0%, #f3b9a5 100%);
+  --card-bg: rgba(255, 255, 255, 0.96);
   --header-bg: linear-gradient(135deg, #{color('akebono')}, #{color('sakura')});
-  --text-primary: #{color('sumi')};
+  --text-primary: #{color('beni')};
   --text-secondary: #{color('hai')};
   --border-color: #{color('akebono')};
-  --hover-shadow: 0 8px 24px rgba(241, 144, 114, 0.35);
-  
+  --hover-shadow: 0 8px 24px rgba(241, 185, 165, 0.18);
   font-family: 'Noto Serif JP', 'Georgia', serif;
   font-weight: 300;
 }

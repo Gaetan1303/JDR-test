@@ -7,8 +7,8 @@
 @use '@angular/material' as mat;
 
 // Import des thèmes L5R
-@import './styles/themes.scss';
-@import './styles/japanese-decorations.scss';
+@use './styles/themes';
+@use './styles/japanese-decorations';
 
 // Import de la police japonaise
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&family=Cinzel:wght@400;600;700&display=swap');

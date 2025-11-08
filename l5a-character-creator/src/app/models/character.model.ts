@@ -148,6 +148,7 @@ export interface Character {
   voidPoints?: number; // Points de Vide disponibles
   skills: Skill[];
   spells: string[]; // Noms des sorts sélectionnés
+  mahoSpells: string[]; // Noms des sorts Maho sélectionnés
   techniques: string[]; // Noms des techniques de clan sélectionnées
   kata: string[]; // Noms des kata sélectionnés
   kiho: string[]; // Noms des kiho sélectionnés (pour les moines)
