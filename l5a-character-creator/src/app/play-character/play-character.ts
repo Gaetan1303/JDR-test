@@ -107,8 +107,12 @@ export class PlayCharacter implements OnInit {
     const competence = skill ? skill.rank : 0;
 
     setTimeout(() => {
-      // Utilisation du service JetService pour le jet de compétence
-      const result = this.jetService.jetCompetence(anneau, competence);
+      let result;
+      if (competence > 0) {
+        result = this.jetService.jetCompetence(anneau, competence);
+      } else {
+        result = this.jetService.jetSansCompetence(anneau);
+      }
       this.jetResult.set(result);
       this.diceResult.set(result.total);
       this.isRolling.set(false);
