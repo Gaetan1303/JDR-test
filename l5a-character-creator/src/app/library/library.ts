@@ -255,6 +255,12 @@ import { CLANS } from '../data/clans.data';
     </div>
   `,
   styles: [`
+    ::ng-deep .library-tabs .mat-mdc-tab-label {
+      color: #FFD700 !important;
+      font-weight: bold;
+      font-size: 1.1em;
+      letter-spacing: 0.5px;
+    }
     .library-container {
       padding: 24px;
       max-width: 1400px;
@@ -269,7 +275,7 @@ import { CLANS } from '../data/clans.data';
         right: 0;
         bottom: 0;
         background: linear-gradient(to bottom, rgba(139, 26, 26, 0.2) 0%, rgba(107, 15, 15, 0.3) 100%),
-                    url('/assets/images/Monastere.png');
+                    url('/src/styles/assets/images/Monastere.png');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;

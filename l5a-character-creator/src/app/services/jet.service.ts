@@ -9,6 +9,17 @@ export interface JetResult {
 @Injectable({ providedIn: 'root' })
 export class JetService {
   /**
+   * Jet sans compétence : on lance autant de dés que la valeur de l'anneau, on garde le meilleur (1 seul)
+   * @param anneau Valeur de l'anneau
+   */
+  jetSansCompetence(anneau: number): JetResult {
+    const nbDes = anneau;
+    const des = Array.from({ length: nbDes }, () => this.lancerDe10());
+    const gardes = [...des].sort((a, b) => b - a).slice(0, 1);
+    const total = gardes[0] ?? 0;
+    return { des, gardes, total };
+  }
+  /**
    * Jet de compétence classique (ex : Kenjutsu, Artisanat, etc.)
    * @param anneau Valeur de l'anneau (Air, Terre, Eau, Feu, Vide)
    * @param competence Rang de la compétence
@@ -16,7 +27,8 @@ export class JetService {
   jetCompetence(anneau: number, competence: number): JetResult {
     const nbDes = anneau + competence;
     const des = Array.from({ length: nbDes }, () => this.lancerDe10());
-    const gardes = [...des].sort((a, b) => b - a).slice(0, anneau);
+    // On garde le nombre de dés égal à la compétence
+    const gardes = [...des].sort((a, b) => b - a).slice(0, competence);
     const total = gardes.reduce((sum, val) => sum + val, 0);
     return { des, gardes, total };
   }
