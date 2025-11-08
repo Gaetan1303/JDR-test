@@ -27,8 +27,8 @@ export class EventService {
       type: 'magie',
       difficulty: 15,
       trait: 'Intelligence',
-      skill: 'Spellcraft', 
-      rewards: { items: ['Artefact magique'] },
+      skill: 'Spellcraft',
+      rewards: { items: ['Fragment de jade purifié, utilisé par les shugenja pour repousser la souillure.'] },
       consequences: 'Succès : Artefact maîtrisé | Échec : Effet magique aléatoire'
     },
     // Religieux
@@ -40,7 +40,7 @@ export class EventService {
       difficulty: 12,
       trait: 'Intuition',
       skill: 'Théologie',
-      rewards: { honor: 2 },
+      rewards: { items: ['Prière manuscrite dédiée à un Kami local, symbole de protection spirituelle.'] },
       consequences: 'Succès : Bénédiction | Échec : Aucun effet'
     },
     // Commerce
@@ -52,7 +52,7 @@ export class EventService {
       difficulty: 13,
       trait: 'Intelligence',
       skill: 'Commerce',
-      rewards: { gold: 20 },
+      rewards: { items: ['Éventail peint à la main, typique des marchés d’Otosan Uchi.'] },
       consequences: 'Succès : Bonne affaire | Échec : Perte d’argent'
     },
     // Entraînement
@@ -64,7 +64,7 @@ export class EventService {
       difficulty: 11,
       trait: 'Force',
       skill: 'Athlétisme',
-      rewards: { honor: 1 },
+      rewards: { items: ['Bandeau du dojo, marqué du mon (blason) du clan local.'] },
       consequences: 'Succès : Progrès personnel | Échec : Fatigue temporaire'
     },
     {
@@ -75,7 +75,7 @@ export class EventService {
       difficulty: 15,
       trait: 'Agilité',
       skill: 'Kenjutsu',
-      rewards: { honor: 5 },
+      rewards: { items: ['Lettre calligraphiée de défi, typique des traditions du duel iaijutsu.'] },
       consequences: 'Victoire : +5 Honneur | Défaite : -5 Honneur'
     },
     {
@@ -86,7 +86,7 @@ export class EventService {
       difficulty: 12,
       trait: 'Intelligence',
       skill: 'Étiquette',
-      rewards: { honor: 3 },
+      rewards: { items: ['Bol à thé en céramique, transmis de génération en génération.'] },
       consequences: 'Succès : +3 Honneur | Échec : -2 Honneur'
     },
     {
@@ -97,7 +97,7 @@ export class EventService {
       difficulty: 18,
       trait: 'Force',
       skill: 'Artisanat (Forgeron)',
-      rewards: { items: ['Katana supérieure (+1k0)'] },
+      rewards: { items: ['Fragment de tamahagane, acier sacré utilisé pour les katanas légendaires.'] },
       consequences: 'Réussite : Katana améliorée | Échec : Temps perdu'
     },
     {
@@ -108,7 +108,7 @@ export class EventService {
       difficulty: 14,
       trait: 'Perception',
       skill: 'Investigation',
-      rewards: { gold: 50, items: ['Artefact ancien'] },
+      rewards: { items: ['Masque de tengu, vestige d’une ancienne légende locale.'] },
       consequences: 'Succès : Artefact trouvé | Échec : Blessure mineure'
     },
     {
@@ -119,7 +119,7 @@ export class EventService {
       difficulty: 16,
       trait: 'Réflexes',
       skill: 'Combat à mains nues',
-      rewards: { honor: 4, gold: 30 },
+      rewards: { items: ['Haori élimé, ancien manteau d’un ronin errant.'] },
       consequences: 'Victoire : +4 Honneur | Défaite : -3 Honneur, blessures'
     },
     {
@@ -130,7 +130,7 @@ export class EventService {
       difficulty: 13,
       trait: 'Intelligence',
       skill: 'Calligraphie',
-      rewards: { honor: 2 },
+      rewards: { items: ['Recueil de haïku, illustrant la beauté éphémère du monde.'] },
       consequences: 'Succès : +2 Honneur | Échec : Aucune conséquence'
     },
     {
@@ -141,7 +141,7 @@ export class EventService {
       difficulty: 12,
       trait: 'Intelligence',
       skill: 'Artisanat (Armurier)',
-      rewards: {},
+      rewards: { items: ['Éclat d’armure gravé, portant l’histoire d’un ancien duel.'] },
       consequences: 'Réussite : Armure réparée | Échec : Réparation coûteuse (-20 koku)'
     },
     {
@@ -152,7 +152,7 @@ export class EventService {
       difficulty: 17,
       trait: 'Volonté',
       skill: 'Investigation',
-      rewards: { items: ['Parchemin de sort', 'Or (100 koku)'] },
+      rewards: { items: ['Tesson de statue de Fortuné, vestige d’un culte oublié.'] },
       consequences: 'Succès : Trésors anciens | Échec : Malédiction mineure'
     }
   ];
