@@ -1,5 +1,4 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
-
 import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { CharacterService } from '../services/character.service';
 import { Character } from '../models/character.model';
+import { JetService, JetResult } from '../services/jet.service';
 
 interface RandomEvent {
   id: string;
@@ -40,12 +40,34 @@ interface RandomEvent {
   styleUrls: ['./play-character.scss']
 })
 export class PlayCharacter implements OnInit {
+
+  /**
+   * Indique si le dé à l'index idx fait partie des dés gardés (en tenant compte des doublons)
+   */
+  isKeptDie(idx: number): boolean {
+    const jet = this.jetResult();
+    if (!jet) return false;
+    const value = jet.des[idx];
+    // Compter combien de fois ce dé est apparu jusqu'à idx
+    let occur = 0;
+    for (let i = 0; i <= idx; i++) {
+      if (jet.des[i] === value) occur++;
+    }
+    // Compter combien de fois ce dé est gardé
+    let kept = 0;
+    for (let i = 0; i < jet.gardes.length; i++) {
+      if (jet.gardes[i] === value) kept++;
+      if (kept === occur) return true;
+    }
+    return false;
+  }
   characters = signal<Character[]>([]);
   selectedCharacter = signal<Character | null>(null);
   currentEvent = signal<RandomEvent | null>(null);
   eventHistory = signal<RandomEvent[]>([]);
   diceResult = signal<number | null>(null);
   isRolling = signal<boolean>(false);
+  jetResult = signal<JetResult | null>(null);
   
   canPlayEvent = computed(() => this.selectedCharacter() !== null && this.currentEvent() === null);
   canRollDice = computed(() => this.currentEvent() !== null && this.diceResult() === null);
@@ -143,7 +165,8 @@ export class PlayCharacter implements OnInit {
 
   constructor(
     private characterService: CharacterService,
-    private router: Router
+    private router: Router,
+    private jetService: JetService // Injection du service de jets
   ) {}
 
   ngOnInit() {
@@ -171,18 +194,22 @@ export class PlayCharacter implements OnInit {
 
   rollDice() {
     const event = this.currentEvent();
-    if (!event) return;
+    const char = this.selectedCharacter();
+    if (!event || !char) return;
 
     this.isRolling.set(true);
-    
-    // Simuler un jet de dés (animation)
+
+    // Récupérer la valeur de l'anneau et de la compétence associée à l'événement
+    const traitKey = event.trait.toLowerCase() as keyof typeof char.traits;
+    const anneau = char.traits[traitKey] || 0;
+    const skill = char.skills.find(s => s.name.toLowerCase() === (event.skill || '').toLowerCase());
+    const competence = skill ? skill.rank : 0;
+
     setTimeout(() => {
-      // Jet de dés L5R: lancer 2d10 et garder le meilleur (système simplifié)
-      const roll1 = Math.floor(Math.random() * 10) + 1;
-      const roll2 = Math.floor(Math.random() * 10) + 1;
-      const result = Math.max(roll1, roll2);
-      
-      this.diceResult.set(result);
+      // Utilisation du service JetService pour le jet de compétence
+      const result = this.jetService.jetCompetence(anneau, competence);
+      this.jetResult.set(result);
+      this.diceResult.set(result.total);
       this.isRolling.set(false);
     }, 1000);
   }

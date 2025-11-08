@@ -1,3 +1,89 @@
+// Style pour les dés
+.dice-list {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  justify-content: center;
+}
+.dice-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 2px solid #bdbdbd;
+  background: #fffbe7;
+  color: #5d4037;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+.dice-face.kept {
+  background: linear-gradient(135deg, #ffe082 0%, #ffd54f 100%);
+  color: #1b5e20;
+  border: 2px solid #ffd600;
+  box-shadow: 0 0 12px 2px #ffd60099;
+}
+.dice-face.not-kept {
+  opacity: 0.5;
+  background: #e0e0e0;
+  color: #bdbdbd;
+}
+.dice-face.rolling {
+  background: repeating-linear-gradient(45deg, #fffbe7, #ffe082 10px, #fffbe7 20px);
+  color: #bdbdbd;
+  animation: dice-roll 0.7s infinite linear;
+}
+@keyframes dice-roll {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
+}
+// Style pour les dés
+.dice-list {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  justify-content: center;
+}
+.dice-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 2px solid #bdbdbd;
+  background: #fffbe7;
+  color: #5d4037;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+.dice-face.kept {
+  background: linear-gradient(135deg, #ffe082 0%, #ffd54f 100%);
+  color: #1b5e20;
+  border: 2px solid #ffd600;
+  box-shadow: 0 0 12px 2px #ffd60099;
+}
+.dice-face.not-kept {
+  opacity: 0.5;
+  background: #e0e0e0;
+  color: #bdbdbd;
+}
+.dice-face.rolling {
+  background: repeating-linear-gradient(45deg, #fffbe7, #ffe082 10px, #fffbe7 20px);
+  color: #bdbdbd;
+  animation: dice-roll 0.7s infinite linear;
+}
+@keyframes dice-roll {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
+}
 .play-character-container {
   padding: 24px;
   max-width: 1400px;

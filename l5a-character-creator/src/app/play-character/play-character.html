@@ -154,18 +154,34 @@
             }
 
             <!-- Résultat du jet de dés -->
-            @if (diceResult() !== null) {
-              <div class="dice-result">
-                <h4>Résultat du jet : {{ diceResult() }}</h4>
-                @if (diceResult()! >= currentEvent()!.difficulty) {
-                  <p class="success">
-                    Succès ! Vous avez réussi l'épreuve.
-                  </p>
+            @if (isRolling()) {
+              <div class="dice-animation">
+                @for (_ of jetResult()?.des ?? []; let idx = $index; track idx) {
+                  <span class="dice-face rolling">?</span>
                 }
-                @if (diceResult()! < currentEvent()!.difficulty) {
-                  <p class="failure">
-                    Échec ! Vous n'avez pas atteint la difficulté requise.
-                  </p>
+                <p>Lancement des dés...</p>
+              </div>
+            }
+            @if (!isRolling() && jetResult()) {
+              <div class="dice-result">
+                <h4>Résultat du jet</h4>
+                <div class="dice-list">
+                  @for (de of jetResult()?.des ?? []; let idx = $index; track idx) {
+                    <span class="dice-face" [class.kept]="isKeptDie(idx)" [class.not-kept]="!isKeptDie(idx)">{{ de }}</span>
+                  }
+                </div>
+                <div class="dice-summary">
+                  <span>Dés lancés : {{ jetResult()!.des.length }}</span> |
+                  <span>Dés gardés : {{ jetResult()!.gardes.length }}</span>
+                </div>
+                <div class="dice-total">
+                  <strong>Total gardé : {{ jetResult()!.total }}</strong>
+                </div>
+                @if (jetResult()!.total >= currentEvent()!.difficulty) {
+                  <p class="success">Succès ! Vous avez réussi l'épreuve.</p>
+                }
+                @if (jetResult()!.total < currentEvent()!.difficulty) {
+                  <p class="failure">Échec ! Vous n'avez pas atteint la difficulté requise.</p>
                 }
               </div>
             }
