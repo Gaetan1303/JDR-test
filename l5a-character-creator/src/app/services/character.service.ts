@@ -403,28 +403,33 @@ export class CharacterService {
     return this.storageService.getAllCharacters();
   }
 
-  // Exemples de signaux et getters pour character-creator
+  // Liste des clans disponibles
   get availableClans() {
     return CLANS;
   }
-  get availableFamilies() {
+
+  // Exemples de signaux et getters pour character-creator
+  public availableFamilies = computed(() => {
     const clan = this._character().clan;
     if (!clan) return [];
+
     // Normalisation pour ignorer la casse et les accents
-    const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const normalize = (str: string) => {
+      return str
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase()
+        .trim();
+    };
+
     const clanNorm = normalize(clan);
-    const allClanNorms = CLANS.map(c => ({ original: c.name, norm: normalize(c.name) }));
-    console.log('[L5A][DEBUG] Clan sélectionné :', clan, '| normalisé :', clanNorm, '| Tous les clans normalisés :', allClanNorms);
     const clanObj = CLANS.find(c => normalize(c.name) === clanNorm);
-    if (clanObj && clanObj.families && clanObj.families.length > 0) {
+    if (clanObj?.families && Array.isArray(clanObj.families) && clanObj.families.length > 0) {
       return clanObj.families;
-    } else {
-      // Fallback de debug : retourne toutes les familles de tous les clans avec un nom de clan en entête
-      console.warn('[L5A] Clan non reconnu pour la sélection de famille :', clan, '| normalisé :', clanNorm);
-      // On retourne un tableau spécial pour affichage debug
-      return [{ name: 'Aucun clan reconnu : ' + clan, clan: '', traitBonus: 'intuition', description: 'Vérifiez le nom du clan sélectionné.' }];
     }
-  }
+    return [];
+  });
+  
   // Retourne les écoles disponibles pour le clan ET la famille sélectionnée
   get availableSchools() {
     const clan = this._character().clan;

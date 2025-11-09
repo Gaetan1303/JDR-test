@@ -89,8 +89,7 @@ export class CharacterCreator {
   availableSchools = this.characterService.availableSchools;
   // Pour éviter les erreurs de typage dans le template, expose les valeurs des anneaux calculés
   get calculatedRingsValue(): { terre: number; eau: number; air: number; feu: number; vide: number } {
-    // Si le signal est un computed, il faut l'appeler
-    const rings: any = typeof this.characterService.calculatedRings === 'function' ? this.characterService.calculatedRings() : this.characterService.calculatedRings;
+    const rings: any = this.characterService.calculatedRings();
     return {
       terre: (rings && typeof rings.terre === 'number') ? rings.terre : 2,
       eau: (rings && typeof rings.eau === 'number') ? rings.eau : 2,
@@ -176,7 +175,9 @@ export class CharacterCreator {
   removeMahoSpell(spellName: string) { this.characterService.removeMahoSpell(spellName); }
   
   availableArmor = this.characterService.availableArmor;
-  availableItems = this.characterService.availableItems;
+  availableItems() {
+    return this.characterService.availableItems();
+  }
   
   // Computed signal pour gérer l'armure (Equipment | Equipment[] -> Equipment)
   currentArmor = computed(() => {
@@ -220,6 +221,16 @@ export class CharacterCreator {
   else if (type === 'artisan') theme = 'marchand';
   else if (type === 'courtier') theme = 'courtisan';
   this.themeService.setTheme(theme);
+    });
+
+    // Debug: log available families whenever clan or families change
+    effect(() => {
+      try {
+        const fams = this.availableFamilies && typeof this.availableFamilies === 'function' ? this.availableFamilies() : (this.availableFamilies || []);
+        console.log('DEBUG: availableFamilies ->', fams);
+      } catch (e) {
+        console.log('DEBUG: availableFamilies error', e);
+      }
     });
   }
 
