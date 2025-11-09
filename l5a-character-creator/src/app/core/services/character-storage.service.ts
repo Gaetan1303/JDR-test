@@ -47,7 +47,7 @@ export class CharacterStorageService {
     if (index >= 0) {
       characters[index] = character;
       localStorage.setItem('myCharacters', JSON.stringify(characters));
-      console.log('[CharacterStorageService] Personnage mis à jour:', character.name);
+      // Log supprimé: personnage mis à jour
     } else {
       console.error('[CharacterStorageService] Personnage non trouvé pour mise à jour:', character.id);
     }

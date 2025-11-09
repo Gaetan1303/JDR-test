@@ -69,13 +69,11 @@ export class MultiplayerService {
     });
 
     this.socket.on('connect', () => {
-      console.log('[WS] Connecté au serveur GM_L5R');
       this.connected.set(true);
       this.refreshRooms();
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('[WS] Déconnecté du serveur:', reason);
       this.connected.set(false);
     });
 

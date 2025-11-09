@@ -206,7 +206,6 @@ export class CharacterCreator {
     // Chercher dans toutes les écoles, pas seulement celles disponibles
     const school = SCHOOLS.find(s => s.name === schoolName);
     const type = school?.type || '';
-    console.log('🎨 School Type Changed:', { schoolName, type, school });
     return type;
   });
 
@@ -221,16 +220,6 @@ export class CharacterCreator {
   else if (type === 'artisan') theme = 'marchand';
   else if (type === 'courtier') theme = 'courtisan';
   this.themeService.setTheme(theme);
-    });
-
-    // Debug: log available families whenever clan or families change
-    effect(() => {
-      try {
-        const fams = this.availableFamilies && typeof this.availableFamilies === 'function' ? this.availableFamilies() : (this.availableFamilies || []);
-        console.log('DEBUG: availableFamilies ->', fams);
-      } catch (e) {
-        console.log('DEBUG: availableFamilies error', e);
-      }
     });
   }
 
@@ -310,15 +299,11 @@ export class CharacterCreator {
   }
 
   nextStep() {
-    console.log('NextStep called, current step:', this.currentStep());
     this.characterService.nextStep();
-    console.log('After nextStep, current step:', this.currentStep());
   }
 
   previousStep() {
-    console.log('PreviousStep called, current step:', this.currentStep());
     this.characterService.previousStep();
-    console.log('After previousStep, current step:', this.currentStep());
   }
 
   resetCharacter() {

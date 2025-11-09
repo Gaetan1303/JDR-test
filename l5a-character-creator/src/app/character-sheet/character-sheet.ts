@@ -1110,7 +1110,7 @@ export class CharacterSheet implements OnInit {
     this.xpToAdd = 0;
     this.showXpDialog = false;
 
-    console.log('[CharacterSheet] XP ajoutés avec succès');
+    // XP ajoutés (log supprimé pour production)
   }
 
   toggleEditMode() {
@@ -1129,8 +1129,7 @@ export class CharacterSheet implements OnInit {
     const char = this.character();
     if (!char) return;
 
-    console.log('[CharacterSheet] Force génération d\'un allié...');
-    
+    // Génération d'un allié (log supprimé)
     // TODO: Implémenter la génération d'un allié (méthode generateRandomNPC supprimée)
     console.error('[CharacterSheet] La génération d\'allié doit être ré-implémentée.');
   }
@@ -1139,8 +1138,7 @@ export class CharacterSheet implements OnInit {
     const char = this.character();
     if (!char) return;
 
-    console.log('[CharacterSheet] Force génération d\'un ennemi...');
-    
+    // Génération d'un ennemi (log supprimé)
     // TODO: Implémenter la génération d'un ennemi (méthode generateRandomNPC supprimée)
     console.error('[CharacterSheet] La génération d\'ennemi doit être ré-implémentée.');
   }
@@ -1208,18 +1206,17 @@ export class CharacterSheet implements OnInit {
   }
 
   loadCharacterById(id: string) {
-    console.log('[CharacterSheet] Recherche du personnage avec ID:', id);
+    // Recherche du personnage avec ID (log supprimé)
     const saved = localStorage.getItem('myCharacters');
     if (saved) {
       try {
         const characters = JSON.parse(saved);
-        console.log('[CharacterSheet] Personnages trouves dans localStorage:', characters.length);
-        console.log('[CharacterSheet] Liste des IDs:', characters.map((c: Character) => c.id));
+        // Informations de debug supprimées
         
         // Convertir les deux en chaînes pour la comparaison
         const found = characters.find((c: Character) => String(c.id) === String(id));
         if (found) {
-          console.log('[CharacterSheet] Personnage trouve:', found.name);
+          // Personnage trouvé (log supprimé)
           this.character.set(found);
           this.characterNotes = found.notes || '';
           
@@ -1231,7 +1228,7 @@ export class CharacterSheet implements OnInit {
           };
         } else {
           console.error('[CharacterSheet] Personnage NON trouve avec ID:', id);
-          console.log('[CharacterSheet] IDs disponibles:', characters.map((c: Character) => `${c.name} (${c.id})`));
+          // Liste des IDs disponible (log supprimé)
           this.router.navigate(['/characters']);
         }
       } catch (error) {

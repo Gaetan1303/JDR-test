@@ -353,12 +353,7 @@ export class Characters implements OnInit {
   }
 
   debugCharacter(character: Character) {
-    console.log('[DEBUG] Personnage:', character.name);
-    console.log('[DEBUG] ID:', character.id);
-    console.log('[DEBUG] Type ID:', typeof character.id);
-    console.log('[DEBUG] Clan:', character.clan);
-    console.log('[DEBUG] Ecole:', character.school);
-    console.log('[DEBUG] URL serait:', `/character-sheet/${character.id}`);
+    // Debug logs supprimés. Laisser l'alerte pour rétrocompatibilité si nécessaire.
     alert(`DEBUG:\nNom: ${character.name}\nID: ${character.id}\nType: ${typeof character.id}`);
   }
 
