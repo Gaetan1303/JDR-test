@@ -7,6 +7,10 @@
         @if (character().school) {
           <span class="school-badge"> | {{ character().school }} ({{ schoolType() || 'non défini' }})</span>
         }
+        <!-- Petit indicateur visuel pour debugging de l'étape active et des écoles disponibles -->
+        <div class="debug-indicator" style="font-size:0.9em; margin-top:6px; color:rgba(0,0,0,0.6);">
+          DEBUG: étape={{ currentStep() }} · écoles disponibles={{ availableSchools?.length || 0 }} · clan={{ character().clan || '—' }} · famille={{ character().family || '—' }}
+        </div>
       </mat-card-subtitle>
     </mat-card-header>
   </mat-card>
