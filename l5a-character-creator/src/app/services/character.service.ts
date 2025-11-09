@@ -430,25 +430,29 @@ export class CharacterService {
     return [];
   });
   
-  // Retourne les écoles disponibles pour le clan ET la famille sélectionnée
+  // Retourne les écoles disponibles pour le clan ET la famille sélectionnée (réactif)
   get availableSchools() {
-    const clan = this._character().clan;
-    const family = this._character().family;
-    if (!clan) return [];
-    // On filtre d'abord par clan
-    let schools = SCHOOLS.filter(s => s.clan === clan);
-    // Si une famille est sélectionnée, on filtre aussi par nom de famille dans le nom de l'école
-    if (family) {
-      // On cherche les écoles dont le nom contient le nom de la famille (ex: "Hida" dans "École de Bushi Hida")
-      const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-      const familyNorm = normalize(family);
-      schools = schools.filter(s => normalize(s.name).includes(familyNorm));
-      // Si aucune école ne correspond exactement à la famille, on garde toutes les écoles du clan
-      if (schools.length === 0) {
-        schools = SCHOOLS.filter(s => s.clan === clan);
+    return computed(() => {
+      const clan = this._character().clan;
+      const family = this._character().family;
+      if (!clan) return [];
+      // On filtre d'abord par clan
+      let schools = SCHOOLS.filter(s => s.clan === clan);
+      // Si une famille est sélectionnée, on filtre aussi par nom de famille dans le nom de l'école
+      if (family) {
+        // On cherche les écoles dont le nom contient le nom de la famille (ex: "Hida" dans "École de Bushi Hida")
+        const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+        const familyNorm = normalize(family);
+        const filtered = schools.filter(s => normalize(s.name).includes(familyNorm));
+        // Si aucune école ne correspond exactement à la famille, on garde toutes les écoles du clan
+        if (filtered.length === 0) {
+          // garder toutes
+        } else {
+          schools = filtered;
+        }
       }
-    }
-    return schools;
+      return schools;
+    });
   }
   get calculatedRings() {
     // Expose le signal rings du personnage
