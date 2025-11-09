@@ -21,6 +21,71 @@ import { CharacterStorageService } from '../core/services/character-storage.serv
   providedIn: 'root'
 })
 export class CharacterService {
+  // Signal réactif pour l'état du personnage (déclaration unique et cohérente)
+  private _character = signal<Character>({
+    name: '',
+    age: 15,
+    gender: '',
+    clan: '',
+    family: '',
+    school: '',
+    rings: {
+      terre: 2,
+      eau: 2,
+      air: 2,
+      feu: 2,
+      vide: 2
+    },
+    traits: {
+      constitution: 2,
+      volonte: 2,
+      force: 2,
+      perception: 2,
+      reflexes: 2,
+      intuition: 2,
+      agilite: 2,
+      intelligence: 2
+    },
+    skills: [],
+    spells: [],
+    mahoSpells: [],
+    techniques: [],
+    kata: [],
+    kiho: [],
+    clanTechniques: [],
+    advantages: [],
+    disadvantages: [],
+    selectedAdvantages: [],
+    selectedDisadvantages: [],
+    experiencePoints: 40,
+    spentExperiencePoints: 0,
+    honor: 5.5,
+    glory: 1,
+    status: 1,
+    taint: 0,
+    equipment: {
+      weapons: [],
+      armor: (typeof ARMOR !== 'undefined' && ARMOR.length > 0 ? ARMOR[0] : undefined),
+      items: [],
+      koku: 100
+    },
+    objective: '',
+    personality: '',
+    background: '',
+    insight: 0,
+    initiative: 0,
+    woundLevels: {
+      healthy: 0,
+      nicked: 0,
+      grazed: 0,
+      hurt: 0,
+      injured: 0,
+      crippled: 0,
+      down: 0,
+      out: 0
+    }
+  });
+  public character = this._character;
   // Mise à jour des infos de base
   updateBasicInfo(data: Partial<Character>) {
     this._character.update(char => ({ ...char, ...data }));
@@ -124,13 +189,47 @@ export class CharacterService {
   }
   resetCharacter() {
     this._character.set({
-      name: '', age: 15, gender: '', clan: '', family: '', school: '',
+      name: '',
+      age: 15,
+      gender: '',
+      clan: '',
+      family: '',
+      school: '',
       rings: { terre: 2, eau: 2, air: 2, feu: 2, vide: 2 },
       traits: { constitution: 2, volonte: 2, force: 2, perception: 2, reflexes: 2, intuition: 2, agilite: 2, intelligence: 2 },
-      skills: [], spells: [], techniques: [], kata: [], kiho: [], clanTechniques: [], advantages: [], disadvantages: [],
-      experiencePoints: 40, spentExperiencePoints: 0, honor: 5.5, glory: 1, status: 1, taint: 0,
-      equipment: { weapons: [], armor: ARMOR[0], items: [], koku: 100 },
-      objective: '', personality: '', background: ''
+      skills: [],
+      spells: [],
+      mahoSpells: [],
+      techniques: [],
+      kata: [],
+      kiho: [],
+      clanTechniques: [],
+      advantages: [],
+      disadvantages: [],
+      selectedAdvantages: [],
+      selectedDisadvantages: [],
+      experiencePoints: 40,
+      spentExperiencePoints: 0,
+      honor: 5.5,
+      glory: 1,
+      status: 1,
+      taint: 0,
+      equipment: { weapons: [], armor: (typeof ARMOR !== 'undefined' && ARMOR.length > 0 ? ARMOR[0] : undefined), items: [], koku: 100 },
+      objective: '',
+      personality: '',
+      background: '',
+      insight: 0,
+      initiative: 0,
+      woundLevels: {
+        healthy: 0,
+        nicked: 0,
+        grazed: 0,
+        hurt: 0,
+        injured: 0,
+        crippled: 0,
+        down: 0,
+        out: 0
+      }
     });
     this.currentStep.set(1);
   }
@@ -291,56 +390,7 @@ export class CharacterService {
   }
   isClanTechniqueSelected = (name: string) => (this._character().clanTechniques || []).includes(name);
   // Pour les kiho (wrapper)
-  // Signal principal pour le personnage (déclaré avant tout usage)
-  private _character = signal<Partial<Character>>({
-    name: '',
-    age: 15,
-    gender: '',
-    clan: '',
-    family: '',
-    school: '',
-    rings: {
-      terre: 2,
-      eau: 2,
-      air: 2,
-      feu: 2,
-      vide: 2
-    },
-    traits: {
-      constitution: 2,
-      volonte: 2,
-      force: 2,
-      perception: 2,
-      reflexes: 2,
-      intuition: 2,
-      agilite: 2,
-      intelligence: 2
-    },
-    skills: [],
-    spells: [],
-    techniques: [],
-    kata: [],
-    kiho: [],
-    clanTechniques: [],
-    advantages: [],
-    disadvantages: [],
-    experiencePoints: 40,
-    spentExperiencePoints: 0,
-    honor: 5.5,
-    glory: 1,
-    status: 1,
-    taint: 0,
-    equipment: {
-      weapons: [],
-      armor: ARMOR[0],
-      items: [],
-      koku: 100
-    },
-    objective: '',
-    personality: '',
-    background: ''
-  });
-  character = this._character;
+  // ...existing code...
 
   // Permet de charger un personnage complet dans le service
   loadCharacter(character: Character) {
