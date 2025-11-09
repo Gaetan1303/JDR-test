@@ -360,13 +360,40 @@ export class CharacterService {
   get availableFamilies() {
     const clan = this._character().clan;
     if (!clan) return [];
-    const clanObj = CLANS.find(c => c.name === clan);
-    return clanObj?.families || [];
+    // Normalisation pour ignorer la casse et les accents
+    const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const clanNorm = normalize(clan);
+    const allClanNorms = CLANS.map(c => ({ original: c.name, norm: normalize(c.name) }));
+    console.log('[L5A][DEBUG] Clan sélectionné :', clan, '| normalisé :', clanNorm, '| Tous les clans normalisés :', allClanNorms);
+    const clanObj = CLANS.find(c => normalize(c.name) === clanNorm);
+    if (clanObj && clanObj.families && clanObj.families.length > 0) {
+      return clanObj.families;
+    } else {
+      // Fallback de debug : retourne toutes les familles de tous les clans avec un nom de clan en entête
+      console.warn('[L5A] Clan non reconnu pour la sélection de famille :', clan, '| normalisé :', clanNorm);
+      // On retourne un tableau spécial pour affichage debug
+      return [{ name: 'Aucun clan reconnu : ' + clan, clan: '', traitBonus: 'intuition', description: 'Vérifiez le nom du clan sélectionné.' }];
+    }
   }
-  get availableSchoolsForClan() {
+  // Retourne les écoles disponibles pour le clan ET la famille sélectionnée
+  get availableSchools() {
     const clan = this._character().clan;
+    const family = this._character().family;
     if (!clan) return [];
-    return SCHOOLS.filter(s => s.clan === clan);
+    // On filtre d'abord par clan
+    let schools = SCHOOLS.filter(s => s.clan === clan);
+    // Si une famille est sélectionnée, on filtre aussi par nom de famille dans le nom de l'école
+    if (family) {
+      // On cherche les écoles dont le nom contient le nom de la famille (ex: "Hida" dans "École de Bushi Hida")
+      const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+      const familyNorm = normalize(family);
+      schools = schools.filter(s => normalize(s.name).includes(familyNorm));
+      // Si aucune école ne correspond exactement à la famille, on garde toutes les écoles du clan
+      if (schools.length === 0) {
+        schools = SCHOOLS.filter(s => s.clan === clan);
+      }
+    }
+    return schools;
   }
   get calculatedRings() {
     // Expose le signal rings du personnage

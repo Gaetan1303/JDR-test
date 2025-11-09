@@ -86,7 +86,7 @@ export class CharacterCreator {
   currentStep = this.characterService.currentStep;
   availableClans = this.characterService.availableClans;
   availableFamilies = this.characterService.availableFamilies;
-  availableSchools = this.characterService.availableSchoolsForClan;
+  availableSchools = this.characterService.availableSchools;
   // Pour éviter les erreurs de typage dans le template, expose les valeurs des anneaux calculés
   get calculatedRingsValue(): { terre: number; eau: number; air: number; feu: number; vide: number } {
     // Si le signal est un computed, il faut l'appeler
