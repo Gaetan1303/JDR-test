@@ -97,7 +97,23 @@ export class CharacterService {
     this._character.update(char => ({ ...char, family: familyName, school: '' }));
   }
   selectSchool(schoolName: string) {
-    this._character.update(char => ({ ...char, school: schoolName }));
+    // Lors de la sélection d'une école, on met à jour l'école
+    // et on ajoute les compétences de l'école (rank 1, isSchoolSkill=true).
+    const schoolObj = SCHOOLS.find(s => s.name === schoolName);
+    this._character.update(char => {
+      // Conserver les compétences hors-école
+      const nonSchoolSkills = (char.skills || []).filter(s => !s.isSchoolSkill);
+      let schoolSkills = [] as any[];
+      if (schoolObj && Array.isArray(schoolObj.skills)) {
+        schoolSkills = schoolObj.skills.map(name => ({
+          name,
+          rank: 1,
+          isSchoolSkill: true,
+          trait: 'agilite' as keyof typeof char.traits // valeur par défaut
+        }));
+      }
+      return { ...char, school: schoolName, skills: [...nonSchoolSkills, ...schoolSkills] };
+    });
   }
 
   // Amélioration/diminution de traits/compétences

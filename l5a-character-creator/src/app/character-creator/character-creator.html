@@ -169,6 +169,17 @@
         </mat-card-header>
         <mat-card-content>
           <div class="school-selection">
+            <!-- Diagnostic: toujours afficher counts pour debug -->
+            <div class="no-schools-warning" style="padding:12px; border:1px dashed #ccc; background:#fff7; margin-bottom:8px;">
+              <strong>DEBUG Écoles</strong>
+              <div style="font-size:0.9em; margin-top:6px; color:rgba(0,0,0,0.6);">
+                availableSchools(): {{ (availableSchools() && availableSchools().length) || 0 }} —
+                SCHOOLS dataset pour le clan: {{ schoolsForCurrentClan().length }}
+              </div>
+              @if (schoolsForCurrentClan().length > 0) {
+                <div style="margin-top:6px; font-size:0.9em; color:rgba(0,0,0,0.7);">Noms: {{ schoolsForCurrentClanNames() }}</div>
+              }
+            </div>
             @for (school of availableSchools(); track trackBySchoolName($index, school)) {
               <mat-card
                 class="school-card"

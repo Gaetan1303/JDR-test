@@ -41,13 +41,8 @@ import { SCHOOLS } from '../data/schools.data';
   styleUrl: './character-creator.scss'
 })
 export class CharacterCreator {
-  // Wrapper pour exposer les objets sorts sélectionnés au template
-  selectedSpellsObjects() {
-    // characterService.selectedSpellsObjects est un computed
-    return typeof this.characterService.selectedSpellsObjects === 'function'
-      ? this.characterService.selectedSpellsObjects()
-      : this.characterService.selectedSpellsObjects;
-  }
+  // Expose directement le computed signal des sorts sélectionnés (préserve la réactivité)
+  selectedSpellsObjects: any;
   // Détermine si le personnage peut utiliser les sorts Maho (ex : a le désavantage Maho-Tsukai)
   canUseMaho(): boolean {
     // On considère que le désavantage Maho-Tsukai a l'id 'maho-tsukai' dans les désavantages
@@ -87,9 +82,21 @@ export class CharacterCreator {
   availableClans = this.characterService.availableClans;
   availableFamilies = this.characterService.availableFamilies;
   availableSchools = this.characterService.availableSchools;
+  // Méthode d'aide pour debug : retourne les écoles du dataset SCHOOLS pour le clan courant
+  schoolsForCurrentClan() {
+    const clan = this.character().clan;
+    if (!clan) return [] as any[];
+    return SCHOOLS.filter(s => s.clan === clan);
+  }
+  schoolsForCurrentClanNames(): string {
+    return this.schoolsForCurrentClan().map(s => s.name).join(', ');
+  }
   // Pour éviter les erreurs de typage dans le template, expose les valeurs des anneaux calculés
   get calculatedRingsValue(): { terre: number; eau: number; air: number; feu: number; vide: number } {
-    const rings: any = this.characterService.calculatedRings();
+    // `calculatedRings` in the service is a computed() — it may be a callable signal.
+    // Support both shapes: either the computed function or a plain value.
+    const ringsSignalOrValue: any = this.characterService.calculatedRings;
+    const rings = (typeof ringsSignalOrValue === 'function') ? ringsSignalOrValue() : ringsSignalOrValue;
     return {
       terre: (rings && typeof rings.terre === 'number') ? rings.terre : 2,
       eau: (rings && typeof rings.eau === 'number') ? rings.eau : 2,
@@ -175,9 +182,8 @@ export class CharacterCreator {
   removeMahoSpell(spellName: string) { this.characterService.removeMahoSpell(spellName); }
   
   availableArmor = this.characterService.availableArmor;
-  availableItems() {
-    return this.characterService.availableItems();
-  }
+  // Expose the computed signal directly to preserve Angular reactivity in templates
+  availableItems = this.characterService.availableItems;
   
   // Computed signal pour gérer l'armure (Equipment | Equipment[] -> Equipment)
   currentArmor = computed(() => {
@@ -210,6 +216,8 @@ export class CharacterCreator {
   });
 
   constructor() {
+    // Initialiser les exposés réactifs après injection des services
+    this.selectedSpellsObjects = this.characterService.selectedSpellsObjects;
     // Synchronise le thème avec le type d'école sélectionné
     effect(() => {
       const type = this.schoolType();
@@ -469,7 +477,8 @@ export class CharacterCreator {
 
   // Méthode pour compter les sorts par rang
   getSpellCountByRank(rank: number): number {
-  return this.characterService.selectedSpellsObjects().filter((s: any) => s && s.mastery === rank).length;
+  return (typeof this.selectedSpellsObjects === 'function' ? this.selectedSpellsObjects() : [])
+    .filter((s: any) => s && s.mastery === rank).length;
   }
 
   // Méthode pour obtenir la description d'un trait
