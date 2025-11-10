@@ -46,6 +46,7 @@ export class CharacterService {
       agilite: 2,
       intelligence: 2
     },
+    appliedBonuses: {},
     skills: [],
     spells: [],
     mahoSpells: [],
@@ -91,15 +92,82 @@ export class CharacterService {
     this._character.update(char => ({ ...char, ...data }));
   }
   selectClan(clanName: string) {
-    this._character.update(char => ({ ...char, clan: clanName, family: '', school: '' }));
+    // When changing clan, remove any previously-applied family/school bonuses
+    const prevFamily = this._character().appliedBonuses?.family;
+    const prevSchool = this._character().appliedBonuses?.school;
+    let traits = { ...this._character().traits } as Traits;
+    // remove previous family bonus
+    if (prevFamily) {
+      for (const c of CLANS) {
+        const f = (c.families || []).find(fi => fi.name === prevFamily);
+        if (f && f.traitBonus) {
+          const tb = f.traitBonus as keyof Traits;
+          traits[tb] = Math.max(2, (traits[tb] || 0) - 1);
+          break;
+        }
+      }
+    }
+    // remove previous school bonus
+    if (prevSchool) {
+      const prevS = SCHOOLS.find(s => s.name === prevSchool);
+      if (prevS && prevS.traitBonus) {
+        const tb = prevS.traitBonus as keyof Traits;
+        traits[tb] = Math.max(2, (traits[tb] || 0) - 1);
+      }
+    }
+
+    this._character.update(char => ({ ...char, clan: clanName, family: '', school: '', traits, appliedBonuses: {} }));
   }
   selectFamily(familyName: string) {
-    this._character.update(char => ({ ...char, family: familyName, school: '' }));
+    // Apply family trait bonus and remove previously-applied family bonus if any
+    const prevFamily = this._character().appliedBonuses?.family;
+    let traits = { ...this._character().traits } as Traits;
+    // remove previous family bonus (if applied by this flow)
+    if (prevFamily) {
+      for (const c of CLANS) {
+        const f = (c.families || []).find(fi => fi.name === prevFamily);
+        if (f && f.traitBonus) {
+          const tb = f.traitBonus as keyof Traits;
+          traits[tb] = Math.max(2, (traits[tb] || 0) - 1);
+          break;
+        }
+      }
+    }
+    // apply new family bonus
+    let newFamilyObj: any = undefined;
+    for (const c of CLANS) {
+      const f = (c.families || []).find(fi => fi.name === familyName);
+      if (f) { newFamilyObj = f; break; }
+    }
+    if (newFamilyObj && newFamilyObj.traitBonus) {
+      const tb = newFamilyObj.traitBonus as keyof Traits;
+      traits[tb] = (traits[tb] || 0) + 1;
+    }
+
+    this._character.update(char => ({ ...char, family: familyName, school: '', traits, appliedBonuses: { ...char.appliedBonuses, family: familyName } }));
   }
   selectSchool(schoolName: string) {
     // Lors de la sélection d'une école, on met à jour l'école
     // et on ajoute les compétences de l'école (rank 1, isSchoolSkill=true).
     const schoolObj = SCHOOLS.find(s => s.name === schoolName);
+    // Apply/remove school trait bonus and add school skills
+    const prevSchool = this._character().appliedBonuses?.school;
+    let traits = { ...this._character().traits } as Traits;
+    // remove previous school bonus if any
+    if (prevSchool) {
+      const prevS = SCHOOLS.find(s => s.name === prevSchool);
+      if (prevS && prevS.traitBonus) {
+        const tb = prevS.traitBonus as keyof Traits;
+        traits[tb] = Math.max(2, (traits[tb] || 0) - 1);
+      }
+    }
+
+    // apply new school bonus
+    if (schoolObj && schoolObj.traitBonus) {
+      const tb = schoolObj.traitBonus as keyof Traits;
+      traits[tb] = (traits[tb] || 0) + 1;
+    }
+
     this._character.update(char => {
       // Conserver les compétences hors-école
       const nonSchoolSkills = (char.skills || []).filter(s => !s.isSchoolSkill);
@@ -112,7 +180,7 @@ export class CharacterService {
           trait: 'agilite' as keyof typeof char.traits // valeur par défaut
         }));
       }
-      return { ...char, school: schoolName, skills: [...nonSchoolSkills, ...schoolSkills] };
+      return { ...char, school: schoolName, skills: [...nonSchoolSkills, ...schoolSkills], traits, appliedBonuses: { ...char.appliedBonuses, school: schoolName } };
     });
   }
 
@@ -246,6 +314,8 @@ export class CharacterService {
         down: 0,
         out: 0
       }
+      ,
+      appliedBonuses: {}
     });
     this.currentStep.set(1);
   }

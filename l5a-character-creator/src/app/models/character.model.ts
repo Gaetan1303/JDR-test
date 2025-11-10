@@ -191,6 +191,13 @@ export interface Character {
   
   // Techniques de Clan
   clanTechniques: string[]; // Noms des techniques de clan/famille sélectionnées
+
+  // Bonus appliqués automatiquement par la création (familie / école / clan)
+  appliedBonuses?: {
+    family?: string;
+    school?: string;
+    clan?: string;
+  };
   
   // Alliés et ennemis
   allies?: NPC[]; // Alliés du personnage
