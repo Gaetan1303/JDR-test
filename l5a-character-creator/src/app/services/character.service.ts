@@ -415,9 +415,35 @@ export class CharacterService {
 
   // Ajout/suppression de sorts via SpellService
   addSpell(spellName: string) {
+    // Retourne un objet résultat pour que l'appelant puisse afficher un feedback
     const current = this._character().spells || [];
+    const spell = SPELLS.find(s => s.name === spellName);
+    if (!spell) return { success: false, error: 'Sort introuvable' };
+
+    // Vérifier que le personnage peut apprendre ce sort (anneau/insight/universal)
+    if (!this.canLearnSpell(spellName)) return { success: false, error: 'Votre personnage ne peut pas apprendre ce sort (rang/anneau insuffisant ou école incompatible)' };
+
+    // Vérifier les limites par rang (rank1 / rank2)
+    const limits: any = this.maxStartingSpells;
+    const rank = spell.mastery || 1;
+    const rankKey = rank === 1 ? 'rank1' : (rank === 2 ? 'rank2' : null);
+    if (rankKey && limits && typeof limits[rankKey] === 'number') {
+      const currentCountForRank = this.spellService.getSpellCountByRank(current, rank);
+      if (currentCountForRank >= limits[rankKey]) {
+        return { success: false, error: `Limite atteinte pour les sorts de rang ${rank} (max ${limits[rankKey]})` };
+      }
+    }
+
+    // Vérifier la limite totale également
+    const totalLimit = (limits?.rank1 || 0) + (limits?.rank2 || 0);
+    if (totalLimit > 0 && current.length >= totalLimit) {
+      return { success: false, error: `Limite totale de sorts atteinte (${totalLimit})` };
+    }
+
+    // Tous les contrôles ok -> ajouter
     const updated = this.spellService.addSpell(current, spellName);
     this._character.update(char => ({ ...char, spells: updated }));
+    return { success: true };
   }
   removeSpell(spellName: string) {
     const current = this._character().spells || [];

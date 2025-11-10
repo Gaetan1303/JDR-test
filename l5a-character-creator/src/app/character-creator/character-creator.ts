@@ -398,7 +398,11 @@ export class CharacterCreator {
 
   // Méthodes pour les sorts
   addSpell(spellName: string) {
-    this.characterService.addSpell(spellName);
+    const result: any = this.characterService.addSpell(spellName);
+    if (result && result.success === false) {
+      // Afficher un message simple pour l'instant (toast/snackbar pourrait être ajouté)
+      alert('⚠️ ' + (result.error || 'Impossible d\'ajouter le sort'));
+    }
   }
 
   removeSpell(spellName: string) {
