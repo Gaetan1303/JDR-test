@@ -439,7 +439,11 @@ export class CharacterService {
     };
 
     const clanNorm = normalize(clan);
-    const clanObj = CLANS.find(c => normalize(c.name) === clanNorm);
+    const clanObj = CLANS.find(c => {
+      const cName = normalize(c.name);
+      // Match strict or when one contains the other (handles 'Clan du Dragon' vs 'Dragon')
+      return cName === clanNorm || cName.includes(clanNorm) || clanNorm.includes(cName);
+    });
     if (clanObj?.families && Array.isArray(clanObj.families) && clanObj.families.length > 0) {
       return clanObj.families;
     }
@@ -452,21 +456,29 @@ export class CharacterService {
       const clan = this._character().clan;
       const family = this._character().family;
       if (!clan) return [];
-      // On filtre d'abord par clan
-      let schools = SCHOOLS.filter(s => s.clan === clan);
-      // Si une famille est sélectionnée, on filtre aussi par nom de famille dans le nom de l'école
+
+      // Normalisation pour comparer correctement les noms (ex: "Clan du Dragon" vs "Dragon")
+      const normalize = (str: string | undefined) => {
+        if (!str) return '';
+        return str
+          .normalize('NFD')
+          .replace(/\p{Diacritic}/gu, '')
+          .toLowerCase()
+          .trim();
+      };
+
+      const clanNorm = normalize(clan);
+      // Filtrer les écoles par clan normalisé
+      let schools = SCHOOLS.filter(s => normalize(s.clan) === clanNorm);
+
+      // Si une famille est sélectionnée, on affine la recherche par nom d'école contenant le nom de la famille
       if (family) {
-        // On cherche les écoles dont le nom contient le nom de la famille (ex: "Hida" dans "École de Bushi Hida")
-        const normalize = (str: string) => str.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
         const familyNorm = normalize(family);
         const filtered = schools.filter(s => normalize(s.name).includes(familyNorm));
-        // Si aucune école ne correspond exactement à la famille, on garde toutes les écoles du clan
-        if (filtered.length === 0) {
-          // garder toutes
-        } else {
-          schools = filtered;
-        }
+        if (filtered.length > 0) schools = filtered;
+        // sinon on garde toutes les écoles du clan
       }
+
       return schools;
     });
   }
