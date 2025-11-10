@@ -85,6 +85,9 @@ export class CharacterService {
       down: 0,
       out: 0
     }
+    ,
+    // Rang de l'Anneau du Vide (acheté avec XP — L5A 4e)
+    voidRank: 2
   });
   public character = this._character;
   // Mise à jour des infos de base
@@ -226,28 +229,43 @@ export class CharacterService {
       return { ...char, traits: newTraits, spentExperiencePoints: newSpent };
     });
   }
-  improveVoidRing() {
-    // Increase void ring and spend XP accordingly
-    this._character.update(char => {
-      const base = { ...char.rings } as Ring;
-      const current = base.vide || 2;
-      const cost = (current + 1) * 10; // same formula que dans CharacterCreator.getVoidRingCost
-      const newRings = { ...base, vide: current + 1 } as Ring;
-      const newSpent = (char.spentExperiencePoints || 0) + cost;
-      return { ...char, rings: newRings, spentExperiencePoints: newSpent };
-    });
+  /**
+   * Upgrade the Void rank (Anneau du Vide) according to L5A 4e rules.
+   * Cost = newRank * 4 XP. Returns true if operation succeeded.
+   */
+  upgradeVoid(newRank: number): boolean {
+    const current = this._character().voidRank ?? ((this._character().rings || {}).vide || 2);
+    if (newRank <= current || newRank > 10) return false;
+    const xpCost = newRank * 4;
+    const availableComputed = this.availableExperiencePoints();
+    const available = (typeof (availableComputed as any) === 'function') ? (availableComputed as any)() : availableComputed;
+    if (xpCost > available) {
+      console.error('XP insuffisant pour améliorer l\'Anneau du Vide.');
+      return false;
+    }
+    this._character.update(char => ({ ...char, voidRank: newRank, spentExperiencePoints: (char.spentExperiencePoints || 0) + xpCost }));
+    return true;
   }
-  decreaseVoidRing() {
-    // Decrease void ring and refund XP from the current level
-    this._character.update(char => {
-      const base = { ...char.rings } as Ring;
-      const current = base.vide || 2;
-      if (current <= 2) return char;
-      const refund = current * 10; // refund the cost paid to reach `current`
-      const newRings = { ...base, vide: Math.max(2, current - 1) } as Ring;
-      const newSpent = Math.max(0, (char.spentExperiencePoints || 0) - refund);
-      return { ...char, rings: newRings, spentExperiencePoints: newSpent };
-    });
+
+  /**
+   * Decrease void rank by 1 and refund the XP paid for the current rank.
+   * Refund uses the same formula (currentRank * 4) to keep symmetry.
+   */
+  decreaseVoidRank(): boolean {
+    const current = this._character().voidRank ?? ((this._character().rings || {}).vide || 2);
+    if (current <= 2) return false;
+    const refund = current * 4;
+    this._character.update(char => ({ ...char, voidRank: Math.max(2, current - 1), spentExperiencePoints: Math.max(0, (char.spentExperiencePoints || 0) - refund) }));
+    return true;
+  }
+
+  // Compatibility wrappers for older UI code that calls improveVoidRing/decreaseVoidRing
+  improveVoidRing(): boolean {
+    const current = this._character().voidRank ?? ((this._character().rings || {}).vide || 2);
+    return this.upgradeVoid(current + 1);
+  }
+  decreaseVoidRing(): boolean {
+    return this.decreaseVoidRank();
   }
   improveSkill(skillName: string) {
     const skills = [...(this._character().skills || [])];
@@ -324,7 +342,8 @@ export class CharacterService {
         out: 0
       }
       ,
-      appliedBonuses: {}
+      appliedBonuses: {},
+      voidRank: 2
     });
     this.currentStep.set(1);
   }
@@ -462,7 +481,7 @@ export class CharacterService {
     // Find spell to determine taint (use mastery as proxy for taint increment)
     const spell = MAHO_SPELLS.find(s => s.name === spellName);
     if (!spell) return { success: false, error: 'Sort Maho introuvable' };
-    const taintIncrement = Math.max(1, Math.round(spell.mastery));
+    const taintIncrement = (typeof (spell as any).taintCost === 'number') ? (spell as any).taintCost : Math.max(1, Math.round(spell.mastery));
     const MAX_TAINT = 10; // seuil global maximal (peut être ajusté)
     const currentTaint = this._character().taint || 0;
     if (currentTaint + taintIncrement > MAX_TAINT) return { success: false, error: 'Ajout refusé : la souillure dépasserait le maximum autorisé' };
@@ -475,7 +494,7 @@ export class CharacterService {
   removeMahoSpell(spellName: string) {
     const current = this._character().mahoSpells || [];
     const spell = MAHO_SPELLS.find(s => s.name === spellName);
-    const taintDecrement = spell ? Math.max(1, Math.round(spell.mastery)) : 1;
+    const taintDecrement = spell ? ((typeof (spell as any).taintCost === 'number') ? (spell as any).taintCost : Math.max(1, Math.round(spell.mastery))) : 1;
     const updated = this.spellService.removeMahoSpell(current, spellName);
     this._character.update(char => ({ ...char, mahoSpells: updated, taint: Math.max(0, (char.taint || 0) - taintDecrement) }));
     return { success: true };
@@ -646,6 +665,31 @@ export class CharacterService {
   // Ajout d'un getter pour l'expérience disponible (exemple)
   get availableExperiencePoints() {
     return computed(() => (this._character().experiencePoints || 0) - (this._character().spentExperiencePoints || 0));
+  }
+
+  // Computed attributes required by rules adaptation (L5A)
+  get fixedInitiative() {
+    return computed(() => {
+      const reflexes = this._character().traits?.reflexes || 0;
+      const iaijutsu = (this._character().skills || []).find(s => (s.name || '').toLowerCase() === 'iaijutsu');
+      const iaijutsuRank = iaijutsu ? (iaijutsu.rank || 0) : 0;
+      return reflexes + iaijutsuRank;
+    });
+  }
+
+  get movementSpeed() {
+    return computed(() => {
+      const reflexes = this._character().traits?.reflexes || 0;
+      const terreRing = (this._character().rings || {}).terre || 0;
+      return (reflexes + terreRing) * 5;
+    });
+  }
+
+  get woundThresholdIndemne() {
+    return computed(() => {
+      const terreRing = (this._character().rings || {}).terre || 0;
+      return terreRing * 5;
+    });
   }
 
   // Ajout d'un getter pour les techniques de clan disponibles (exemple)
@@ -971,7 +1015,7 @@ export class CharacterService {
       const ringLevel = (this._character().rings as any)?.[ringSource] || 0;
       effectiveRank = Math.max(insightRank, ringLevel);
     }
-    const result = this.kihoService.addKiho(kihoName, current, school, effectiveRank);
+  const result = this.kihoService.addKiho(kihoName, current, school, effectiveRank, this.getMaxKiho());
     if (result.success) {
       this._character.update(char => ({ ...char, kiho: [...current, kihoName] }));
     }
@@ -986,9 +1030,11 @@ export class CharacterService {
     return this.kihoService.isKihoSelected(kihoName, this._character().kiho || []);
   }
   canAddMoreKiho(): boolean {
-    return this.kihoService.canAddMoreKiho(this._character().kiho || []);
+    return this.kihoService.canAddMoreKiho(this._character().kiho || [], this.getMaxKiho());
   }
   getMaxKiho(): number {
-    return this.kihoService.getMaxKiho();
+    // La limite de Kiho dépend désormais du rang acheté de l'Anneau du Vide (voidRank).
+    const vr = (typeof this._character().voidRank === 'number') ? this._character().voidRank : ((this._character().rings || {}).vide || 3);
+    return (typeof vr === 'number' && vr > 0) ? vr : 3;
   }
 }

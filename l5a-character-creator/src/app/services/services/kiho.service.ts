@@ -24,13 +24,13 @@ export class KihoService {
     return KIHO.filter((k: Kiho) => k.element === element && k.mastery <= insightRank);
   }
 
-  addKiho(kihoName: string, currentKiho: string[], school: string | undefined, insightRank: number): { success: boolean; error?: string } {
+  addKiho(kihoName: string, currentKiho: string[], school: string | undefined, insightRank: number, maxKihoParam?: number): { success: boolean; error?: string } {
     if (currentKiho.includes(kihoName)) {
       return { success: false, error: 'Kiho déjà sélectionné' };
     }
-    const maxKiho = 3;
+    const maxKiho = (typeof maxKihoParam === 'number' && maxKihoParam > 0) ? maxKihoParam : 3;
     if (currentKiho.length >= maxKiho) {
-      return { success: false, error: `Limite de Kiho atteinte (${maxKiho} maximum au rang 1)` };
+      return { success: false, error: `Limite de Kiho atteinte (${maxKiho} maximum)` };
     }
     if (!school || !school.toLowerCase().includes('moine')) {
       return { success: false, error: 'Seuls les moines peuvent apprendre des Kiho' };
@@ -67,8 +67,9 @@ export class KihoService {
       .filter((k: Kiho | undefined): k is Kiho => k !== undefined) as Kiho[];
   }
 
-  canAddMoreKiho(currentKiho: string[]): boolean {
-    return currentKiho.length < 3;
+  canAddMoreKiho(currentKiho: string[], maxKiho?: number): boolean {
+    const max = (typeof maxKiho === 'number' && maxKiho > 0) ? maxKiho : 3;
+    return currentKiho.length < max;
   }
 
   getMaxKiho(): number {

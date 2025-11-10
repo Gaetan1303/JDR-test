@@ -55,6 +55,7 @@ export interface Spell {
   name: string;
   element: 'Air' | 'Terre' | 'Eau' | 'Feu' | 'Vide' | 'Maho';
   mastery: number;
+  taintCost?: number; // Coût en Souillure (pour sorts Maho). Optionnel pour les autres sorts.
   range: string;
   area: string;
   duration: string;
@@ -171,6 +172,8 @@ export interface Character {
   // Statistiques dérivées
   insight: number;
   initiative: number;
+  // Rang de l'Anneau du Vide (acheté avec XP en L5A 4e). Utiliser en priorité plutôt que rings.vide
+  voidRank?: number;
   
   // Statuts
   honor: number;
