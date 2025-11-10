@@ -471,12 +471,15 @@ export class CharacterService {
       // Filtrer les écoles par clan normalisé
       let schools = SCHOOLS.filter(s => normalize(s.clan) === clanNorm);
 
-      // Si une famille est sélectionnée, on affine la recherche par nom d'école contenant le nom de la famille
+      // Si une famille est sélectionnée, ne pas exclure les autres écoles du clan :
+      // on renvoie toutes les écoles du clan, mais on peut prioriser celles liées à la famille.
       if (family) {
         const familyNorm = normalize(family);
-        const filtered = schools.filter(s => normalize(s.name).includes(familyNorm));
-        if (filtered.length > 0) schools = filtered;
-        // sinon on garde toutes les écoles du clan
+        // Séparer les écoles qui correspondent à la famille et les autres
+        const matched = schools.filter(s => normalize(s.name).includes(familyNorm));
+        const others = schools.filter(s => !normalize(s.name).includes(familyNorm));
+        // Concaténer en plaçant les écoles correspondant à la famille en tête
+        schools = [...matched, ...others];
       }
 
       return schools;
