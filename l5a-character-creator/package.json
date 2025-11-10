@@ -7,7 +7,7 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "deploy": "ng build --configuration production && npx angular-cli-ghpages --dir=dist/l5a-character-creator/browser",
-    "watch": "ng build --watch --configuration development",
+  "watch": "ng build --watch --configuration development"
   },
   "prettier": {
     "printWidth": 100,
