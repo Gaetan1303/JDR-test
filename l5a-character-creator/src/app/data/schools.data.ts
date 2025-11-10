@@ -362,4 +362,79 @@ export const SCHOOLS: School[] = [
     outfit: ['Kimono élégant sombre', 'Wakizashi', 'Éventail', 'Kit de calligraphie', 'Koku'],
     startingMoney: '5d10'
   }
+  ,
+  // Écoles ajoutées pour les trois clans visibles
+  // Clan de l'Ours (famille: Kuma)
+  {
+    name: 'École de Bushi Kuma',
+    type: 'bushi',
+    clan: 'Clan de l\'Ours',
+    traitBonus: 'constitution',
+    skills: ['Défense', 'Kenjutsu', 'Endurance', 'Survie', 'Lore: Montagnes'],
+    technique: 'Garde de la Toundra : Quand vous défendez un point fixe, vous bénéficiez d\'un bonus de +1k1 à toutes vos actions de défense. Peut encaisser un dégât supplémentaire une fois par scène.',
+    honor: 6.0,
+    outfit: ['Armure lourde', 'Wakizashi', 'Kimono robuste', 'Trousse de survie', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Shugenja Kuma',
+    type: 'shugenja',
+    clan: 'Clan de l\'Ours',
+    traitBonus: 'volonte',
+    skills: ['Méditation', 'Lore: Terres du Nord', 'Médecine', 'Spellcraft', 'Calligraphie'],
+    technique: 'Prières des Pics : Le shugenja peut canaliser les forces de la montagne pour renforcer les alliés proches (+1k0 aux jets de sauv. contre les effets météo et froid). Affinité: Terre, Déficience: Feu',
+    honor: 6.5,
+    outfit: ['Robes chaudes', 'Encens', 'Parchemins', 'Talisman de pierre', 'Koku'],
+    startingMoney: '2d10',
+    spellLimits: { rank1: 3, rank2: 1, affinity: 'Terre', deficiency: 'Feu' }
+  },
+
+  // Clan du Serpent (famille: Chuda)
+  {
+    name: 'École de Bushi Chuda',
+    type: 'bushi',
+    clan: 'Clan du Serpent',
+    traitBonus: 'agilite',
+    skills: ['Discrétion', 'Kenjutsu', 'Kyujutsu', 'Tromperie', 'Acrobatie'],
+    technique: 'Voile du Serpent : Permet d\'effectuer une attaque sournoise après s\'être dissimulé. +1k1 aux jets d\'attaque si la cible est surprise.',
+    honor: 5.5,
+    outfit: ['Vêtements sombres', 'Wakizashi', 'Faux', 'Masques', 'Koku'],
+    startingMoney: '3d10'
+  },
+  {
+    name: 'École de Courtisan Chuda',
+    type: 'courtier',
+    clan: 'Clan du Serpent',
+    traitBonus: 'intuition',
+    skills: ['Manipulation', 'Comédie', 'Courtoisie', 'Sincérité', 'Investigation'],
+    technique: 'Miroir Trompeur : Peut changer d\'identité sociale rapidement et gagner un bonus sur les jets de Tromperie. Peut préparer une couverture sociale en une scène.',
+    honor: 5.0,
+    outfit: ['Tenues changeantes', 'Parfum', 'Masques', 'Kit de maquillage', 'Koku'],
+    startingMoney: '4d10'
+  },
+
+  // Clan de la Tortue (famille: Kasuga)
+  {
+    name: 'École de Bushi Kasuga',
+    type: 'bushi',
+    clan: 'Clan de la Tortue',
+    traitBonus: 'constitution',
+    skills: ['Défense', 'Kenjutsu', 'Tactique', 'Armurerie', 'Endurance'],
+    technique: 'Bouclier du Kasuga : Les personnages peuvent interposer leur armure pour protéger un allié, réduisant les dégâts subis par celui-ci de 1 point une fois par scène.',
+    honor: 6.0,
+    outfit: ['Armure légère', 'Bouclier', 'Wakizashi', 'Outils d\'entretien', 'Koku'],
+    startingMoney: '2d10'
+  },
+  {
+    name: 'École de Shugenja Kasuga',
+    type: 'shugenja',
+    clan: 'Clan de la Tortue',
+    traitBonus: 'intelligence',
+    skills: ['Spellcraft', 'Médecine', 'Lore: Architecture', 'Méditation', 'Calligraphie'],
+    technique: 'Sagesse de la Coquille : Peut ajouter +1k0 aux jets de protection magique et soigner plus efficacement les blessures de l\'équipe. Affinité: Eau, Déficience: Air',
+    honor: 6.5,
+    outfit: ['Robes cérémoniales', 'Parchemins', 'Herbes médicinales', 'Koku'],
+    startingMoney: '2d10',
+    spellLimits: { rank1: 3, rank2: 1, affinity: 'Eau', deficiency: 'Air' }
+  }
 ];
