@@ -104,4 +104,43 @@ describe('CharacterService - creation flows', () => {
     expect(saved.id).toBeDefined();
     expect(storageServiceStub.addCharacter).toHaveBeenCalled();
   });
+
+  it('should improve and decrease a non-school skill and adjust XP accordingly', () => {
+    // Create a fresh service instance with same stubs
+    const localService = new CharacterService(spellServiceStub, equipmentServiceStub, kihoServiceStub, techniqueServiceStub, storageServiceStub);
+    localService.resetCharacter();
+    // Add a non-school skill
+    localService.character.update(c => ({ ...c, skills: [{ name: 'Artisanat', rank: 0, isSchoolSkill: false, trait: 'intelligence' }] }));
+    const beforeXP = localService.character().spentExperiencePoints || 0;
+    localService.improveSkill('Artisanat');
+  const skill = localService.character().skills.find((s: any) => s.name === 'Artisanat');
+  expect(skill).toBeDefined();
+  expect(skill!.rank).toBe(1);
+    // cost for non-school skill for rank 0->1 is (0+1)*2 = 2
+    expect(localService.character().spentExperiencePoints).toBe(beforeXP + 2);
+
+    // Now decrease skill and expect refund
+    localService.decreaseSkill('Artisanat');
+  const skillAfter = localService.character().skills.find((s: any) => s.name === 'Artisanat');
+  expect(skillAfter).toBeDefined();
+  expect(skillAfter!.rank).toBe(0);
+    expect(localService.character().spentExperiencePoints).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should refuse to upgrade void rank when XP insufficient', () => {
+    const localService = new CharacterService(spellServiceStub, equipmentServiceStub, kihoServiceStub, techniqueServiceStub, storageServiceStub);
+    localService.resetCharacter();
+    // Set experience points to zero to force failure
+    localService.character.update(c => ({ ...c, experiencePoints: 0, spentExperiencePoints: 0 }));
+    const success = localService.upgradeVoid(5); // cost would be 5*4 = 20
+    expect(success).toBeFalse();
+  });
+
+  it('should return false for canAffordEquipment when equipment service denies affordability', () => {
+    const equipmentStubFalse: any = { canAffordEquipment: () => false };
+    const localService = new CharacterService(spellServiceStub, equipmentStubFalse, kihoServiceStub, techniqueServiceStub, storageServiceStub);
+    localService.resetCharacter();
+    const can = localService.canAffordEquipment({ name: 'Fake Sword', type: 'weapon' } as any);
+    expect(can).toBeFalse();
+  });
 });
