@@ -8,7 +8,6 @@
     "build:prod": "ng build --configuration production",
     "deploy": "ng build --configuration production && npx angular-cli-ghpages --dir=dist/l5a-character-creator/browser",
     "watch": "ng build --watch --configuration development",
-    "test": "CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\") ng test"
   },
   "prettier": {
     "printWidth": 100,
