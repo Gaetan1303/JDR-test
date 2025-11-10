@@ -347,6 +347,9 @@ export const SCHOOLS: School[] = [
     traitBonus: 'volonte',
     skills: ['Calligraphie: Maho', 'Lore: Shadowlands', 'Lore: Souillure', 'Meditation', 'Spellcraft'],
     technique: 'Maître du Sang : Vous connaissez 3 sorts de Maho en plus de vos sorts de départ. Vous pouvez lancer des sorts de Maho sans parchemin. Lorsque vous lancez un sort de Maho, vous gagnez +1k1 au jet de lancement mais prenez 1 point de Souillure.',
+    // Permet l'accès aux sorts Maho sans nécessiter le désavantage `maho-tsukai`
+    allowsMaho: true,
+    mahoStartingCount: 3,
     honor: 4.0,
     outfit: ['Robes sombres', 'Wakizashi', 'Couteau de sacrifice', 'Parchemins de Maho', 'Kit de voyage', 'Koku'],
     startingMoney: '2d10'

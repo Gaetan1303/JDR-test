@@ -113,6 +113,10 @@ export interface School {
     affinity?: string; // Élément d'affinité si applicable
     deficiency?: string; // Élément de déficience si applicable
   };
+  // Indique si l'école autorise l'accès automatique au Maho (optionnel)
+  allowsMaho?: boolean;
+  // Nombre de sorts Maho de départ autorisés (optionnel)
+  mahoStartingCount?: number;
 }
 
 export interface Family {

@@ -11,11 +11,11 @@ import { CLAN_TECHNIQUES, KATA, ClanTechnique as TechniqueKata } from '../data/t
 import { CLAN_TECHNIQUES as CLAN_FAMILY_TECHNIQUES, ClanTechnique } from '../data/clan-techniques.data';
 import { KIHO } from '../data/kiho.data';
 
-import { SpellService } from '../core/services/spell.service';
-import { EquipmentService } from '../core/services/equipment.service';
-import { KihoService } from '../core/services/kiho.service';
-import { TechniqueService } from '../core/services/technique.service';
-import { CharacterStorageService } from '../core/services/character-storage.service';
+import { SpellService } from './services/spell.service';
+import { EquipmentService } from './services/equipment.service';
+import { KihoService } from './services/kiho.service';
+import { TechniqueService } from './services/technique.service';
+import { CharacterStorageService } from './services/character-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -186,82 +186,91 @@ export class CharacterService {
 
   // Amélioration/diminution de traits/compétences
   improveTrait(trait: keyof Traits) {
+    // Compute cost and update spentExperiencePoints when improving a trait
     this._character.update(char => {
       const base = { ...char.traits } as Traits;
-      return {
-        ...char,
-        traits: {
-          constitution: trait === 'constitution' ? base.constitution + 1 : base.constitution,
-          volonte: trait === 'volonte' ? base.volonte + 1 : base.volonte,
-          force: trait === 'force' ? base.force + 1 : base.force,
-          perception: trait === 'perception' ? base.perception + 1 : base.perception,
-          reflexes: trait === 'reflexes' ? base.reflexes + 1 : base.reflexes,
-          intuition: trait === 'intuition' ? base.intuition + 1 : base.intuition,
-          agilite: trait === 'agilite' ? base.agilite + 1 : base.agilite,
-          intelligence: trait === 'intelligence' ? base.intelligence + 1 : base.intelligence
-        }
-      };
+      const current = base[trait] || 2;
+      const cost = (current + 1) * 4; // same formula que dans CharacterCreator.getTraitCost
+      const newTraits: Traits = {
+        constitution: trait === 'constitution' ? base.constitution + 1 : base.constitution,
+        volonte: trait === 'volonte' ? base.volonte + 1 : base.volonte,
+        force: trait === 'force' ? base.force + 1 : base.force,
+        perception: trait === 'perception' ? base.perception + 1 : base.perception,
+        reflexes: trait === 'reflexes' ? base.reflexes + 1 : base.reflexes,
+        intuition: trait === 'intuition' ? base.intuition + 1 : base.intuition,
+        agilite: trait === 'agilite' ? base.agilite + 1 : base.agilite,
+        intelligence: trait === 'intelligence' ? base.intelligence + 1 : base.intelligence
+      } as Traits;
+      const newSpent = (char.spentExperiencePoints || 0) + cost;
+      return { ...char, traits: newTraits, spentExperiencePoints: newSpent };
     });
   }
   decreaseTrait(trait: keyof Traits) {
+    // Refund the cost of the current level when decreasing a trait
     this._character.update(char => {
       const base = { ...char.traits } as Traits;
-      return {
-        ...char,
-        traits: {
-          constitution: trait === 'constitution' ? Math.max(2, base.constitution - 1) : base.constitution,
-          volonte: trait === 'volonte' ? Math.max(2, base.volonte - 1) : base.volonte,
-          force: trait === 'force' ? Math.max(2, base.force - 1) : base.force,
-          perception: trait === 'perception' ? Math.max(2, base.perception - 1) : base.perception,
-          reflexes: trait === 'reflexes' ? Math.max(2, base.reflexes - 1) : base.reflexes,
-          intuition: trait === 'intuition' ? Math.max(2, base.intuition - 1) : base.intuition,
-          agilite: trait === 'agilite' ? Math.max(2, base.agilite - 1) : base.agilite,
-          intelligence: trait === 'intelligence' ? Math.max(2, base.intelligence - 1) : base.intelligence
-        }
-      };
+      const current = base[trait] || 2; // value before decrease
+      if (current <= 2) return char; // cannot go below 2
+      const refund = current * 4; // cost that was paid to reach `current`
+      const newTraits: Traits = {
+        constitution: trait === 'constitution' ? Math.max(2, base.constitution - 1) : base.constitution,
+        volonte: trait === 'volonte' ? Math.max(2, base.volonte - 1) : base.volonte,
+        force: trait === 'force' ? Math.max(2, base.force - 1) : base.force,
+        perception: trait === 'perception' ? Math.max(2, base.perception - 1) : base.perception,
+        reflexes: trait === 'reflexes' ? Math.max(2, base.reflexes - 1) : base.reflexes,
+        intuition: trait === 'intuition' ? Math.max(2, base.intuition - 1) : base.intuition,
+        agilite: trait === 'agilite' ? Math.max(2, base.agilite - 1) : base.agilite,
+        intelligence: trait === 'intelligence' ? Math.max(2, base.intelligence - 1) : base.intelligence
+      } as Traits;
+      const newSpent = Math.max(0, (char.spentExperiencePoints || 0) - refund);
+      return { ...char, traits: newTraits, spentExperiencePoints: newSpent };
     });
   }
   improveVoidRing() {
+    // Increase void ring and spend XP accordingly
     this._character.update(char => {
       const base = { ...char.rings } as Ring;
-      return {
-        ...char,
-        rings: {
-          terre: base.terre,
-          eau: base.eau,
-          air: base.air,
-          feu: base.feu,
-          vide: base.vide + 1
-        }
-      };
+      const current = base.vide || 2;
+      const cost = (current + 1) * 10; // same formula que dans CharacterCreator.getVoidRingCost
+      const newRings = { ...base, vide: current + 1 } as Ring;
+      const newSpent = (char.spentExperiencePoints || 0) + cost;
+      return { ...char, rings: newRings, spentExperiencePoints: newSpent };
     });
   }
   decreaseVoidRing() {
+    // Decrease void ring and refund XP from the current level
     this._character.update(char => {
       const base = { ...char.rings } as Ring;
-      return {
-        ...char,
-        rings: {
-          terre: base.terre,
-          eau: base.eau,
-          air: base.air,
-          feu: base.feu,
-          vide: Math.max(2, base.vide - 1)
-        }
-      };
+      const current = base.vide || 2;
+      if (current <= 2) return char;
+      const refund = current * 10; // refund the cost paid to reach `current`
+      const newRings = { ...base, vide: Math.max(2, current - 1) } as Ring;
+      const newSpent = Math.max(0, (char.spentExperiencePoints || 0) - refund);
+      return { ...char, rings: newRings, spentExperiencePoints: newSpent };
     });
   }
   improveSkill(skillName: string) {
     const skills = [...(this._character().skills || [])];
     const idx = skills.findIndex(s => s.name === skillName);
-    if (idx >= 0) skills[idx] = { ...skills[idx], rank: (skills[idx].rank || 0) + 1 };
-    this._character.update(char => ({ ...char, skills }));
+    if (idx >= 0) {
+      const currentRank = skills[idx].rank || 0;
+      const isSchool = !!skills[idx].isSchoolSkill;
+      const cost = isSchool ? (currentRank + 1) * 1 : (currentRank + 1) * 2; // same formula que CharacterCreator.getSkillCost
+      skills[idx] = { ...skills[idx], rank: currentRank + 1 };
+      this._character.update(char => ({ ...char, skills, spentExperiencePoints: (char.spentExperiencePoints || 0) + cost }));
+    }
   }
   decreaseSkill(skillName: string) {
     const skills = [...(this._character().skills || [])];
     const idx = skills.findIndex(s => s.name === skillName);
-    if (idx >= 0) skills[idx] = { ...skills[idx], rank: Math.max(0, (skills[idx].rank || 0) - 1) };
-    this._character.update(char => ({ ...char, skills }));
+    if (idx >= 0) {
+      const currentRank = skills[idx].rank || 0;
+      if (currentRank <= 0) return;
+      const isSchool = !!skills[idx].isSchoolSkill;
+      const refund = isSchool ? currentRank * 1 : currentRank * 2; // refund cost for current rank
+      skills[idx] = { ...skills[idx], rank: Math.max(0, currentRank - 1) };
+      this._character.update(char => ({ ...char, skills, spentExperiencePoints: Math.max(0, (char.spentExperiencePoints || 0) - refund) }));
+    }
   }
 
   // Étapes de création
@@ -330,9 +339,17 @@ export class CharacterService {
 
   // Sauvegarde du personnage (retourne l'objet courant)
   saveCharacter() {
-    const char = { ...this._character() };
-    this.storageService.updateCharacter(char as Character);
-    return char;
+    const char = { ...this._character() } as Character;
+    // Si l'objet a déjà un ID, on met à jour, sinon on l'ajoute
+    if (char.id) {
+      this.storageService.updateCharacter(char);
+      return char;
+    }
+    // Ajouter et récupérer l'objet avec ID généré
+    const saved = this.storageService.addCharacter(char);
+    // Mettre à jour le signal avec l'ID/valeurs sauvegardées
+    this._character.set({ ...saved });
+    return saved;
   }
 
   // Gestion équipement (vente, argent, etc.)
@@ -369,23 +386,25 @@ export class CharacterService {
     const current = this._character().advantages || [];
     if (!current.some((a: Advantage) => a.id === id)) {
       const adv = ADVANTAGES.find(a => a.id === id);
-      if (adv) this._character.update(char => ({ ...char, advantages: [...current, adv] }));
+      if (adv) this._character.update(char => ({ ...char, advantages: [...current, adv], spentExperiencePoints: (char.spentExperiencePoints || 0) + (adv.cost || 0) }));
     }
   }
   deselectAdvantage(id: string) {
     const current = this._character().advantages || [];
-    this._character.update(char => ({ ...char, advantages: current.filter((a: Advantage) => a.id !== id) }));
+    const adv = current.find((a: Advantage) => a.id === id);
+    this._character.update(char => ({ ...char, advantages: current.filter((a: Advantage) => a.id !== id), spentExperiencePoints: Math.max(0, (char.spentExperiencePoints || 0) - (adv?.cost || 0)) }));
   }
   selectDisadvantage(id: string) {
     const current = this._character().disadvantages || [];
     if (!current.some((d: Disadvantage) => d.id === id)) {
       const dis = DISADVANTAGES.find(d => d.id === id);
-      if (dis) this._character.update(char => ({ ...char, disadvantages: [...current, dis] }));
+      if (dis) this._character.update(char => ({ ...char, disadvantages: [...current, dis], experiencePoints: (char.experiencePoints || 0) + (dis.xpGain || 0) }));
     }
   }
   deselectDisadvantage(id: string) {
     const current = this._character().disadvantages || [];
-    this._character.update(char => ({ ...char, disadvantages: current.filter((d: Disadvantage) => d.id !== id) }));
+    const dis = current.find((d: Disadvantage) => d.id === id);
+    this._character.update(char => ({ ...char, disadvantages: current.filter((d: Disadvantage) => d.id !== id), experiencePoints: Math.max(0, (char.experiencePoints || 0) - (dis?.xpGain || 0)) }));
   }
   isAdvantageSelected(id: string) {
     return (this._character().advantages || []).some((a: Advantage) => a.id === id);
@@ -407,15 +426,33 @@ export class CharacterService {
   }
   // Ajout/suppression de sorts Maho via SpellService
   addMahoSpell(spellName: string) {
+    // Return result-like object { success: boolean, error?: string }
     const current = this._character().mahoSpells || [];
+    // Check permission
+    const canUse = this.canUseMaho();
+    if (!canUse) return { success: false, error: 'École ou conditions ne permettent pas d\'apprendre le Maho' };
+    // Prevent duplicates
+    if (current.includes(spellName)) return { success: false, error: 'Sort Maho déjà sélectionné' };
+    // Find spell to determine taint (use mastery as proxy for taint increment)
+    const spell = MAHO_SPELLS.find(s => s.name === spellName);
+    if (!spell) return { success: false, error: 'Sort Maho introuvable' };
+    const taintIncrement = Math.max(1, Math.round(spell.mastery));
+    const MAX_TAINT = 10; // seuil global maximal (peut être ajusté)
+    const currentTaint = this._character().taint || 0;
+    if (currentTaint + taintIncrement > MAX_TAINT) return { success: false, error: 'Ajout refusé : la souillure dépasserait le maximum autorisé' };
+
     const updated = this.spellService.addMahoSpell(current, spellName);
-    this._character.update(char => ({ ...char, mahoSpells: updated }));
+    this._character.update(char => ({ ...char, mahoSpells: updated, taint: (char.taint || 0) + taintIncrement }));
+    return { success: true };
   }
 
   removeMahoSpell(spellName: string) {
     const current = this._character().mahoSpells || [];
+    const spell = MAHO_SPELLS.find(s => s.name === spellName);
+    const taintDecrement = spell ? Math.max(1, Math.round(spell.mastery)) : 1;
     const updated = this.spellService.removeMahoSpell(current, spellName);
-    this._character.update(char => ({ ...char, mahoSpells: updated }));
+    this._character.update(char => ({ ...char, mahoSpells: updated, taint: Math.max(0, (char.taint || 0) - taintDecrement) }));
+    return { success: true };
   }
 
   getAvailableMahoByRank(maxRank: number) {
@@ -438,8 +475,12 @@ export class CharacterService {
   }
 
   canAddMoreMahoSpells(): boolean {
-    // Par défaut, pas de limite stricte, mais on peut en ajouter une ici si besoin
-    return true;
+    // Respecter une limite par école si fournie
+    const school = SCHOOLS.find(s => s.name === this._character().school) as any;
+    const limit = school?.mahoStartingCount ?? null;
+    const selected = this._character().mahoSpells || [];
+    if (limit === null) return true;
+    return selected.length < limit;
   }
 
   // Ajout/suppression de techniques/kata (modifie le signal)
@@ -603,18 +644,70 @@ export class CharacterService {
   }
 
   // Ajout d'un getter pour savoir si on peut lancer des sorts (exemple)
+  // Indique si l'école sélectionnée permet d'apprendre/lancer des sorts
   get canCastSpells() {
-    return computed(() => (this._character().spells || []).length > 0);
+    return computed(() => {
+      const school = SCHOOLS.find(s => s.name === this._character().school);
+      if (!school) return false;
+      // Schools of type 'shugenja' can cast spells; also support explicit spellLimits
+      if ((school as any).type === 'shugenja') return true;
+      return !!((school as any).spellLimits);
+    });
   }
 
-  // Ajout d'un getter pour le nombre max de sorts de départ (exemple)
+  // Indique si le personnage peut apprendre/utiliser le Maho
+  // Vrai si l'école autorise explicitement le maho (allowsMaho) ou si le désavantage maho-tsukai est sélectionné
+  get canUseMaho() {
+    return computed(() => {
+      const school = SCHOOLS.find(s => s.name === this._character().school) as any;
+      const bySchool = !!(school && school.allowsMaho);
+      const byDisadv = this.isDisadvantageSelected('maho-tsukai');
+      return bySchool || byDisadv;
+    });
+  }
+
+  // Nombre max de sorts de départ (dépend de l'école sélectionnée)
+  // Retourne un objet { rank1, rank2, affinity?, deficiency? }
   get maxStartingSpells() {
-    return 3;
+    const school = SCHOOLS.find(s => s.name === this._character().school);
+    if (school && (school as any).spellLimits) return (school as any).spellLimits;
+    return { rank1: 0, rank2: 0 };
+  }
+
+  // Retourne les sorts disponibles pour le personnage selon son rang d'insight
+  getAvailableSpellsForCharacter(element: string) {
+    const insight = this.getInsightRank();
+    // Determine ring level for element (map element name to ring key)
+    const ringKey = (element || '').toString().toLowerCase();
+    const ringLevel = (this._character().rings as any)?.[ringKey] || 0;
+    const effectiveRank = Math.max(insight, ringLevel);
+    // Récupère tous les sorts de l'élément puis filtre par mastery <= effectiveRank ou universal
+    return this.spellService.getAvailableSpells(element).filter(s => (s && (s.mastery <= effectiveRank || (s as any).universal === true)));
+  }
+
+  // Indique si le personnage peut apprendre/lancer un sort donné
+  canLearnSpell(spellName: string): boolean {
+    const spell = SPELLS.find(s => s.name === spellName);
+    if (!spell) return false;
+    // Doit être une école qui peut lancer des sorts
+    if (!this.canCastSpells()) return false;
+    const insight = this.getInsightRank();
+    // determine which ring corresponds to the spell element
+    const ringKey = (spell.element || '').toString().toLowerCase();
+    const ringLevel = (this._character().rings as any)?.[ringKey] || 0;
+    const effectiveRank = Math.max(insight, ringLevel);
+    return spell.mastery <= effectiveRank || (spell as any).universal === true;
   }
 
   // Ajout d'un getter pour savoir si on peut ajouter plus de sorts (exemple)
+  // Autorise l'ajout de sorts si le total de sorts sélectionnés est inférieur au quota total
   get canAddMoreSpells() {
-    return computed(() => (this._character().spells || []).length < this.maxStartingSpells);
+    return computed(() => {
+      const limits: any = this.maxStartingSpells;
+      const totalLimit = (limits?.rank1 || 0) + (limits?.rank2 || 0);
+      const selected = this._character().spells || [];
+      return selected.length < totalLimit;
+    });
   }
 
   // Ajout d'un getter pour l'affinité/déficience d'école (exemple)
@@ -705,6 +798,30 @@ export class CharacterService {
   if (ring === 'all') return this.kihoService.getAllKiho();
   return this.kihoService.getKihoByElement(ring as any);
   }
+
+  // Retourne les Kiho accessibles pour le personnage selon son rang d'insight (et éventuellement l'anneau)
+  getAvailableKihoForCharacter(ring: string) {
+    const insight = this.getInsightRank();
+    if (ring === 'all') return this.kihoService.getAvailableKihoByRank(insight);
+    // If we have a specific ring/element requested, compute effective rank using character's ring level
+    const ringKey = (ring || '').toString().toLowerCase();
+    const ringLevel = (this._character().rings as any)?.[ringKey] || 0;
+    const effectiveRank = Math.max(insight, ringLevel);
+    return this.kihoService.getAvailableKihoByElementAndRank(ring as any, effectiveRank);
+  }
+
+  // Indique si le personnage peut utiliser/apprendre un Kiho donné
+  canUseKiho(kihoName: string): boolean {
+    const kiho = this.kihoService.getKihoDetails(kihoName);
+    if (!kiho) return false;
+    if (!this.isMonk()) return false;
+    const insight = this.getInsightRank();
+    // Determine ring to use: kiho can specify a ring, otherwise use its element
+    const ringSource = (kiho.ring || kiho.element || '').toString().toLowerCase();
+    const ringLevel = (this._character().rings as any)?.[ringSource] || 0;
+    const effectiveRank = Math.max(insight, ringLevel);
+    return kiho.mastery <= effectiveRank;
+  }
   // Techniques
   getAvailableClanTechniques(clan: string) {
     return this.techniqueService.availableClanTechniques(clan);
@@ -778,12 +895,12 @@ export class CharacterService {
    * Utilisé pour déterminer quels Kiho peuvent être appris
    */
   getInsightRank(): number {
-  const insight = this.getInsightRank();
-    
-    if (insight < 150) return 1;
-    if (insight < 175) return 2;
-    if (insight < 200) return 3;
-    if (insight < 225) return 4;
+    // Utiliser la valeur d'insight du personnage (mesurée en points)
+    const insightValue = (this._character().insight || 0);
+    if (insightValue < 150) return 1;
+    if (insightValue < 175) return 2;
+    if (insightValue < 200) return 3;
+    if (insightValue < 225) return 4;
     return 5;
   }
 
@@ -816,17 +933,23 @@ export class CharacterService {
   getSelectedKihoDetails(): Kiho[] {
     return this.kihoService.getSelectedKihoDetails(this._character().kiho || []);
   }
-  addKiho(kihoName: string): void {
+  addKiho(kihoName: string): { success: boolean; error?: string } {
     const current = this._character().kiho || [];
     const school = this._character().school;
+    // Compute effective rank as max(insightRank, ring level for this kiho)
     const insightRank = this.getInsightRank();
-    const result = this.kihoService.addKiho(kihoName, current, school, insightRank);
+    const kiho = this.kihoService.getKihoDetails(kihoName);
+    let effectiveRank = insightRank;
+    if (kiho) {
+      const ringSource = (kiho.ring || kiho.element || '').toString().toLowerCase();
+      const ringLevel = (this._character().rings as any)?.[ringSource] || 0;
+      effectiveRank = Math.max(insightRank, ringLevel);
+    }
+    const result = this.kihoService.addKiho(kihoName, current, school, effectiveRank);
     if (result.success) {
       this._character.update(char => ({ ...char, kiho: [...current, kihoName] }));
-    } else {
-      // Optionnel : gestion d'erreur utilisateur
-      // alert(result.error);
     }
+    return result;
   }
   removeKiho(kihoName: string): void {
     const current = this._character().kiho || [];

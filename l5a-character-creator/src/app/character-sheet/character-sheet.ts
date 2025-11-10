@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, Signal, WritableSignal } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -1029,8 +1029,10 @@ export class CharacterSheet implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   readonly characterService = inject(CharacterService);
-  
-  character = signal<Character | null>(null);
+
+  // Utiliser le signal partagé du service pour garder une seule source de vérité
+  // Evite les désynchronisations (XP figées) quand on modifie le personnage
+  character: WritableSignal<Character | null> = this.characterService.character as unknown as WritableSignal<Character | null>;
   
   // Computed signals pour les compétences hiérarchisées
   schoolAndClanSkills = computed(() => {
@@ -1197,7 +1199,8 @@ export class CharacterSheet implements OnInit {
         if (index >= 0) {
           characters[index] = char;
           localStorage.setItem('myCharacters', JSON.stringify(characters));
-          this.character.set(char);
+          // Forcer une nouvelle référence pour déclencher la réactivité des signals
+          this.character.set({ ...char });
         }
       } catch (error) {
         console.error('[CharacterSheet] Erreur lors de la sauvegarde:', error);

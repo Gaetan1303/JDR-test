@@ -52,4 +52,18 @@ export class CharacterStorageService {
       console.error('[CharacterStorageService] Personnage non trouvé pour mise à jour:', character.id);
     }
   }
+
+  /**
+   * Ajoute un nouveau personnage à la liste et lui attribue un ID si nécessaire
+   */
+  addCharacter(character: Character): Character {
+    const characters = this.getAllCharacters();
+    const toSave = { ...character } as Character;
+    if (!toSave.id) {
+      toSave.id = Date.now().toString();
+    }
+    characters.push(toSave);
+    localStorage.setItem('myCharacters', JSON.stringify(characters));
+    return toSave;
+  }
 }

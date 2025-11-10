@@ -11,7 +11,13 @@ import { ClanTechnique as TechniqueKata } from '../../data/techniques-kata.data'
 export class TechniqueService {
   availableClanTechniques(clan: string): TechniqueKata[] {
     if (!clan) return [];
-    return CLAN_TECHNIQUES.filter((t: TechniqueKata) => t.clan === clan || t.clan === 'Universel');
+    const normalize = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+    const clanNorm = normalize(clan);
+    return CLAN_TECHNIQUES.filter((t: TechniqueKata) => {
+      const tClan = t.clan || '';
+      const tClanNorm = normalize(tClan);
+      return tClanNorm === clanNorm || tClanNorm === 'universel';
+    });
   }
 
   availableKata(): TechniqueKata[] {
@@ -59,12 +65,22 @@ export class TechniqueService {
 
   getAvailableClanTechniques(clan: string): ClanFamilyTechnique[] {
     if (!clan) return [];
-    return CLAN_FAMILY_TECHNIQUES.filter((t: ClanFamilyTechnique) => t.clan === clan && t.type === 'clan');
+    const normalize = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+    const clanNorm = normalize(clan);
+    return CLAN_FAMILY_TECHNIQUES.filter((t: ClanFamilyTechnique) => {
+      const tClan = t.clan || '';
+      return normalize(tClan) === clanNorm && t.type === 'clan';
+    });
   }
 
   getAvailableFamilyTechniques(family: string): ClanFamilyTechnique[] {
     if (!family) return [];
-    return CLAN_FAMILY_TECHNIQUES.filter((t: ClanFamilyTechnique) => t.family === family && t.type === 'famille');
+    const normalize = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+    const familyNorm = normalize(family);
+    return CLAN_FAMILY_TECHNIQUES.filter((t: ClanFamilyTechnique) => {
+      const tFamily = t.family || '';
+      return normalize(tFamily) === familyNorm && t.type === 'famille';
+    });
   }
 
   addClanTechnique(currentTechniques: string[], techniqueName: string): string[] {

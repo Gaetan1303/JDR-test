@@ -134,6 +134,10 @@ export class CharacterCreator {
   // Signaux pour les sorts
   selectedSpells = this.characterService.selectedSpells;
   availableSpellsByElement = this.characterService.availableSpellsByElement;
+  // Retourne les sorts filtrés selon le rang d'insight et règles d'école
+  getAvailableSpellsForCharacter = (element: string) => this.characterService.getAvailableSpellsForCharacter(element);
+  // Vérifie si le personnage peut apprendre/laner le sort
+  canLearnSpell = (spellName: string) => this.characterService.canLearnSpell(spellName);
   canCastSpells = this.characterService.canCastSpells;
   get maxStartingSpellsValue() {
     // maxStartingSpells est un getter, pas une fonction

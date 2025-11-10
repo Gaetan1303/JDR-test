@@ -804,10 +804,11 @@
                   <mat-tab
                     [label]="element">
                     <div class="spells-list">
-                      @for (spell of availableSpellsByElement(element) || []; track spell) {
+                @for (spell of getAvailableSpellsForCharacter(element) || []; track spell) {
                         <mat-card
-                          class="spell-card"
-                          [class.spell-selected]="isSpellSelected(spell.name)">
+                      class="spell-card"
+                      [class.spell-selected]="isSpellSelected(spell.name)"
+                      [class.spell-disabled]="!canLearnSpell(spell.name)">
                           <mat-card-header>
                             <mat-card-title>
                               <span class="spell-title">
@@ -846,9 +847,9 @@
                             @if (!isSpellSelected(spell.name)) {
                               <button mat-button
                                 color="primary"
-                                [disabled]="!canAddMoreSpells()"
+                                [disabled]="!canAddMoreSpells() || !canLearnSpell(spell.name)"
                                 (click)="addSpell(spell.name); $event.stopPropagation()">
-                                {{ canAddMoreSpells() ? 'Sélectionner' : 'Limite atteinte' }}
+                                {{ !canLearnSpell(spell.name) ? 'Indisponible' : (canAddMoreSpells() ? 'Sélectionner' : 'Limite atteinte') }}
                               </button>
                             }
                             @if (isSpellSelected(spell.name)) {
