@@ -1,0 +1,23 @@
+HTTP test result:
+-----------------
+Command: node scripts/connection_http_test.js http://localhost:9876/debug.html
+Result:
+{
+  "ok": true,
+  "statusCode": 200,
+  "url": "http://localhost:9876/debug.html"
+}
+
+WebSocket test result:
+----------------------
+Command: node scripts/connection_ws_test.js http://localhost:3000
+Result:
+{
+  "ok": false,
+  "error": "xhr poll error",
+  "url": "http://localhost:3000"
+}
+
+Notes:
+- The HTTP endpoint (Karma debug UI) is reachable and returned 200.
+- The WebSocket test attempted to connect to the local GM_L5R server at port 3000 but failed. If you want this to succeed, start the server `node ../GM_L5R_websocket_server.js` or set the correct URL/port.
